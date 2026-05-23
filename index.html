@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHANYRAQ — AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<style>
+  :root {
+    --bg-base: #0b1210;
+    --bg-sidebar: #0e1814;
+    --bg-card: #131f16;
+    --bg-input: #172219;
+    --bg-msg-user: #1a2e1e;
+    --bg-msg-ai: #111a13;
+    --border: #253829;
+    --border-light: #1b2a1e;
+    --green-primary: #48976a;
+    --green-bright: #5aad7e;
+    --green-muted: #376e52;
+    --green-dim: #254d38;
+    --text-primary: #e4ede6;
+    --text-secondary: #8ba590;
+    --text-muted: #516358;
+    --sand: #c0a472;
+    --accent: #63b87a;
+    --danger: #bf5555;
+    --fs-base: 12.8px;
+    --fs-sm: 11.2px;
+    --fs-xs: 10.4px;
+    --fs-lg: 14.4px;
+    --fs-xl: 16px;
+    --fs-2xl: 22.4px;
+    --sp-xs: 4px;
+    --sp-sm: 8px;
+    --sp-md: 12px;
+    --sp-lg: 16px;
+    --sp-xl: 20px;
+    --sp-2xl: 24px;
+    --r-sm: 7px;
+    --r-md: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Golos Text', sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    font-size: var(--fs-base);
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: 256px; min-width: 256px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    height: 100dvh; position: relative; z-index: 10;
+  }
+
+  .sidebar-header {
+    padding: var(--sp-xl) var(--sp-lg) var(--sp-md);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .logo-wrap { display: flex; align-items: center; gap: var(--sp-sm); margin-bottom: var(--sp-lg); }
+
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--green-muted), var(--green-primary));
+    border-radius: var(--r-sm);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(72,151,106,0.25); flex-shrink: 0;
+  }
+  .logo-icon svg { color: #fff; }
+
+  .logo-text { font-family: 'Unbounded', sans-serif; font-size: var(--fs-sm); font-weight: 700; color: var(--text-primary); letter-spacing: 0.06em; }
+  .logo-sub { font-size: 9.6px; color: var(--text-muted); font-weight: 300; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 1px; }
+
+  .new-chat-btn {
+    width: 100%; padding: var(--sp-sm) var(--sp-md);
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--r-sm); color: var(--text-secondary);
+    font-family: 'Golos Text', sans-serif; font-size: var(--fs-sm);
+    cursor: pointer; display: flex; align-items: center; gap: var(--sp-xs);
+    transition: all 0.2s;
+  }
+  .new-chat-btn:hover { background: var(--bg-input); border-color: var(--green-dim); color: var(--text-primary); }
+
+  .sidebar-section { padding: var(--sp-md) var(--sp-md) var(--sp-xs); font-size: 9.6px; font-family: 'Unbounded', sans-serif; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
+  .chat-list { flex: 1; overflow-y: auto; padding: var(--sp-xs) var(--sp-sm); }
+  .chat-list::-webkit-scrollbar { width: 3px; }
+  .chat-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .chat-item {
+    padding: var(--sp-sm) var(--sp-md); border-radius: var(--r-sm);
+    cursor: pointer; display: flex; align-items: center; gap: var(--sp-sm);
+    transition: all 0.15s; margin-bottom: 2px; border: 1px solid transparent;
+  }
+  .chat-item:hover { background: var(--bg-card); }
+  .chat-item.active { background: var(--bg-msg-user); border-color: var(--green-dim); }
+  .chat-item-icon { flex-shrink: 0; color: var(--text-muted); }
+  .chat-item-content { flex: 1; min-width: 0; }
+  .chat-item-title { font-size: var(--fs-sm); color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-item-preview { font-size: var(--fs-xs); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+  .chat-item-delete { opacity: 0; background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 2px; border-radius: 4px; transition: all 0.15s; flex-shrink: 0; display: flex; }
+  .chat-item:hover .chat-item-delete { opacity: 1; }
+  .chat-item-delete:hover { color: var(--danger); background: rgba(191,85,85,0.1); }
+
+  .sidebar-footer { padding: var(--sp-md); border-top: 1px solid var(--border-light); }
+  .profile-card {
+    display: flex; align-items: center; gap: var(--sp-sm);
+    padding: var(--sp-sm) var(--sp-md); background: var(--bg-card);
+    border: 1px solid var(--border); border-radius: var(--r-sm);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .profile-card:hover { border-color: var(--green-dim); }
+  .profile-avatar { width: 28px; height: 28px; background: linear-gradient(135deg, var(--green-dim), var(--green-muted)); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-primary); }
+  .profile-name { font-size: var(--fs-sm); font-weight: 600; color: var(--text-primary); }
+  .profile-status { font-size: var(--fs-xs); color: var(--green-primary); margin-top: 1px; display: flex; align-items: center; gap: 4px; }
+  .status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green-primary); box-shadow: 0 0 4px var(--green-primary); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+  /* ── MAIN ── */
+  #main { flex: 1; display: flex; flex-direction: column; height: 100dvh; position: relative; z-index: 1; }
+
+  .chat-header {
+    padding: var(--sp-md) var(--sp-2xl);
+    border-bottom: 1px solid var(--border-light);
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(11,18,16,0.85); backdrop-filter: blur(8px);
+  }
+  .chat-header-left { display: flex; align-items: center; gap: var(--sp-md); }
+  .chat-title-header { font-family: 'Unbounded', sans-serif; font-size: var(--fs-sm); font-weight: 600; color: var(--text-primary); }
+  .header-sub { font-size: var(--fs-xs); color: var(--text-muted); margin-top: 1px; }
+
+  /* ── MESSAGES ── */
+  #messages { flex: 1; overflow-y: auto; padding: var(--sp-xl) 0; scroll-behavior: smooth; }
+  #messages::-webkit-scrollbar { width: 4px; }
+  #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .welcome-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 32px var(--sp-xl); text-align: center; }
+  .welcome-logo { width: 60px; height: 60px; background: linear-gradient(135deg, var(--green-dim), var(--green-primary)); border-radius: var(--sp-lg); display: flex; align-items: center; justify-content: center; margin-bottom: var(--sp-lg); box-shadow: 0 6px 28px rgba(72,151,106,0.22); animation: float 4s ease-in-out infinite; color: #fff; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+  .welcome-title { font-family: 'Unbounded', sans-serif; font-size: var(--fs-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: var(--sp-sm); letter-spacing: 0.05em; }
+  .welcome-sub { font-size: var(--fs-sm); color: var(--text-muted); margin-bottom: var(--sp-2xl); max-width: 320px; line-height: 1.65; }
+
+  .message-row { padding: var(--sp-xs) var(--sp-2xl); display: flex; gap: var(--sp-md); animation: msgIn 0.2s ease; }
+  @keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .message-row.user { justify-content: flex-end; }
+
+  .msg-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .msg-avatar.ai { background: linear-gradient(135deg, var(--green-dim), var(--green-muted)); font-family: 'Unbounded', sans-serif; font-size: 9px; font-weight: 700; color: var(--text-primary); }
+  .msg-avatar.user { background: var(--bg-msg-user); border: 1px solid var(--green-dim); color: var(--text-secondary); }
+
+  .msg-bubble { max-width: 640px; padding: var(--sp-sm) var(--sp-md); border-radius: var(--r-md); font-size: var(--fs-base); line-height: 1.65; }
+  .msg-bubble.user { background: var(--bg-msg-user); border: 1px solid var(--green-dim); color: var(--text-primary); border-bottom-right-radius: 3px; }
+  .msg-bubble.ai { background: var(--bg-msg-ai); border: 1px solid var(--border-light); color: var(--text-primary); border-bottom-left-radius: 3px; }
+
+  /* image preview inside user bubble */
+  .msg-img-preview { max-width: 280px; max-height: 200px; border-radius: var(--r-sm); margin-bottom: var(--sp-xs); display: block; border: 1px solid var(--border); object-fit: cover; }
+
+  .msg-bubble h1,.msg-bubble h2,.msg-bubble h3 { font-family: 'Unbounded', sans-serif; color: var(--green-bright); margin: var(--sp-md) 0 var(--sp-xs); font-size: var(--fs-sm); font-weight: 600; }
+  .msg-bubble h1 { font-size: var(--fs-lg); }
+  .msg-bubble p { margin-bottom: var(--sp-sm); }
+  .msg-bubble p:last-child { margin-bottom: 0; }
+  .msg-bubble strong { color: var(--sand); font-weight: 600; }
+  .msg-bubble em { color: var(--text-secondary); font-style: italic; }
+  .msg-bubble a { color: var(--green-primary); text-decoration: none; border-bottom: 1px solid var(--green-dim); }
+  .msg-bubble a:hover { color: var(--green-bright); }
+  .msg-bubble ul,.msg-bubble ol { padding-left: var(--sp-xl); margin: var(--sp-xs) 0; }
+  .msg-bubble li { margin-bottom: 3px; }
+  .msg-bubble code:not(pre code) { background: rgba(72,151,106,0.1); border: 1px solid var(--green-dim); border-radius: 4px; padding: 1px 5px; font-size: var(--fs-xs); font-family: monospace; color: var(--green-bright); }
+  .msg-bubble pre { background: #090e0b; border: 1px solid var(--border); border-radius: var(--r-sm); overflow-x: auto; margin: var(--sp-sm) 0; }
+  .msg-bubble pre code { font-size: var(--fs-xs); padding: var(--sp-md); display: block; }
+  .msg-bubble blockquote { border-left: 2px solid var(--green-dim); padding-left: var(--sp-md); color: var(--text-secondary); margin: var(--sp-sm) 0; }
+  .msg-bubble hr { border: none; border-top: 1px solid var(--border-light); margin: var(--sp-sm) 0; }
+
+  .typing-cursor { display: inline-block; width: 2px; height: 14px; background: var(--green-primary); margin-left: 2px; vertical-align: middle; animation: blink 0.8s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .thinking-dots { display: flex; gap: 4px; padding: 3px 0; }
+  .thinking-dots span { width: 5px; height: 5px; background: var(--green-muted); border-radius: 50%; animation: dot 1.2s infinite; }
+  .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dot { 0%,60%,100%{transform:translateY(0);opacity:.35} 30%{transform:translateY(-5px);opacity:1} }
+
+  /* ── INPUT AREA ── */
+  .input-area {
+    padding: var(--sp-sm) var(--sp-2xl) var(--sp-sm);
+    background: rgba(11,18,16,0.98);
+    border-top: 1px solid var(--border-light);
+    backdrop-filter: blur(8px);
+    flex-shrink: 0;
+  }
+  @media (max-width: 768px) {
+    .input-area {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: var(--sp-sm) var(--sp-sm) env(safe-area-inset-bottom, 12px);
+      z-index: 50;
+    }
+    #messages {
+      padding-bottom: 90px;
+    }
+  }
+
+  /* image preview strip above input */
+  .img-preview-strip { display: flex; gap: var(--sp-sm); flex-wrap: wrap; margin-bottom: var(--sp-sm); }
+  .img-thumb-wrap { position: relative; display: inline-flex; }
+  .img-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: var(--r-sm); border: 1px solid var(--border); }
+  .img-thumb-remove {
+    position: absolute; top: -5px; right: -5px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--danger); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 9px; line-height: 1;
+  }
+
+  .input-wrap {
+    display: flex; align-items: flex-end; gap: var(--sp-sm);
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: var(--sp-sm) var(--sp-md);
+    transition: border-color 0.2s;
+  }
+  .input-wrap:focus-within { border-color: var(--green-muted); box-shadow: 0 0 0 3px rgba(72,151,106,0.07); }
+
+  #userInput { flex: 1; background: none; border: none; outline: none; color: var(--text-primary); font-family: 'Golos Text', sans-serif; font-size: var(--fs-base); resize: none; max-height: 140px; line-height: 1.5; overflow-y: auto; }
+  #userInput::placeholder { color: var(--text-muted); }
+
+  /* image upload button */
+  .img-upload-btn {
+    width: 32px; height: 32px; background: var(--bg-card);
+    border: 1px solid var(--border); border-radius: var(--r-sm);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s; color: var(--text-muted);
+  }
+  .img-upload-btn:hover { border-color: var(--green-dim); color: var(--green-bright); }
+
+  #sendBtn {
+    width: 32px; height: 32px; background: var(--green-primary);
+    border: none; border-radius: var(--r-sm); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s; color: white;
+  }
+  #sendBtn:hover { background: var(--green-bright); transform: scale(1.04); }
+  #sendBtn:disabled { background: var(--bg-card); color: var(--text-muted); cursor: not-allowed; transform: none; }
+
+  .input-hint { display: none; }
+
+  #fileInput { display: none; }
+
+  /* ── MOBILE ── */
+  #sidebarToggle { display: none; background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 3px; align-items: center; justify-content: center; }
+  @media (max-width: 768px) {
+    #sidebar { position: fixed; left: -256px; transition: left 0.3s ease; z-index: 100; }
+    #sidebar.open { left: 0; }
+    #sidebarToggle { display: flex; }
+    .message-row { padding: var(--sp-xs) var(--sp-md); }
+    .chat-header { padding: var(--sp-sm) var(--sp-md); }
+  }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+  .overlay.show { display: block; }
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<input type="file" id="fileInput" accept="image/*" multiple onchange="handleFileSelect(event)">
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">SHANYRAQ</div>
+        <div class="logo-sub">AI Agent</div>
+      </div>
+    </div>
+    <button class="new-chat-btn" onclick="newChat()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Жаңа сөйлесу
+    </button>
+  </div>
+  <div class="sidebar-section">Тарих</div>
+  <div class="chat-list" id="chatList"></div>
+  <div class="sidebar-footer">
+    <div class="profile-card">
+      <div class="profile-avatar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name">Пайдаланушы</div>
+        <div class="profile-status"><span class="status-dot"></span>Онлайн</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main id="main">
+  <div class="chat-header">
+    <div class="chat-header-left">
+      <button id="sidebarToggle" onclick="toggleSidebar()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div>
+        <div class="chat-title-header" id="chatTitleHeader">SHANYRAQ AI</div>
+        <div class="header-sub" id="headerSub">Сұрағыңызды қойыңыз</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="messages">
+    <div class="welcome-screen" id="welcomeScreen">
+      <div class="welcome-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div class="welcome-title">SHANYRAQ AI</div>
+      <div class="welcome-sub">Кез келген сұрағыңызды қойыңыз немесе сурет жүктеп талдатыңыз.</div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="img-preview-strip" id="imgPreviewStrip"></div>
+    <div class="input-wrap">
+      <button class="img-upload-btn" onclick="document.getElementById('fileInput').click()" title="Сурет жүктеу">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </button>
+      <textarea id="userInput" rows="1" placeholder="Сұрағыңызды жазыңыз..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button id="sendBtn" onclick="sendMessage()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div class="input-hint">Enter — жіберу &nbsp;·&nbsp; Shift+Enter — жол аусыру &nbsp;·&nbsp;
+      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      — сурет жүктеу
+    </div>
+  </div>
+</main>
+
+<script>
+const API_KEY = "AIzaSyAVIEFFtAxQepzp_b5R60gs7dGEreXcm-M";
+const MODEL = "gemini-2.5-flash";
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:streamGenerateContent?key=${API_KEY}&alt=sse`;
+
+const SYSTEM_PROMPT = `Сен SHANYRAQ AI агентісің — SHANYRAQ атты Қазақстандық Minecraft серверінің ресми ЖИ агентісі.
+
+СЕРВЕР ТУРАЛЫ МӘЛІМЕТ:
+- Атауы: SHANYRAQ — Қазақстанда ашылған Minecraft сервер жобасы
+- Негізін қалаушылар: Hirako_Shin (Бибарыс) және KolenkeMc (Бейнұр)
+- Техникалық жетекші: QobaMn (Бейбарыс)
+- Сервер IP: shanyraq.gomc.fun
+- Discord: https://discord.gg/hBU2nYAW7
+- Telegram: https://t.me/shanyraqz
+- Сайт: https://shanyramc.vercel.app
+
+ЖАУАП БЕРУ ФОРМАТЫ (МІНДЕТТІ — әрбір жауап осы 3 бөлімнен тұруы керек):
+
+**1. Негізгі жауап**
+Сұраққа тікелей, нақты жауап бер.
+
+---
+
+**2. Мәлімет**
+Тақырыпқа байланысты тереңірек түсіндірме немесе қосымша контекст.
+
+---
+
+**3. Кеңес**
+Практикалық кеңес немесе алға жылжуға ұсыныс.
+
+ТАҚЫРЫП БОЙЫНША:
+- Кез келген тақырыпта жауап бер: ғылым, тарих, тіл, математика, программалау, мәдениет, Minecraft, т.б.
+- Сурет жіберілсе — суретті мұқият талда, не көрсетілгенін сипатта
+
+ТІЛ: Пайдаланушы қай тілде жазса, сол тілде жауап бер.
+
+"Сен кімсің?" деген сұраққа: "Мен SHANYRAQ Minecraft серверінің AI агентімін — кез келген тақырыпта сізге көмектесуге дайынмын!"
+
+Тақырыпқа сай 1-2 эмодзи ғана қолдан. Markdown форматын пайдалан.`;
+
+// pending images: [{dataUrl, base64, mimeType}]
+let pendingImages = [];
+
+let chats = JSON.parse(localStorage.getItem('shanyraq_chats_v3') || '[]');
+let currentChatId = null;
+let isLoading = false;
+
+function generateId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function saveChats() { localStorage.setItem('shanyraq_chats_v3', JSON.stringify(chats)); }
+
+// ── FILE HANDLING ──
+function handleFileSelect(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const dataUrl = ev.target.result;
+      const base64 = dataUrl.split(',')[1];
+      pendingImages.push({ dataUrl, base64, mimeType: file.type });
+      renderPreviewStrip();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+}
+
+function renderPreviewStrip() {
+  const strip = document.getElementById('imgPreviewStrip');
+  strip.innerHTML = pendingImages.map((img, i) => `
+    <div class="img-thumb-wrap">
+      <img class="img-thumb" src="${img.dataUrl}" alt="preview">
+      <button class="img-thumb-remove" onclick="removeImage(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeImage(i) {
+  pendingImages.splice(i, 1);
+  renderPreviewStrip();
+}
+
+// drag & drop onto messages area
+document.addEventListener('DOMContentLoaded', () => {
+  const messagesEl = document.getElementById('messages');
+  messagesEl.addEventListener('dragover', e => { e.preventDefault(); });
+  messagesEl.addEventListener('drop', e => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        pendingImages.push({ dataUrl: ev.target.result, base64: ev.target.result.split(',')[1], mimeType: file.type });
+        renderPreviewStrip();
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+});
+
+// paste image from clipboard
+document.addEventListener('paste', e => {
+  const items = Array.from(e.clipboardData.items || []);
+  items.forEach(item => {
+    if (!item.type.startsWith('image/')) return;
+    const file = item.getAsFile();
+    const reader = new FileReader();
+    reader.onload = ev => {
+      pendingImages.push({ dataUrl: ev.target.result, base64: ev.target.result.split(',')[1], mimeType: item.type });
+      renderPreviewStrip();
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
+// ── CHAT MANAGEMENT ──
+function newChat() {
+  const id = generateId();
+  chats.unshift({ id, title: 'Жаңа сөйлесу', messages: [], createdAt: Date.now() });
+  saveChats();
+  loadChat(id);
+  renderChatList();
+  closeSidebar();
+}
+
+function loadChat(id) {
+  currentChatId = id;
+  const chat = chats.find(c => c.id === id);
+  if (!chat) return;
+  const messagesEl = document.getElementById('messages');
+  if (chat.messages.length === 0) {
+    messagesEl.innerHTML = '';
+    messagesEl.appendChild(createWelcomeScreen());
+  } else {
+    messagesEl.innerHTML = '';
+    chat.messages.forEach(msg => appendMessage(msg.role, msg.content, msg.images, false));
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+  document.getElementById('chatTitleHeader').textContent = chat.title;
+  renderChatList();
+}
+
+function createWelcomeScreen() {
+  const div = document.createElement('div');
+  div.className = 'welcome-screen';
+  div.id = 'welcomeScreen';
+  div.innerHTML = `
+    <div class="welcome-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <div class="welcome-title">SHANYRAQ AI</div>
+    <div class="welcome-sub">Кез келген сұрағыңызды қойыңыз немесе сурет жүктеп талдатыңыз.</div>`;
+  return div;
+}
+
+function renderChatList() {
+  const list = document.getElementById('chatList');
+  if (chats.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:11px;padding:16px 0;">Сөйлесу жоқ</div>';
+    return;
+  }
+  list.innerHTML = chats.map(chat => `
+    <div class="chat-item ${chat.id === currentChatId ? 'active' : ''}" onclick="loadChat('${chat.id}')">
+      <div class="chat-item-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div class="chat-item-content">
+        <div class="chat-item-title">${escapeHtml(chat.title)}</div>
+        <div class="chat-item-preview">${chat.messages.length > 0 ? escapeHtml(chat.messages[chat.messages.length-1].content.slice(0,38))+'...' : 'Бос сөйлесу'}</div>
+      </div>
+      <button class="chat-item-delete" onclick="deleteChat(event,'${chat.id}')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      </button>
+    </div>
+  `).join('');
+}
+
+function deleteChat(e, id) {
+  e.stopPropagation();
+  chats = chats.filter(c => c.id !== id);
+  saveChats();
+  if (currentChatId === id) {
+    if (chats.length > 0) loadChat(chats[0].id);
+    else {
+      currentChatId = null;
+      const messagesEl = document.getElementById('messages');
+      messagesEl.innerHTML = '';
+      messagesEl.appendChild(createWelcomeScreen());
+      document.getElementById('chatTitleHeader').textContent = 'SHANYRAQ AI';
+    }
+  }
+  renderChatList();
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// images param: array of dataUrls (for display from history)
+function appendMessage(role, content, images, animate = true) {
+  const messagesEl = document.getElementById('messages');
+  const welcome = document.getElementById('welcomeScreen');
+  if (welcome) welcome.remove();
+
+  const row = document.createElement('div');
+  row.className = `message-row ${role}`;
+
+  if (role === 'assistant') {
+    row.innerHTML = `<div class="msg-avatar ai">AI</div><div class="msg-bubble ai">${marked.parse(content)}</div>`;
+  } else {
+    let imgHtml = '';
+    if (images && images.length > 0) {
+      imgHtml = images.map(src => `<img class="msg-img-preview" src="${src}" alt="uploaded">`).join('');
+    }
+    row.innerHTML = `
+      <div class="msg-bubble user">
+        ${imgHtml}
+        ${content ? escapeHtml(content).replace(/\n/g,'<br>') : ''}
+      </div>
+      <div class="msg-avatar user">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>`;
+  }
+
+  messagesEl.appendChild(row);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  row.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+  return row;
+}
+
+function addThinkingBubble() {
+  const messagesEl = document.getElementById('messages');
+  const welcome = document.getElementById('welcomeScreen');
+  if (welcome) welcome.remove();
+  const row = document.createElement('div');
+  row.className = 'message-row assistant';
+  row.id = 'thinking-row';
+  row.innerHTML = `<div class="msg-avatar ai">AI</div><div class="msg-bubble ai"><div class="thinking-dots"><span></span><span></span><span></span></div></div>`;
+  messagesEl.appendChild(row);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function removeThinkingBubble() {
+  const el = document.getElementById('thinking-row');
+  if (el) el.remove();
+}
+
+// ── SEND ──
+async function sendMessage() {
+  if (isLoading) return;
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  const imgs = [...pendingImages];
+
+  if (!text && imgs.length === 0) return;
+  if (!currentChatId) newChat();
+
+  input.value = '';
+  input.style.height = 'auto';
+  pendingImages = [];
+  renderPreviewStrip();
+
+  const chat = chats.find(c => c.id === currentChatId);
+  if (!chat) return;
+
+  const userMsg = { role: 'user', content: text, images: imgs.map(i => i.dataUrl) };
+  chat.messages.push(userMsg);
+  if (chat.title === 'Жаңа сөйлесу' && chat.messages.length === 1) {
+    chat.title = (text || 'Сурет').slice(0, 34) + ((text.length > 34) ? '...' : '');
+    document.getElementById('chatTitleHeader').textContent = chat.title;
+  }
+  saveChats();
+  renderChatList();
+  appendMessage('user', text, imgs.map(i => i.dataUrl));
+
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('headerSub').textContent = 'Жауап дайындалуда...';
+  addThinkingBubble();
+
+  try {
+    // Build contents for Gemini — rebuild full history
+    const geminiContents = chat.messages.map(m => {
+      if (m.role === 'assistant') {
+        return { role: 'model', parts: [{ text: m.content }] };
+      } else {
+        const parts = [];
+        // attach images for this message
+        if (m.images && m.images.length > 0) {
+          m.images.forEach(dataUrl => {
+            const b64 = dataUrl.split(',')[1];
+            const mime = dataUrl.split(';')[0].split(':')[1];
+            parts.push({ inline_data: { mime_type: mime, data: b64 } });
+          });
+        }
+        if (m.content) parts.push({ text: m.content });
+        return { role: 'user', parts };
+      }
+    });
+
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        contents: geminiContents,
+        generationConfig: { temperature: 0.75, maxOutputTokens: 2048 }
+      })
+    });
+
+    removeThinkingBubble();
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(`API қатесі ${response.status}: ${err?.error?.message || ''}`);
+    }
+
+    const messagesEl = document.getElementById('messages');
+    const row = document.createElement('div');
+    row.className = 'message-row assistant';
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble ai';
+    const avatar = document.createElement('div');
+    avatar.className = 'msg-avatar ai';
+    avatar.textContent = 'AI';
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    let renderTimeout = null;
+
+    function renderBubble() {
+      bubble.innerHTML = marked.parse(fullText) + '<span class="typing-cursor"></span>';
+      bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (!data || data === '[DONE]') continue;
+        try {
+          const json = JSON.parse(data);
+          const delta = json.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          if (delta) {
+            fullText += delta;
+            if (!renderTimeout) renderTimeout = setTimeout(() => { renderBubble(); renderTimeout = null; }, 25);
+          }
+        } catch {}
+      }
+    }
+
+    clearTimeout(renderTimeout);
+    bubble.innerHTML = marked.parse(fullText);
+    bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    chat.messages.push({ role: 'assistant', content: fullText });
+    saveChats();
+    renderChatList();
+
+  } catch (err) {
+    removeThinkingBubble();
+    appendMessage('assistant', `**Қате орын алды**\n\n${err.message}\n\nБірнеше секундтан кейін қайталап көріңіз.`, null);
+  } finally {
+    isLoading = false;
+    document.getElementById('sendBtn').disabled = false;
+    document.getElementById('headerSub').textContent = 'Сұрағыңызды қойыңыз';
+    document.getElementById('userInput').focus();
+  }
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+marked.setOptions({ breaks: true, gfm: true });
+renderChatList();
+if (chats.length > 0) loadChat(chats[0].id);
+else newChat();
+</script>
+</body>
+</html>
