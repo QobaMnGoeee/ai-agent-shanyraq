@@ -1,771 +1,1576 @@
 <!DOCTYPE html>
-<html lang="kk">
+<html lang="uz" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SHANYRAQ — AI</title>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<title>QR Studio - QR Kod generatori</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root {
-    --bg-base: #0b1210;
-    --bg-sidebar: #0e1814;
-    --bg-card: #131f16;
-    --bg-input: #172219;
-    --bg-msg-user: #1a2e1e;
-    --bg-msg-ai: #111a13;
-    --border: #253829;
-    --border-light: #1b2a1e;
-    --green-primary: #48976a;
-    --green-bright: #5aad7e;
-    --green-muted: #376e52;
-    --green-dim: #254d38;
-    --text-primary: #e4ede6;
-    --text-secondary: #8ba590;
-    --text-muted: #516358;
-    --sand: #c0a472;
-    --accent: #63b87a;
-    --danger: #bf5555;
-    --fs-base: 12.8px;
-    --fs-sm: 11.2px;
-    --fs-xs: 10.4px;
-    --fs-lg: 14.4px;
-    --fs-xl: 16px;
-    --fs-2xl: 22.4px;
-    --sp-xs: 4px;
-    --sp-sm: 8px;
-    --sp-md: 12px;
-    --sp-lg: 16px;
-    --sp-xl: 20px;
-    --sp-2xl: 24px;
-    --r-sm: 7px;
-    --r-md: 10px;
+    --bg: #f5f7f9;
+    --surface: #ffffff;
+    --border: #e2e8ee;
+    --border-soft: #edf1f5;
+    --cyan: #5bb8c9;
+    --cyan-light: #8fd0dc;
+    --cyan-pale: #e8f5f8;
+    --cyan-deep: #3a9aae;
+    --milk: #fafbfc;
+    --text: #1a2332;
+    --text-mid: #4a5568;
+    --text-soft: #8899aa;
+    --shadow: rgba(91,184,201,0.12);
+    --shadow-md: rgba(26,35,50,0.08);
+    --theme-toggle-bg: #e8f5f8;
+    --theme-toggle-color: #3a9aae;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  [data-theme="dark"] {
+    --bg: #0f1623;
+    --surface: #1a2332;
+    --border: #2a3a50;
+    --border-soft: #223040;
+    --cyan: #5bb8c9;
+    --cyan-light: #4a9aaa;
+    --cyan-pale: #1a3040;
+    --cyan-deep: #7dd0de;
+    --milk: #141e2b;
+    --text: #e8f0f8;
+    --text-mid: #a0b4c8;
+    --text-soft: #5a7080;
+    --shadow: rgba(91,184,201,0.08);
+    --shadow-md: rgba(0,0,0,0.25);
+    --theme-toggle-bg: #1a3040;
+    --theme-toggle-color: #7dd0de;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
 
   body {
-    font-family: 'Golos Text', sans-serif;
-    background: var(--bg-base);
-    color: var(--text-primary);
-    height: 100dvh;
-    max-height: 100dvh;
-    overflow: hidden;
-    display: flex;
-    font-size: var(--fs-base);
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+    transition: background 0.3s, color 0.3s;
   }
 
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 0;
-  }
+  .app { display: flex; min-height: 100vh; }
 
-  /* ── SIDEBAR ── */
-  #sidebar {
-    width: 256px; min-width: 256px;
-    background: var(--bg-sidebar);
+  .sidebar {
+    width: 220px;
+    background: var(--surface);
     border-right: 1px solid var(--border);
-    display: flex; flex-direction: column;
-    height: 100dvh; position: relative; z-index: 10;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 10;
+    transition: background 0.3s, border-color 0.3s;
   }
 
-  .sidebar-header {
-    padding: var(--sp-xl) var(--sp-lg) var(--sp-md);
-    border-bottom: 1px solid var(--border-light);
+  .sidebar-logo {
+    padding: 0 24px 28px;
+    border-bottom: 1px solid var(--border-soft);
+    margin-bottom: 20px;
   }
 
-  .logo-wrap { display: flex; align-items: center; gap: var(--sp-sm); margin-bottom: var(--sp-lg); }
+  .logo-mark { display: flex; align-items: center; gap: 10px; }
 
   .logo-icon {
-    width: 32px; height: 32px;
-    background: linear-gradient(135deg, var(--green-muted), var(--green-primary));
-    border-radius: var(--r-sm);
+    width: 34px; height: 34px;
+    background: var(--cyan);
+    border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 10px rgba(72,151,106,0.25); flex-shrink: 0;
-  }
-  .logo-icon svg { color: #fff; }
-
-  .logo-text { font-family: 'Unbounded', sans-serif; font-size: var(--fs-sm); font-weight: 700; color: var(--text-primary); letter-spacing: 0.06em; }
-  .logo-sub { font-size: 9.6px; color: var(--text-muted); font-weight: 300; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 1px; }
-
-  .new-chat-btn {
-    width: 100%; padding: var(--sp-sm) var(--sp-md);
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: var(--r-sm); color: var(--text-secondary);
-    font-family: 'Golos Text', sans-serif; font-size: var(--fs-sm);
-    cursor: pointer; display: flex; align-items: center; gap: var(--sp-xs);
-    transition: all 0.2s;
-  }
-  .new-chat-btn:hover { background: var(--bg-input); border-color: var(--green-dim); color: var(--text-primary); }
-
-  .sidebar-section { padding: var(--sp-md) var(--sp-md) var(--sp-xs); font-size: 9.6px; font-family: 'Unbounded', sans-serif; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; }
-
-  .chat-list { flex: 1; overflow-y: auto; padding: var(--sp-xs) var(--sp-sm); }
-  .chat-list::-webkit-scrollbar { width: 3px; }
-  .chat-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .chat-item {
-    padding: var(--sp-sm) var(--sp-md); border-radius: var(--r-sm);
-    cursor: pointer; display: flex; align-items: center; gap: var(--sp-sm);
-    transition: all 0.15s; margin-bottom: 2px; border: 1px solid transparent;
-  }
-  .chat-item:hover { background: var(--bg-card); }
-  .chat-item.active { background: var(--bg-msg-user); border-color: var(--green-dim); }
-  .chat-item-icon { flex-shrink: 0; color: var(--text-muted); }
-  .chat-item-content { flex: 1; min-width: 0; }
-  .chat-item-title { font-size: var(--fs-sm); color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .chat-item-preview { font-size: var(--fs-xs); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
-  .chat-item-delete { opacity: 0; background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 2px; border-radius: 4px; transition: all 0.15s; flex-shrink: 0; display: flex; }
-  .chat-item:hover .chat-item-delete { opacity: 1; }
-  .chat-item-delete:hover { color: var(--danger); background: rgba(191,85,85,0.1); }
-
-  .sidebar-footer { padding: var(--sp-md); border-top: 1px solid var(--border-light); }
-  .profile-card {
-    display: flex; align-items: center; gap: var(--sp-sm);
-    padding: var(--sp-sm) var(--sp-md); background: var(--bg-card);
-    border: 1px solid var(--border); border-radius: var(--r-sm);
-    cursor: pointer; transition: all 0.2s;
-  }
-  .profile-card:hover { border-color: var(--green-dim); }
-  .profile-avatar { width: 28px; height: 28px; background: linear-gradient(135deg, var(--green-dim), var(--green-muted)); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-primary); }
-  .profile-name { font-size: var(--fs-sm); font-weight: 600; color: var(--text-primary); }
-  .profile-status { font-size: var(--fs-xs); color: var(--green-primary); margin-top: 1px; display: flex; align-items: center; gap: 4px; }
-  .status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green-primary); box-shadow: 0 0 4px var(--green-primary); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
-
-  /* ── MAIN ── */
-  #main { flex: 1; display: flex; flex-direction: column; height: 100dvh; position: relative; z-index: 1; }
-
-  .chat-header {
-    padding: var(--sp-md) var(--sp-2xl);
-    border-bottom: 1px solid var(--border-light);
-    display: flex; align-items: center; justify-content: space-between;
-    background: rgba(11,18,16,0.85); backdrop-filter: blur(8px);
-  }
-  .chat-header-left { display: flex; align-items: center; gap: var(--sp-md); }
-  .chat-title-header { font-family: 'Unbounded', sans-serif; font-size: var(--fs-sm); font-weight: 600; color: var(--text-primary); }
-  .header-sub { font-size: var(--fs-xs); color: var(--text-muted); margin-top: 1px; }
-
-  /* ── MESSAGES ── */
-  #messages { flex: 1; overflow-y: auto; padding: var(--sp-xl) 0; scroll-behavior: smooth; }
-  #messages::-webkit-scrollbar { width: 4px; }
-  #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .welcome-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 32px var(--sp-xl); text-align: center; }
-  .welcome-logo { width: 60px; height: 60px; background: linear-gradient(135deg, var(--green-dim), var(--green-primary)); border-radius: var(--sp-lg); display: flex; align-items: center; justify-content: center; margin-bottom: var(--sp-lg); box-shadow: 0 6px 28px rgba(72,151,106,0.22); animation: float 4s ease-in-out infinite; color: #fff; }
-  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-  .welcome-title { font-family: 'Unbounded', sans-serif; font-size: var(--fs-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: var(--sp-sm); letter-spacing: 0.05em; }
-  .welcome-sub { font-size: var(--fs-sm); color: var(--text-muted); margin-bottom: var(--sp-2xl); max-width: 320px; line-height: 1.65; }
-
-  .message-row { padding: var(--sp-xs) var(--sp-2xl); display: flex; gap: var(--sp-md); animation: msgIn 0.2s ease; }
-  @keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-  .message-row.user { justify-content: flex-end; }
-
-  .msg-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
-  .msg-avatar.ai { background: linear-gradient(135deg, var(--green-dim), var(--green-muted)); font-family: 'Unbounded', sans-serif; font-size: 9px; font-weight: 700; color: var(--text-primary); }
-  .msg-avatar.user { background: var(--bg-msg-user); border: 1px solid var(--green-dim); color: var(--text-secondary); }
-
-  .msg-bubble { max-width: 640px; padding: var(--sp-sm) var(--sp-md); border-radius: var(--r-md); font-size: var(--fs-base); line-height: 1.65; }
-  .msg-bubble.user { background: var(--bg-msg-user); border: 1px solid var(--green-dim); color: var(--text-primary); border-bottom-right-radius: 3px; }
-  .msg-bubble.ai { background: var(--bg-msg-ai); border: 1px solid var(--border-light); color: var(--text-primary); border-bottom-left-radius: 3px; }
-
-  /* image preview inside user bubble */
-  .msg-img-preview { max-width: 280px; max-height: 200px; border-radius: var(--r-sm); margin-bottom: var(--sp-xs); display: block; border: 1px solid var(--border); object-fit: cover; }
-
-  .msg-bubble h1,.msg-bubble h2,.msg-bubble h3 { font-family: 'Unbounded', sans-serif; color: var(--green-bright); margin: var(--sp-md) 0 var(--sp-xs); font-size: var(--fs-sm); font-weight: 600; }
-  .msg-bubble h1 { font-size: var(--fs-lg); }
-  .msg-bubble p { margin-bottom: var(--sp-sm); }
-  .msg-bubble p:last-child { margin-bottom: 0; }
-  .msg-bubble strong { color: var(--sand); font-weight: 600; }
-  .msg-bubble em { color: var(--text-secondary); font-style: italic; }
-  .msg-bubble a { color: var(--green-primary); text-decoration: none; border-bottom: 1px solid var(--green-dim); }
-  .msg-bubble a:hover { color: var(--green-bright); }
-  .msg-bubble ul,.msg-bubble ol { padding-left: var(--sp-xl); margin: var(--sp-xs) 0; }
-  .msg-bubble li { margin-bottom: 3px; }
-  .msg-bubble code:not(pre code) { background: rgba(72,151,106,0.1); border: 1px solid var(--green-dim); border-radius: 4px; padding: 1px 5px; font-size: var(--fs-xs); font-family: monospace; color: var(--green-bright); }
-  .msg-bubble pre { background: #090e0b; border: 1px solid var(--border); border-radius: var(--r-sm); overflow-x: auto; margin: var(--sp-sm) 0; }
-  .msg-bubble pre code { font-size: var(--fs-xs); padding: var(--sp-md); display: block; }
-  .msg-bubble blockquote { border-left: 2px solid var(--green-dim); padding-left: var(--sp-md); color: var(--text-secondary); margin: var(--sp-sm) 0; }
-  .msg-bubble hr { border: none; border-top: 1px solid var(--border-light); margin: var(--sp-sm) 0; }
-
-  .typing-cursor { display: inline-block; width: 2px; height: 14px; background: var(--green-primary); margin-left: 2px; vertical-align: middle; animation: blink 0.8s step-end infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-  .thinking-dots { display: flex; gap: 4px; padding: 3px 0; }
-  .thinking-dots span { width: 5px; height: 5px; background: var(--green-muted); border-radius: 50%; animation: dot 1.2s infinite; }
-  .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes dot { 0%,60%,100%{transform:translateY(0);opacity:.35} 30%{transform:translateY(-5px);opacity:1} }
-
-  /* ── INPUT AREA ── */
-  .input-area {
-    padding: var(--sp-sm) var(--sp-2xl) var(--sp-sm);
-    background: rgba(11,18,16,0.98);
-    border-top: 1px solid var(--border-light);
-    backdrop-filter: blur(8px);
     flex-shrink: 0;
   }
-  @media (max-width: 768px) {
-    .input-area {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: var(--sp-sm) var(--sp-sm) env(safe-area-inset-bottom, 12px);
-      z-index: 50;
-    }
-    #messages {
-      padding-bottom: 90px;
-    }
+
+  .logo-icon svg { width: 18px; height: 18px; }
+  .logo-text { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  .logo-sub { font-size: 10px; color: var(--text-soft); font-weight: 400; margin-top: 1px; }
+
+  .nav { padding: 0 12px; flex: 1; }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text-soft);
+    font-weight: 500;
+    font-size: 13.5px;
+    transition: all 0.2s;
+    margin-bottom: 2px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
   }
 
-  /* image preview strip above input */
-  .img-preview-strip { display: flex; gap: var(--sp-sm); flex-wrap: wrap; margin-bottom: var(--sp-sm); }
-  .img-thumb-wrap { position: relative; display: inline-flex; }
-  .img-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: var(--r-sm); border: 1px solid var(--border); }
-  .img-thumb-remove {
-    position: absolute; top: -5px; right: -5px;
-    width: 16px; height: 16px; border-radius: 50%;
-    background: var(--danger); border: none; cursor: pointer;
+  .nav-item:hover { background: var(--cyan-pale); color: var(--cyan-deep); }
+  .nav-item.active { background: var(--cyan-pale); color: var(--cyan-deep); font-weight: 600; }
+  .nav-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  .sidebar-footer {
+    padding: 16px 24px 0;
+    border-top: 1px solid var(--border-soft);
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .version-tag { font-size: 11px; color: var(--text-soft); display: flex; align-items: center; gap: 6px; }
+  .version-dot { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; animation: pulse 2.5s ease-in-out infinite; }
+
+  .theme-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--theme-toggle-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: var(--theme-toggle-color);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.2s;
+    outline: none;
+  }
+
+  .theme-toggle-btn:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 2px rgba(91,184,201,0.15);
+  }
+
+  .theme-toggle-btn i { font-size: 13px; }
+
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
+
+  .main { margin-left: 220px; flex: 1; min-height: 100vh; }
+
+  .page { display: none; animation: fadeIn 0.3s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 36px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 5;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .topbar-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .topbar-badge { background: var(--cyan-pale); color: var(--cyan-deep); font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 100px; letter-spacing: 0.2px; }
+
+  .dash-content { padding: 36px; }
+
+  .dash-hero {
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--cyan-deep) 100%);
+    border-radius: 20px;
+    padding: 40px 44px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dash-hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 220px; height: 220px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+  }
+
+  .dash-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: 80px;
+    width: 160px; height: 160px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+
+  .hero-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.7; margin-bottom: 12px; }
+  .hero-title { font-family: 'Instrument Serif', serif; font-size: 38px; line-height: 1.1; font-weight: 400; margin-bottom: 14px; letter-spacing: -0.5px; }
+  .hero-title em { font-style: italic; opacity: 0.85; }
+  .hero-sub { font-size: 14px; opacity: 0.75; max-width: 420px; line-height: 1.6; margin-bottom: 24px; }
+
+  .hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .hero-btn:hover { background: rgba(255,255,255,0.28); transform: translateY(-1px); }
+
+  .work-content {
+    padding: 36px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .input-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .panel-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .panel-header-icon {
+    width: 32px; height: 32px;
+    background: var(--cyan-pale);
+    border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 9px; line-height: 1;
+    color: var(--cyan-deep);
+    flex-shrink: 0;
+    font-size: 14px;
   }
 
-  .input-wrap {
-    display: flex; align-items: flex-end; gap: var(--sp-sm);
-    background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: var(--r-md); padding: var(--sp-sm) var(--sp-md);
+  .panel-header-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .panel-body { padding: 24px; }
+
+  .type-selector-wrap { margin-bottom: 20px; }
+  .type-selector-label { font-size: 12px; font-weight: 600; color: var(--text-mid); margin-bottom: 8px; display: block; letter-spacing: 0.1px; }
+
+  .custom-select-btn {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+    outline: none;
+  }
+
+  .custom-select-btn:hover,
+  .custom-select-btn.open {
+    border-color: var(--cyan);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(91,184,201,0.12);
+  }
+
+  .custom-select-btn .sel-left { display: flex; align-items: center; gap: 10px; }
+  .custom-select-btn .sel-icon { width: 26px; height: 26px; background: var(--cyan-pale); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: var(--cyan-deep); font-size: 12px; flex-shrink: 0; }
+  .custom-select-btn .sel-text { font-weight: 600; }
+  .custom-select-btn .sel-arrow { color: var(--text-soft); font-size: 11px; transition: transform 0.2s; }
+  .custom-select-btn.open .sel-arrow { transform: rotate(180deg); }
+
+  .custom-select-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0; right: 0;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 13px;
+    box-shadow: 0 12px 40px rgba(26,35,50,0.18);
+    z-index: 50;
+    overflow-y: auto;
+    max-height: 320px;
+    display: none;
+    animation: dropIn 0.18s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  .custom-select-dropdown.open { display: block; }
+
+  @keyframes dropIn {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .custom-select-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .custom-select-option:last-child { border-bottom: none; }
+  .custom-select-option:hover { background: var(--cyan-pale); }
+  .custom-select-option.selected { background: var(--cyan-pale); }
+
+  .opt-icon {
+    width: 32px; height: 32px;
+    background: var(--bg);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cyan-deep);
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .custom-select-option.selected .opt-icon { background: var(--cyan-pale); }
+  .opt-info { flex: 1; }
+  .opt-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .opt-desc { font-size: 11px; color: var(--text-soft); margin-top: 1px; }
+  .opt-check { color: var(--cyan-deep); font-size: 12px; opacity: 0; }
+  .custom-select-option.selected .opt-check { opacity: 1; }
+
+  .type-selector-pos { position: relative; }
+
+  .input-sec { display: none; }
+  .input-sec.active { display: block; animation: fadeIn 0.25s ease; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-mid); margin-bottom: 7px; letter-spacing: 0.1px; }
+
+  .field input, .field textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    transition: all 0.2s;
+    outline: none;
+    resize: none;
+  }
+
+  .field input:focus, .field textarea:focus {
+    border-color: var(--cyan);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(91,184,201,0.12);
+  }
+
+  .field textarea { min-height: 90px; }
+
+  .mini-custom-select { position: relative; }
+
+  .mini-select-btn {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    transition: all 0.2s;
+    outline: none;
+  }
+
+  .mini-select-btn:hover, .mini-select-btn.open {
+    border-color: var(--cyan);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(91,184,201,0.12);
+  }
+
+  .mini-select-btn .ms-text { font-weight: 500; }
+  .mini-select-btn .ms-arrow { color: var(--text-soft); font-size: 10px; transition: transform 0.2s; }
+  .mini-select-btn.open .ms-arrow { transform: rotate(180deg); }
+
+  .mini-select-dropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0; right: 0;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    box-shadow: 0 10px 32px rgba(26,35,50,0.18);
+    z-index: 60;
+    overflow: hidden;
+    display: none;
+    animation: dropIn 0.16s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  .mini-select-dropdown.open { display: block; }
+
+  .mini-select-option {
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-mid);
+    transition: background 0.14s;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mini-select-option:last-child { border-bottom: none; }
+  .mini-select-option:hover { background: var(--cyan-pale); color: var(--text); }
+  .mini-select-option.selected { background: var(--cyan-pale); color: var(--cyan-deep); font-weight: 600; }
+  .mini-select-option .mso-check { font-size: 11px; opacity: 0; color: var(--cyan-deep); }
+  .mini-select-option.selected .mso-check { opacity: 1; }
+
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg);
+  }
+
+  .upload-zone:hover, .upload-zone.drag { border-color: var(--cyan); background: var(--cyan-pale); }
+  .upload-zone input { display: none; }
+  .upload-zone-icon { font-size: 22px; color: var(--cyan-deep); margin-bottom: 8px; }
+  .upload-zone-text { font-size: 12.5px; color: var(--text-soft); }
+  .upload-zone-text span { color: var(--cyan-deep); font-weight: 600; }
+
+  #preview-img { max-width: 100%; max-height: 100px; border-radius: 8px; margin-top: 10px; display: none; }
+
+  .divider { border: none; border-top: 1px solid var(--border-soft); margin: 20px 0; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    border: none;
+    padding: 0;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--cyan);
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(91,184,201,0.2);
+    transition: transform 0.15s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  .size-slider-box {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    padding: 13px 16px;
     transition: border-color 0.2s;
   }
-  .input-wrap:focus-within { border-color: var(--green-muted); box-shadow: 0 0 0 3px rgba(72,151,106,0.07); }
 
-  #userInput { flex: 1; background: none; border: none; outline: none; color: var(--text-primary); font-family: 'Golos Text', sans-serif; font-size: var(--fs-base); resize: none; max-height: 140px; line-height: 1.5; overflow-y: auto; }
-  #userInput::placeholder { color: var(--text-muted); }
-
-  /* image upload button */
-  .img-upload-btn {
-    width: 32px; height: 32px; background: var(--bg-card);
-    border: 1px solid var(--border); border-radius: var(--r-sm);
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: all 0.2s; color: var(--text-muted);
+  .size-slider-box:focus-within {
+    border-color: var(--cyan);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(91,184,201,0.12);
   }
-  .img-upload-btn:hover { border-color: var(--green-dim); color: var(--green-bright); }
 
-  #sendBtn {
-    width: 32px; height: 32px; background: var(--green-primary);
-    border: none; border-radius: var(--r-sm); cursor: pointer;
+  .size-slider-inner { display: flex; align-items: center; gap: 10px; }
+
+  .size-min-lbl, .size-max-lbl {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-soft);
+    min-width: 26px;
+    flex-shrink: 0;
+  }
+
+  .size-max-lbl { text-align: right; }
+  .size-slider-inner input[type="range"] { flex: 1; }
+
+  .color-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+
+  .color-pick {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .color-pick:hover { border-color: var(--cyan-light); }
+
+  .color-thumb {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .color-thumb input[type="color"] {
+    position: absolute;
+    inset: -4px;
+    width: calc(100% + 8px);
+    height: calc(100% + 8px);
+    border: none; padding: 0;
+    cursor: pointer;
+    opacity: 0;
+  }
+
+  .color-swatch-inner { width: 100%; height: 100%; border-radius: 5px; pointer-events: none; }
+  .color-pick-label { font-size: 12px; color: var(--text-soft); font-weight: 500; }
+
+  .gen-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--cyan);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.22s;
+    letter-spacing: 0.2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .gen-btn:hover { background: var(--cyan-deep); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(91,184,201,0.35); }
+  .gen-btn:active { transform: translateY(0); }
+
+  .output-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    position: sticky;
+    top: 84px;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .output-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .output-header-title { font-size: 13.5px; font-weight: 600; color: var(--text); }
+  .output-header-status { font-size: 11px; color: var(--text-soft); background: var(--bg); padding: 3px 10px; border-radius: 100px; border: 1px solid var(--border); }
+  .output-header-status.ready { color: #3aad7a; background: #f0faf5; border-color: #c3e8d4; }
+
+  [data-theme="dark"] .output-header-status.ready { background: #0e2a1c; border-color: #1a4a30; }
+
+  .qr-zone { padding: 28px 24px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+
+  .qr-frame {
+    width: 220px; height: 220px;
+    background: var(--milk);
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
     display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: all 0.2s; color: white;
+    position: relative;
+    transition: all 0.3s;
+    overflow: hidden;
   }
-  #sendBtn:hover { background: var(--green-bright); transform: scale(1.04); }
-  #sendBtn:disabled { background: var(--bg-card); color: var(--text-muted); cursor: not-allowed; transform: none; }
 
-  .input-hint { display: none; }
+  .qr-frame.has-qr { box-shadow: 0 8px 32px rgba(91,184,201,0.18); border-color: var(--cyan-light); }
 
-  #fileInput { display: none; }
+  .qr-corner-dec { position: absolute; width: 16px; height: 16px; border-color: var(--cyan-light); border-style: solid; opacity: 0.7; }
+  .qr-corner-dec.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; border-radius: 3px 0 0 0; }
+  .qr-corner-dec.tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; border-radius: 0 3px 0 0; }
+  .qr-corner-dec.bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; border-radius: 0 0 0 3px; }
+  .qr-corner-dec.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; border-radius: 0 0 3px 0; }
 
-  /* ── MOBILE ── */
-  #sidebarToggle { display: none; background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 3px; align-items: center; justify-content: center; }
-  @media (max-width: 768px) {
-    #sidebar { position: fixed; left: -256px; transition: left 0.3s ease; z-index: 100; }
-    #sidebar.open { left: 0; }
-    #sidebarToggle { display: flex; }
-    .message-row { padding: var(--sp-xs) var(--sp-md); }
-    .chat-header { padding: var(--sp-sm) var(--sp-md); }
+  #qr-display { width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
+  #qr-display canvas, #qr-display img { max-width: 100% !important; max-height: 100% !important; width: auto !important; height: auto !important; }
+
+  .qr-placeholder-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .qr-placeholder-svg { opacity: 0.18; width: 72px; height: 72px; }
+  .qr-placeholder-text { font-size: 11.5px; color: var(--text-soft); text-align: center; line-height: 1.5; }
+
+  .info-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 100%; }
+  .chip { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; text-align: center; flex: 1; min-width: 60px; }
+  .chip-val { font-size: 16px; font-weight: 600; color: var(--cyan-deep); font-family: 'Instrument Serif', serif; line-height: 1; margin-bottom: 3px; }
+  .chip-lbl { font-size: 10px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+
+  .dl-area { padding: 0 24px 24px; display: flex; flex-direction: column; gap: 8px; }
+  .dl-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .dl-btn {
+    padding: 11px;
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--text-mid);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
   }
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
-  .overlay.show { display: block; }
+
+  .dl-btn:hover { border-color: var(--cyan); color: var(--cyan-deep); background: var(--cyan-pale); }
+  .dl-btn.primary { background: var(--cyan); border-color: var(--cyan); color: white; }
+  .dl-btn.primary:hover { background: var(--cyan-deep); border-color: var(--cyan-deep); box-shadow: 0 4px 14px rgba(91,184,201,0.3); }
+
+  .copy-btn {
+    padding: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    background: var(--bg);
+    color: var(--text-soft);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+
+  .copy-btn:hover { color: var(--text-mid); background: var(--surface); }
+
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 12px 24px 12px 16px;
+    border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(26,35,50,0.22);
+    z-index: 200;
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.35s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+
+  .toast-icon {
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .toast.toast-success .toast-icon { background: #3aad7a; color: white; }
+  .toast.toast-warn .toast-icon { background: #f0a742; color: white; }
+  .toast.toast-error .toast-icon { background: #e05555; color: white; }
+  .toast.toast-info .toast-icon { background: var(--cyan); color: white; }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,35,50,0.45);
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; animation: overlayIn 0.2s ease; }
+
+  @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-box {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 32px 24px;
+    min-width: 320px;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 24px 60px rgba(26,35,50,0.25);
+    animation: modalIn 0.25s cubic-bezier(0.16,1,0.3,1);
+    position: relative;
+  }
+
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.93) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+  .modal-icon-wrap {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .modal-icon-wrap.success { background: #f0faf5; color: #3aad7a; }
+  .modal-icon-wrap.warn { background: #fffbf0; color: #f0a742; }
+  .modal-icon-wrap.error { background: #fff5f5; color: #e05555; }
+  .modal-icon-wrap.info { background: var(--cyan-pale); color: var(--cyan-deep); }
+
+  [data-theme="dark"] .modal-icon-wrap.success { background: #0e2a1c; }
+  [data-theme="dark"] .modal-icon-wrap.warn { background: #2a1e00; }
+  [data-theme="dark"] .modal-icon-wrap.error { background: #2a0e0e; }
+
+  .modal-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .modal-body { font-size: 13.5px; color: var(--text-mid); line-height: 1.6; margin-bottom: 22px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+  .modal-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    border: 1.5px solid transparent;
+  }
+
+  .modal-btn.secondary { background: var(--bg); border-color: var(--border); color: var(--text-mid); }
+  .modal-btn.secondary:hover { border-color: var(--cyan-light); color: var(--cyan-deep); }
+  .modal-btn.primary { background: var(--cyan); color: white; }
+  .modal-btn.primary:hover { background: var(--cyan-deep); box-shadow: 0 4px 14px rgba(91,184,201,0.3); }
+  .modal-btn.danger { background: #e05555; color: white; }
+  .modal-btn.danger:hover { background: #c94444; }
+
+  .modal-close-x {
+    position: absolute;
+    top: 18px; right: 18px;
+    width: 28px; height: 28px;
+    border: none; background: var(--bg);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    transition: all 0.15s;
+  }
+
+  .modal-close-x:hover { background: var(--border); color: var(--text); }
+
+  @media (max-width: 800px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .work-content { grid-template-columns: 1fr; }
+    .output-panel { position: static; }
+    .dash-content, .work-content { padding: 20px; }
+  }
 </style>
 </head>
 <body>
+<div class="app">
 
-<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-<input type="file" id="fileInput" accept="image/*" multiple onchange="handleFileSelect(event)">
-
-<!-- SIDEBAR -->
-<aside id="sidebar">
-  <div class="sidebar-header">
-    <div class="logo-wrap">
-      <div class="logo-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      </div>
-      <div>
-        <div class="logo-text">SHANYRAQ</div>
-        <div class="logo-sub">AI Agent</div>
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">
+          <svg viewBox="0 0 18 18" fill="none">
+            <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white"/>
+            <rect x="11" y="1" width="6" height="6" rx="1.5" fill="white"/>
+            <rect x="1" y="11" width="6" height="6" rx="1.5" fill="white"/>
+            <rect x="11" y="11" width="2.5" height="2.5" rx="0.5" fill="white"/>
+            <rect x="15.5" y="11" width="1.5" height="6" rx="0.5" fill="white"/>
+            <rect x="11" y="15.5" width="4.5" height="1.5" rx="0.5" fill="white"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-text">QR Studio</div>
+          <div class="logo-sub">Generator v2.0</div>
+        </div>
       </div>
     </div>
-    <button class="new-chat-btn" onclick="newChat()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Жаңа сөйлесу
-    </button>
-  </div>
-  <div class="sidebar-section">Тарих</div>
-  <div class="chat-list" id="chatList"></div>
-  <div class="sidebar-footer">
-    <div class="profile-card">
-      <div class="profile-avatar">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </div>
-      <div class="profile-info">
-        <div class="profile-name">Пайдаланушы</div>
-        <div class="profile-status"><span class="status-dot"></span>Онлайн</div>
-      </div>
-    </div>
-  </div>
-</aside>
 
-<!-- MAIN -->
-<main id="main">
-  <div class="chat-header">
-    <div class="chat-header-left">
-      <button id="sidebarToggle" onclick="toggleSidebar()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <nav class="nav">
+      <button class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard">
+        <span class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </span>
+        BOSH SAHIFA
       </button>
-      <div>
-        <div class="chat-title-header" id="chatTitleHeader">SHANYRAQ AI</div>
-        <div class="header-sub" id="headerSub">Сұрағыңызды қойыңыз</div>
+      <button class="nav-item" onclick="goPage('work')" id="nav-work">
+        <span class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="9" y="9" width="2" height="2" rx="0.5" fill="currentColor"/>
+            <rect x="13" y="9" width="1" height="5" rx="0.5" fill="currentColor"/>
+            <rect x="9" y="13" width="4" height="1" rx="0.5" fill="currentColor"/>
+          </svg>
+        </span>
+        QR Generator
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+        <span id="theme-label">Tungi rejim</span>
+      </button>
+      <div class="version-tag">
+        <div class="version-dot"></div>
+        Hammasi tayyor
       </div>
     </div>
-  </div>
+  </aside>
 
-  <div id="messages">
-    <div class="welcome-screen" id="welcomeScreen">
-      <div class="welcome-logo">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  <main class="main">
+
+    <div class="page active" id="page-dashboard">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title">BOSH SAHIFA</div>
+        </div>
+        <span class="topbar-badge">v2.0</span>
       </div>
-      <div class="welcome-title">SHANYRAQ AI</div>
-      <div class="welcome-sub">Кез келген сұрағыңызды қойыңыз немесе сурет жүктеп талдатыңыз.</div>
-    </div>
-  </div>
 
-  <div class="input-area">
-    <div class="img-preview-strip" id="imgPreviewStrip"></div>
-    <div class="input-wrap">
-      <button class="img-upload-btn" onclick="document.getElementById('fileInput').click()" title="Сурет жүктеу">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-      </button>
-      <textarea id="userInput" rows="1" placeholder="Сұрағыңызды жазыңыз..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-      <button id="sendBtn" onclick="sendMessage()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
+      <div class="dash-content">
+        <div class="dash-hero">
+          <div class="hero-label">QR Studio Pro</div>
+          <h1 class="hero-title">QR Kodni<br><em>tez yarating</em></h1>
+          <p class="hero-sub">Havola, matn, WiFi, kontakt va rasmlar uchun professional QR kodlarni soniyalar ichida yarating.</p>
+          <button class="hero-btn" onclick="goPage('work')">
+            <i class="fa-solid fa-qrcode" style="font-size:13px;"></i>
+            QR yaratishni boshlash
+            <i class="fa-solid fa-arrow-right" style="font-size:11px;"></i>
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="input-hint">Enter — жіберу &nbsp;·&nbsp; Shift+Enter — жол аусыру &nbsp;·&nbsp;
-      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-      — сурет жүктеу
+
+    <div class="page" id="page-work">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title">ISH SAHIFASI</div>
+        </div>
+        <span class="topbar-badge">Ish sahifasi</span>
+      </div>
+
+      <div class="work-content">
+
+        <div class="input-panel">
+          <div class="panel-header">
+            <div class="panel-header-icon">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </div>
+            <div>
+              <div class="panel-header-title">Ma'lumot kiritish</div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+
+            <div class="type-selector-wrap">
+              <span class="type-selector-label">Kontent turi</span>
+              <div class="type-selector-pos">
+                <button class="custom-select-btn" id="content-type-btn" onclick="toggleContentTypeDropdown()">
+                  <div class="sel-left">
+                    <div class="sel-icon" id="sel-icon-display"><i class="fa-solid fa-link"></i></div>
+                    <span class="sel-text" id="sel-text-display">Havola</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-down sel-arrow"></i>
+                </button>
+                <div class="custom-select-dropdown" id="content-type-dropdown">
+                  <div class="custom-select-option selected" data-value="link" onclick="selectContentType(this)">
+                    <div class="opt-icon"><i class="fa-solid fa-link"></i></div>
+                    <div class="opt-info">
+                      <div class="opt-name">Havola</div>
+                      <div class="opt-desc">Veb-sayt URL manzili</div>
+                    </div>
+                    <i class="fa-solid fa-check opt-check"></i>
+                  </div>
+                  <div class="custom-select-option" data-value="text" onclick="selectContentType(this)">
+                    <div class="opt-icon"><i class="fa-solid fa-align-left"></i></div>
+                    <div class="opt-info">
+                      <div class="opt-name">Matn</div>
+                      <div class="opt-desc">Erkin matn yoki xabar</div>
+                    </div>
+                    <i class="fa-solid fa-check opt-check"></i>
+                  </div>
+                  <div class="custom-select-option" data-value="image" onclick="selectContentType(this)">
+                    <div class="opt-icon"><i class="fa-solid fa-image"></i></div>
+                    <div class="opt-info">
+                      <div class="opt-name">Rasm</div>
+                      <div class="opt-desc">Rasm URL yoki fayl</div>
+                    </div>
+                    <i class="fa-solid fa-check opt-check"></i>
+                  </div>
+                  <div class="custom-select-option" data-value="wifi" onclick="selectContentType(this)">
+                    <div class="opt-icon"><i class="fa-solid fa-wifi"></i></div>
+                    <div class="opt-info">
+                      <div class="opt-name">WiFi</div>
+                      <div class="opt-desc">Tarmoq nomi va parol</div>
+                    </div>
+                    <i class="fa-solid fa-check opt-check"></i>
+                  </div>
+                  <div class="custom-select-option" data-value="contact" onclick="selectContentType(this)">
+                    <div class="opt-icon"><i class="fa-solid fa-address-card"></i></div>
+                    <div class="opt-info">
+                      <div class="opt-name">Kontakt (vCard)</div>
+                      <div class="opt-desc">Aloqa ma'lumotlari</div>
+                    </div>
+                    <i class="fa-solid fa-check opt-check"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="input-sec active" id="sec-link">
+              <div class="field">
+                <label>Veb-sayt manzili (URL)</label>
+                <input type="url" id="input-link" placeholder="https://example.com">
+              </div>
+            </div>
+
+            <div class="input-sec" id="sec-text">
+              <div class="field">
+                <label>Matn yoki xabar</label>
+                <textarea id="input-text" placeholder="Bu yerga istalgan matnni yozing..."></textarea>
+              </div>
+            </div>
+
+            <div class="input-sec" id="sec-image">
+              <div class="field">
+                <label>Rasm manzili (URL)</label>
+                <input type="url" id="input-image-url" placeholder="https://example.com/photo.jpg">
+              </div>
+              <div class="field">
+                <label>yoki rasm yuklang</label>
+                <div class="upload-zone" id="dropzone" onclick="document.getElementById('file-input').click()">
+                  <input type="file" id="file-input" accept="image/*" onchange="handleFileUpload(event)">
+                  <div class="upload-zone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                  <div class="upload-zone-text"><span>Bosing</span> yoki sudrab tashlang</div>
+                  <img id="preview-img" alt="preview">
+                </div>
+              </div>
+            </div>
+
+            <div class="input-sec" id="sec-wifi">
+              <div class="field">
+                <label>WiFi nomi (SSID)</label>
+                <input type="text" id="wifi-ssid" placeholder="Mening_WiFi">
+              </div>
+              <div class="field">
+                <label>Parol</label>
+                <input type="text" id="wifi-pass" placeholder="wifi_parol123">
+              </div>
+              <div class="field">
+                <label>Xavfsizlik turi</label>
+                <div class="mini-custom-select" id="wifi-enc-select">
+                  <button class="mini-select-btn" id="wifi-enc-btn" onclick="toggleMiniSelect('wifi-enc-select')">
+                    <span class="ms-text" id="wifi-enc-text">WPA / WPA2</span>
+                    <i class="fa-solid fa-chevron-down ms-arrow"></i>
+                  </button>
+                  <div class="mini-select-dropdown" id="wifi-enc-dropdown">
+                    <div class="mini-select-option selected" data-value="WPA" onclick="selectMiniOption('wifi-enc-select', this)">
+                      WPA / WPA2
+                      <i class="fa-solid fa-check mso-check"></i>
+                    </div>
+                    <div class="mini-select-option" data-value="WEP" onclick="selectMiniOption('wifi-enc-select', this)">
+                      WEP
+                      <i class="fa-solid fa-check mso-check"></i>
+                    </div>
+                    <div class="mini-select-option" data-value="" onclick="selectMiniOption('wifi-enc-select', this)">
+                      Ochiq (parolsiz)
+                      <i class="fa-solid fa-check mso-check"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="input-sec" id="sec-contact">
+              <div class="field">
+                <label>To'liq ism</label>
+                <input type="text" id="ct-name" placeholder="Askar Yaxshilikbekov">
+              </div>
+              <div class="two-col">
+                <div class="field" style="margin:0">
+                  <label>Telefon</label>
+                  <input type="tel" id="ct-phone" placeholder="+998 90 000 0000">
+                </div>
+                <div class="field" style="margin:0">
+                  <label>Email</label>
+                  <input type="email" id="ct-email" placeholder="email@example.com">
+                </div>
+              </div>
+              <div class="field" style="margin-top:12px">
+                <label>Kompaniya</label>
+                <input type="text" id="ct-org" placeholder="Kompaniya nomi">
+              </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="type-selector-wrap">
+              <span class="type-selector-label">Xatolik darajasi</span>
+              <div class="type-selector-pos">
+                <button class="custom-select-btn" id="err-level-btn" onclick="toggleErrDropdown()">
+                  <div class="sel-left">
+                    <div class="sel-icon" id="err-icon-display"><i class="fa-solid fa-shield-halved"></i></div>
+                    <span class="sel-text" id="err-level-text">O'rtacha (M)</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-down sel-arrow"></i>
+                </button>
+                <div class="custom-select-dropdown" id="err-level-dropdown">
+                  <div class="custom-select-option" data-value="L" onclick="selectErrLevel(this)">
+                    <div class="opt-icon"><i class="fa-solid fa-signal" style="opacity:.5;"></i></div>
+                    <div class="opt-info">
+                      <div class="opt-name">Past (L)</div>
+                      <div class="opt-desc">7% tiklash — kichik QR</div>
+                    </div>
+                    <i class="fa-solid fa-check opt-check"></i>
+                  </div>
+                  <div class="custom-select-option selected" data-value="M" onclick="selectErrLevel(this)">
+                    <div class="opt-icon"><i class="fa-solid fa-signal" style="opacity:.7;"></i></div>
+                    <div class="opt-info">
+                      <div class="opt-name">O'rtacha (M)</div>
+                      <div class="opt-desc">15% tiklash — tavsiya etiladi</div>
+                    </div>
+                    <i class="fa-solid fa-check opt-check"></i>
+                  </div>
+                  <div class="custom-select-option" data-value="Q" onclick="selectErrLevel(this)">
+                    <div class="opt-icon"><i class="fa-solid fa-signal" style="opacity:.85;"></i></div>
+                    <div class="opt-info">
+                      <div class="opt-name">Yuqori (Q)</div>
+                      <div class="opt-desc">25% tiklash</div>
+                    </div>
+                    <i class="fa-solid fa-check opt-check"></i>
+                  </div>
+                  <div class="custom-select-option" data-value="H" onclick="selectErrLevel(this)">
+                    <div class="opt-icon"><i class="fa-solid fa-signal"></i></div>
+                    <div class="opt-info">
+                      <div class="opt-name">Eng yuqori (H)</div>
+                      <div class="opt-desc">30% tiklash — logo bilan ishlatish uchun</div>
+                    </div>
+                    <i class="fa-solid fa-check opt-check"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="type-selector-wrap">
+              <span class="type-selector-label">O'lcham — <span id="size-val">256</span>px</span>
+              <div class="size-slider-box">
+                <div class="size-slider-inner">
+                  <span class="size-min-lbl">128</span>
+                  <input type="range" id="qr-size" min="128" max="400" value="256" step="16"
+                         oninput="document.getElementById('size-val').textContent=this.value">
+                  <span class="size-max-lbl">400</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="color-row">
+              <div class="color-pick" onclick="document.getElementById('qr-fg').click()">
+                <div class="color-thumb">
+                  <div class="color-swatch-inner" id="fg-swatch" style="background:#000000;"></div>
+                  <input type="color" id="qr-fg" value="#000000" oninput="updateColor('fg')">
+                </div>
+                <span class="color-pick-label">QR rangi (old)</span>
+              </div>
+              <div class="color-pick" onclick="document.getElementById('qr-bg').click()">
+                <div class="color-thumb">
+                  <div class="color-swatch-inner" id="bg-swatch" style="background:#ffffff; border: 1px solid #e2e8ee;"></div>
+                  <input type="color" id="qr-bg" value="#ffffff" oninput="updateColor('bg')">
+                </div>
+                <span class="color-pick-label">Fon rangi</span>
+              </div>
+            </div>
+
+            <button class="gen-btn" onclick="generateQR()">
+              <i class="fa-solid fa-qrcode" style="font-size:15px;"></i>
+              QR Kod Yaratish
+            </button>
+          </div>
+        </div>
+
+        <div class="output-panel">
+          <div class="output-header">
+            <div class="output-header-title">QR Kod natijasi</div>
+            <span class="output-header-status" id="qr-status">Kutilmoqda</span>
+          </div>
+
+          <div class="qr-zone">
+            <div class="qr-frame" id="qr-frame">
+              <div class="qr-corner-dec tl"></div>
+              <div class="qr-corner-dec tr"></div>
+              <div class="qr-corner-dec bl"></div>
+              <div class="qr-corner-dec br"></div>
+              <div id="qr-display">
+                <div class="qr-placeholder-wrap">
+                  <svg class="qr-placeholder-svg" viewBox="0 0 100 100" fill="none">
+                    <rect x="5" y="5" width="35" height="35" rx="4" stroke="#aabbcc" stroke-width="4"/>
+                    <rect x="13" y="13" width="19" height="19" rx="2" fill="#aabbcc" opacity="0.3"/>
+                    <rect x="60" y="5" width="35" height="35" rx="4" stroke="#aabbcc" stroke-width="4"/>
+                    <rect x="68" y="13" width="19" height="19" rx="2" fill="#aabbcc" opacity="0.3"/>
+                    <rect x="5" y="60" width="35" height="35" rx="4" stroke="#aabbcc" stroke-width="4"/>
+                    <rect x="13" y="68" width="19" height="19" rx="2" fill="#aabbcc" opacity="0.3"/>
+                    <rect x="60" y="60" width="8" height="8" rx="1" fill="#aabbcc" opacity="0.5"/>
+                    <rect x="72" y="60" width="8" height="8" rx="1" fill="#aabbcc" opacity="0.5"/>
+                    <rect x="84" y="60" width="11" height="8" rx="1" fill="#aabbcc" opacity="0.5"/>
+                    <rect x="60" y="72" width="11" height="8" rx="1" fill="#aabbcc" opacity="0.5"/>
+                    <rect x="76" y="72" width="8" height="8" rx="1" fill="#aabbcc" opacity="0.5"/>
+                    <rect x="84" y="72" width="11" height="11" rx="1" fill="#aabbcc" opacity="0.5"/>
+                    <rect x="60" y="84" width="8" height="11" rx="1" fill="#aabbcc" opacity="0.5"/>
+                    <rect x="76" y="84" width="19" height="11" rx="1" fill="#aabbcc" opacity="0.5"/>
+                  </svg>
+                  <div class="qr-placeholder-text">QR yaratishni<br>boshlang</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-chips">
+              <div class="chip">
+                <div class="chip-val" id="chip-chars">—</div>
+                <div class="chip-lbl">Belgi</div>
+              </div>
+              <div class="chip">
+                <div class="chip-val" id="chip-size">—</div>
+                <div class="chip-lbl">O'lcham</div>
+              </div>
+              <div class="chip">
+                <div class="chip-val" id="chip-type">—</div>
+                <div class="chip-lbl">Turi</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dl-area">
+            <div class="dl-row">
+              <button class="dl-btn primary" onclick="downloadQR('png')">
+                <i class="fa-solid fa-file-image" style="font-size:12px;"></i>
+                PNG yuklab olish
+              </button>
+              <button class="dl-btn" onclick="downloadQR('svg')">
+                <i class="fa-solid fa-bezier-curve" style="font-size:12px;"></i>
+                SVG yuklab olish
+              </button>
+            </div>
+            <button class="copy-btn" onclick="copyQRData()">
+              <i class="fa-regular fa-copy" style="font-size:12px;"></i>
+              Matnni nusxalash
+            </button>
+          </div>
+        </div>
+
+      </div>
     </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toast-icon"></div>
+  <span id="toast-msg"></span>
+</div>
+
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
+  <div class="modal-box" id="modal-box">
+    <button class="modal-close-x" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-icon-wrap" id="modal-icon-wrap"><i id="modal-icon-fa"></i></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
   </div>
-</main>
+</div>
 
 <script>
-const API_KEY = "AIzaSyAVIEFFtAxQepzp_b5R60gs7dGEreXcm-M";
-const MODEL = "gemini-2.5-flash";
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:streamGenerateContent?key=${API_KEY}&alt=sse`;
+let currentTab = 'link';
+let currentQRData = '';
+let currentImageData = null;
+let miniSelectValues = { 'wifi-enc-select': 'WPA' };
+let currentErrLevel = 'M';
 
-const SYSTEM_PROMPT = `Сен SHANYRAQ AI агентісің — SHANYRAQ атты Қазақстандық Minecraft серверінің ресми ЖИ агентісі.
-
-СЕРВЕР ТУРАЛЫ МӘЛІМЕТ:
-- Атауы: SHANYRAQ — Қазақстанда ашылған Minecraft сервер жобасы
-- Негізін қалаушылар: Hirako_Shin (Бибарыс) және KolenkeMc (Бейнұр)
-- Техникалық жетекші: QobaMn (Бейбарыс)
-- Сервер IP: shanyraq.gomc.fun
-- Discord: https://discord.gg/hBU2nYAW7
-- Telegram: https://t.me/shanyraqz
-- Сайт: https://shanyramc.vercel.app
-
-ЖАУАП БЕРУ ФОРМАТЫ (МІНДЕТТІ — әрбір жауап осы 3 бөлімнен тұруы керек):
-
-**1. Негізгі жауап**
-Сұраққа тікелей, нақты жауап бер.
-
----
-
-**2. Мәлімет**
-Тақырыпқа байланысты тереңірек түсіндірме немесе қосымша контекст.
-
----
-
-**3. Кеңес**
-Практикалық кеңес немесе алға жылжуға ұсыныс.
-
-ТАҚЫРЫП БОЙЫНША:
-- Кез келген тақырыпта жауап бер: ғылым, тарих, тіл, математика, программалау, мәдениет, Minecraft, т.б.
-- Сурет жіберілсе — суретті мұқият талда, не көрсетілгенін сипатта
-
-ТІЛ: Пайдаланушы қай тілде жазса, сол тілде жауап бер.
-
-"Сен кімсің?" деген сұраққа: "Мен SHANYRAQ Minecraft серверінің AI агентімін — кез келген тақырыпта сізге көмектесуге дайынмын!"
-
-Тақырыпқа сай 1-2 эмодзи ғана қолдан. Markdown форматын пайдалан.`;
-
-// pending images: [{dataUrl, base64, mimeType}]
-let pendingImages = [];
-
-let chats = JSON.parse(localStorage.getItem('shanyraq_chats_v3') || '[]');
-let currentChatId = null;
-let isLoading = false;
-
-function generateId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
-function saveChats() { localStorage.setItem('shanyraq_chats_v3', JSON.stringify(chats)); }
-
-// ── FILE HANDLING ──
-function handleFileSelect(e) {
-  const files = Array.from(e.target.files);
-  files.forEach(file => {
-    if (!file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const dataUrl = ev.target.result;
-      const base64 = dataUrl.split(',')[1];
-      pendingImages.push({ dataUrl, base64, mimeType: file.type });
-      renderPreviewStrip();
-    };
-    reader.readAsDataURL(file);
-  });
-  e.target.value = '';
+function goPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
 }
 
-function renderPreviewStrip() {
-  const strip = document.getElementById('imgPreviewStrip');
-  strip.innerHTML = pendingImages.map((img, i) => `
-    <div class="img-thumb-wrap">
-      <img class="img-thumb" src="${img.dataUrl}" alt="preview">
-      <button class="img-thumb-remove" onclick="removeImage(${i})">✕</button>
-    </div>
-  `).join('');
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+  document.getElementById('theme-label').textContent = isDark ? 'Tungi rejim' : 'Kunduzgi rejim';
 }
 
-function removeImage(i) {
-  pendingImages.splice(i, 1);
-  renderPreviewStrip();
+function toggleErrDropdown() {
+  const btn = document.getElementById('err-level-btn');
+  const dd  = document.getElementById('err-level-dropdown');
+  const isOpen = dd.classList.contains('open');
+  closeAllDropdowns();
+  if (!isOpen) {
+    btn.classList.add('open');
+    dd.classList.add('open');
+  }
 }
 
-// drag & drop onto messages area
-document.addEventListener('DOMContentLoaded', () => {
-  const messagesEl = document.getElementById('messages');
-  messagesEl.addEventListener('dragover', e => { e.preventDefault(); });
-  messagesEl.addEventListener('drop', e => {
-    e.preventDefault();
-    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = ev => {
-        pendingImages.push({ dataUrl: ev.target.result, base64: ev.target.result.split(',')[1], mimeType: file.type });
-        renderPreviewStrip();
-      };
-      reader.readAsDataURL(file);
-    });
-  });
+function selectErrLevel(el) {
+  document.querySelectorAll('#err-level-dropdown .custom-select-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  currentErrLevel = el.dataset.value;
+  document.getElementById('err-level-text').textContent = el.querySelector('.opt-name').textContent;
+  closeAllDropdowns();
+}
+
+function toggleContentTypeDropdown() {
+  const btn = document.getElementById('content-type-btn');
+  const dd  = document.getElementById('content-type-dropdown');
+  const isOpen = dd.classList.contains('open');
+  closeAllDropdowns();
+  if (!isOpen) {
+    btn.classList.add('open');
+    dd.classList.add('open');
+  }
+}
+
+function selectContentType(el) {
+  const val = el.dataset.value;
+  document.querySelectorAll('#content-type-dropdown .custom-select-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+
+  const iconMap = {
+    link:    '<i class="fa-solid fa-link"></i>',
+    text:    '<i class="fa-solid fa-align-left"></i>',
+    image:   '<i class="fa-solid fa-image"></i>',
+    wifi:    '<i class="fa-solid fa-wifi"></i>',
+    contact: '<i class="fa-solid fa-address-card"></i>'
+  };
+  const nameMap = {
+    link: 'Havola', text: 'Matn', image: 'Rasm', wifi: 'WiFi', contact: 'Kontakt'
+  };
+
+  document.getElementById('sel-icon-display').innerHTML = iconMap[val];
+  document.getElementById('sel-text-display').textContent = nameMap[val];
+
+  closeAllDropdowns();
+  switchTab(val);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.input-sec').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + tab).classList.add('active');
+  currentTab = tab;
+}
+
+function toggleMiniSelect(selectId) {
+  const wrap = document.getElementById(selectId);
+  const btn  = wrap.querySelector('.mini-select-btn');
+  const dd   = wrap.querySelector('.mini-select-dropdown');
+  const isOpen = dd.classList.contains('open');
+  closeAllDropdowns();
+  if (!isOpen) {
+    btn.classList.add('open');
+    dd.classList.add('open');
+  }
+}
+
+function selectMiniOption(selectId, el) {
+  const wrap = document.getElementById(selectId);
+  wrap.querySelectorAll('.mini-select-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  miniSelectValues[selectId] = el.dataset.value;
+
+  const idMap = { 'wifi-enc-select': 'wifi-enc-text' };
+  if (idMap[selectId]) {
+    document.getElementById(idMap[selectId]).textContent = el.childNodes[0].textContent.trim();
+  }
+
+  closeAllDropdowns();
+}
+
+function closeAllDropdowns() {
+  document.querySelectorAll('.custom-select-btn.open').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.custom-select-dropdown.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.mini-select-btn.open').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.mini-select-dropdown.open').forEach(d => d.classList.remove('open'));
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.type-selector-pos') && !e.target.closest('.mini-custom-select')) {
+    closeAllDropdowns();
+  }
 });
 
-// paste image from clipboard
-document.addEventListener('paste', e => {
-  const items = Array.from(e.clipboardData.items || []);
-  items.forEach(item => {
-    if (!item.type.startsWith('image/')) return;
-    const file = item.getAsFile();
-    const reader = new FileReader();
-    reader.onload = ev => {
-      pendingImages.push({ dataUrl: ev.target.result, base64: ev.target.result.split(',')[1], mimeType: item.type });
-      renderPreviewStrip();
-    };
-    reader.readAsDataURL(file);
-  });
+function updateColor(which) {
+  const val = document.getElementById('qr-' + which).value;
+  document.getElementById(which + '-swatch').style.background = val;
+}
+
+function handleFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = document.getElementById('preview-img');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    document.getElementById('input-image-url').value = 'data:image embedded';
+    currentImageData = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const input = document.getElementById('file-input');
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    input.files = dt.files;
+    handleFileUpload({ target: input });
+  }
 });
 
-// ── CHAT MANAGEMENT ──
-function newChat() {
-  const id = generateId();
-  chats.unshift({ id, title: 'Жаңа сөйлесу', messages: [], createdAt: Date.now() });
-  saveChats();
-  loadChat(id);
-  renderChatList();
-  closeSidebar();
-}
-
-function loadChat(id) {
-  currentChatId = id;
-  const chat = chats.find(c => c.id === id);
-  if (!chat) return;
-  const messagesEl = document.getElementById('messages');
-  if (chat.messages.length === 0) {
-    messagesEl.innerHTML = '';
-    messagesEl.appendChild(createWelcomeScreen());
-  } else {
-    messagesEl.innerHTML = '';
-    chat.messages.forEach(msg => appendMessage(msg.role, msg.content, msg.images, false));
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-  }
-  document.getElementById('chatTitleHeader').textContent = chat.title;
-  renderChatList();
-}
-
-function createWelcomeScreen() {
-  const div = document.createElement('div');
-  div.className = 'welcome-screen';
-  div.id = 'welcomeScreen';
-  div.innerHTML = `
-    <div class="welcome-logo">
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    </div>
-    <div class="welcome-title">SHANYRAQ AI</div>
-    <div class="welcome-sub">Кез келген сұрағыңызды қойыңыз немесе сурет жүктеп талдатыңыз.</div>`;
-  return div;
-}
-
-function renderChatList() {
-  const list = document.getElementById('chatList');
-  if (chats.length === 0) {
-    list.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:11px;padding:16px 0;">Сөйлесу жоқ</div>';
-    return;
-  }
-  list.innerHTML = chats.map(chat => `
-    <div class="chat-item ${chat.id === currentChatId ? 'active' : ''}" onclick="loadChat('${chat.id}')">
-      <div class="chat-item-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      </div>
-      <div class="chat-item-content">
-        <div class="chat-item-title">${escapeHtml(chat.title)}</div>
-        <div class="chat-item-preview">${chat.messages.length > 0 ? escapeHtml(chat.messages[chat.messages.length-1].content.slice(0,38))+'...' : 'Бос сөйлесу'}</div>
-      </div>
-      <button class="chat-item-delete" onclick="deleteChat(event,'${chat.id}')">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-      </button>
-    </div>
-  `).join('');
-}
-
-function deleteChat(e, id) {
-  e.stopPropagation();
-  chats = chats.filter(c => c.id !== id);
-  saveChats();
-  if (currentChatId === id) {
-    if (chats.length > 0) loadChat(chats[0].id);
-    else {
-      currentChatId = null;
-      const messagesEl = document.getElementById('messages');
-      messagesEl.innerHTML = '';
-      messagesEl.appendChild(createWelcomeScreen());
-      document.getElementById('chatTitleHeader').textContent = 'SHANYRAQ AI';
+function getQRContent() {
+  switch (currentTab) {
+    case 'link':   return document.getElementById('input-link').value.trim() || 'https://example.com';
+    case 'text':   return document.getElementById('input-text').value.trim() || 'Salom Dunyo!';
+    case 'image':
+      if (currentImageData) return currentImageData;
+      return document.getElementById('input-image-url').value.trim() || 'https://example.com/image.jpg';
+    case 'wifi': {
+      const ssid = document.getElementById('wifi-ssid').value.trim();
+      const pass = document.getElementById('wifi-pass').value.trim();
+      const enc  = miniSelectValues['wifi-enc-select'];
+      return `WIFI:T:${enc};S:${ssid};P:${pass};;`;
     }
-  }
-  renderChatList();
-}
-
-function escapeHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// images param: array of dataUrls (for display from history)
-function appendMessage(role, content, images, animate = true) {
-  const messagesEl = document.getElementById('messages');
-  const welcome = document.getElementById('welcomeScreen');
-  if (welcome) welcome.remove();
-
-  const row = document.createElement('div');
-  row.className = `message-row ${role}`;
-
-  if (role === 'assistant') {
-    row.innerHTML = `<div class="msg-avatar ai">AI</div><div class="msg-bubble ai">${marked.parse(content)}</div>`;
-  } else {
-    let imgHtml = '';
-    if (images && images.length > 0) {
-      imgHtml = images.map(src => `<img class="msg-img-preview" src="${src}" alt="uploaded">`).join('');
+    case 'contact': {
+      const name  = document.getElementById('ct-name').value.trim();
+      const phone = document.getElementById('ct-phone').value.trim();
+      const email = document.getElementById('ct-email').value.trim();
+      const org   = document.getElementById('ct-org').value.trim();
+      return `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}\nORG:${org}\nEND:VCARD`;
     }
-    row.innerHTML = `
-      <div class="msg-bubble user">
-        ${imgHtml}
-        ${content ? escapeHtml(content).replace(/\n/g,'<br>') : ''}
-      </div>
-      <div class="msg-avatar user">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </div>`;
+    default: return 'https://example.com';
   }
-
-  messagesEl.appendChild(row);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-  row.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
-  return row;
 }
 
-function addThinkingBubble() {
-  const messagesEl = document.getElementById('messages');
-  const welcome = document.getElementById('welcomeScreen');
-  if (welcome) welcome.remove();
-  const row = document.createElement('div');
-  row.className = 'message-row assistant';
-  row.id = 'thinking-row';
-  row.innerHTML = `<div class="msg-avatar ai">AI</div><div class="msg-bubble ai"><div class="thinking-dots"><span></span><span></span><span></span></div></div>`;
-  messagesEl.appendChild(row);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
+function generateQR() {
+  const content = getQRContent();
+  if (!content) { showToast("Ma'lumot kiriting!", 'warn'); return; }
 
-function removeThinkingBubble() {
-  const el = document.getElementById('thinking-row');
-  if (el) el.remove();
-}
+  currentQRData = content;
+  const size = parseInt(document.getElementById('qr-size').value);
+  const fg   = document.getElementById('qr-fg').value;
+  const bg   = document.getElementById('qr-bg').value;
+  const err  = currentErrLevel;
 
-// ── SEND ──
-async function sendMessage() {
-  if (isLoading) return;
-  const input = document.getElementById('userInput');
-  const text = input.value.trim();
-  const imgs = [...pendingImages];
-
-  if (!text && imgs.length === 0) return;
-  if (!currentChatId) newChat();
-
-  input.value = '';
-  input.style.height = 'auto';
-  pendingImages = [];
-  renderPreviewStrip();
-
-  const chat = chats.find(c => c.id === currentChatId);
-  if (!chat) return;
-
-  const userMsg = { role: 'user', content: text, images: imgs.map(i => i.dataUrl) };
-  chat.messages.push(userMsg);
-  if (chat.title === 'Жаңа сөйлесу' && chat.messages.length === 1) {
-    chat.title = (text || 'Сурет').slice(0, 34) + ((text.length > 34) ? '...' : '');
-    document.getElementById('chatTitleHeader').textContent = chat.title;
-  }
-  saveChats();
-  renderChatList();
-  appendMessage('user', text, imgs.map(i => i.dataUrl));
-
-  isLoading = true;
-  document.getElementById('sendBtn').disabled = true;
-  document.getElementById('headerSub').textContent = 'Жауап дайындалуда...';
-  addThinkingBubble();
+  const display = document.getElementById('qr-display');
+  display.innerHTML = '';
 
   try {
-    // Build contents for Gemini — rebuild full history
-    const geminiContents = chat.messages.map(m => {
-      if (m.role === 'assistant') {
-        return { role: 'model', parts: [{ text: m.content }] };
-      } else {
-        const parts = [];
-        // attach images for this message
-        if (m.images && m.images.length > 0) {
-          m.images.forEach(dataUrl => {
-            const b64 = dataUrl.split(',')[1];
-            const mime = dataUrl.split(';')[0].split(':')[1];
-            parts.push({ inline_data: { mime_type: mime, data: b64 } });
-          });
-        }
-        if (m.content) parts.push({ text: m.content });
-        return { role: 'user', parts };
-      }
+    new QRCode(display, {
+      text: content,
+      width: Math.min(size, 180),
+      height: Math.min(size, 180),
+      colorDark: fg,
+      colorLight: bg,
+      correctLevel: QRCode.CorrectLevel[err]
     });
+  } catch(e) {
+    showToast('Matn juda uzun bo\'lishi mumkin.', 'error');
+    return;
+  }
 
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-        contents: geminiContents,
-        generationConfig: { temperature: 0.75, maxOutputTokens: 2048 }
-      })
-    });
+  document.getElementById('qr-frame').style.background = bg;
+  document.getElementById('qr-frame').classList.add('has-qr');
 
-    removeThinkingBubble();
+  const typeMap = {link:'URL', text:'MATN', image:'RASM', wifi:'WIFI', contact:'VCARD'};
+  document.getElementById('chip-chars').textContent = content.length;
+  document.getElementById('chip-size').textContent  = size + 'px';
+  document.getElementById('chip-type').textContent  = typeMap[currentTab] || 'DATA';
 
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(`API қатесі ${response.status}: ${err?.error?.message || ''}`);
-    }
+  const status = document.getElementById('qr-status');
+  status.textContent = 'Tayyor';
+  status.className = 'output-header-status ready';
 
-    const messagesEl = document.getElementById('messages');
-    const row = document.createElement('div');
-    row.className = 'message-row assistant';
-    const bubble = document.createElement('div');
-    bubble.className = 'msg-bubble ai';
-    const avatar = document.createElement('div');
-    avatar.className = 'msg-avatar ai';
-    avatar.textContent = 'AI';
-    row.appendChild(avatar);
-    row.appendChild(bubble);
-    messagesEl.appendChild(row);
+  const frame = document.getElementById('qr-frame');
+  frame.style.transform = 'scale(0.94)';
+  frame.style.transition = 'all 0.25s cubic-bezier(0.16,1,0.3,1)';
+  setTimeout(() => { frame.style.transform = 'scale(1)'; }, 30);
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let fullText = '';
-    let renderTimeout = null;
+  showToast('QR kod yaratildi!', 'success');
+}
 
-    function renderBubble() {
-      bubble.innerHTML = marked.parse(fullText) + '<span class="typing-cursor"></span>';
-      bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
+function downloadQR(format) {
+  const canvas = document.querySelector('#qr-display canvas');
+  if (!canvas) { showToast('Avval QR yarating!', 'warn'); return; }
 
-    let buffer = '';
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop();
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const data = line.slice(6).trim();
-        if (!data || data === '[DONE]') continue;
-        try {
-          const json = JSON.parse(data);
-          const delta = json.candidates?.[0]?.content?.parts?.[0]?.text || '';
-          if (delta) {
-            fullText += delta;
-            if (!renderTimeout) renderTimeout = setTimeout(() => { renderBubble(); renderTimeout = null; }, 25);
-          }
-        } catch {}
+  if (format === 'png') {
+    const a = document.createElement('a');
+    a.download = 'qr-studio-' + Date.now() + '.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+    showToast('PNG yuklab olindi!', 'info');
+  } else {
+    const size = canvas.width;
+    const ctx  = canvas.getContext('2d');
+    const img  = ctx.getImageData(0, 0, size, size);
+    const fg   = document.getElementById('qr-fg').value;
+    const bg   = document.getElementById('qr-bg').value;
+    let rects  = `<rect width="${size}" height="${size}" fill="${bg}"/>`;
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const idx = (y * size + x) * 4;
+        if (img.data[idx] < 128) rects += `<rect x="${x}" y="${y}" width="1" height="1" fill="${fg}"/>`;
       }
     }
-
-    clearTimeout(renderTimeout);
-    bubble.innerHTML = marked.parse(fullText);
-    bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-
-    chat.messages.push({ role: 'assistant', content: fullText });
-    saveChats();
-    renderChatList();
-
-  } catch (err) {
-    removeThinkingBubble();
-    appendMessage('assistant', `**Қате орын алды**\n\n${err.message}\n\nБірнеше секундтан кейін қайталап көріңіз.`, null);
-  } finally {
-    isLoading = false;
-    document.getElementById('sendBtn').disabled = false;
-    document.getElementById('headerSub').textContent = 'Сұрағыңызды қойыңыз';
-    document.getElementById('userInput').focus();
+    const svg  = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">${rects}</svg>`;
+    const blob = new Blob([svg], {type:'image/svg+xml'});
+    const a    = document.createElement('a');
+    a.download = 'qr-studio-' + Date.now() + '.svg';
+    a.href = URL.createObjectURL(blob);
+    a.click();
+    showToast('SVG yuklab olindi!', 'info');
   }
 }
 
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+function copyQRData() {
+  if (!currentQRData) { showToast('Avval QR yarating!', 'warn'); return; }
+  navigator.clipboard.writeText(currentQRData)
+    .then(() => showToast('Nusxalandi!', 'success'))
+    .catch(() => showToast('Nusxalash mumkin bo\'lmadi', 'error'));
 }
 
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+function showToast(msg, type = 'info') {
+  const t     = document.getElementById('toast');
+  const icon  = document.getElementById('toast-icon');
+  const msgEl = document.getElementById('toast-msg');
+
+  const iconMap = {
+    success: '<i class="fa-solid fa-check"></i>',
+    warn:    '<i class="fa-solid fa-triangle-exclamation"></i>',
+    error:   '<i class="fa-solid fa-xmark"></i>',
+    info:    '<i class="fa-solid fa-arrow-down-to-bracket"></i>'
+  };
+
+  t.className = `toast toast-${type}`;
+  icon.innerHTML = iconMap[type] || iconMap.info;
+  msgEl.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('overlay').classList.toggle('show');
+let modalResolve = null;
+
+function showModal({ type = 'info', title, body, buttons = [] }) {
+  const overlay  = document.getElementById('modal-overlay');
+  const iconWrap = document.getElementById('modal-icon-wrap');
+  const iconFa   = document.getElementById('modal-icon-fa');
+  const titleEl  = document.getElementById('modal-title');
+  const bodyEl   = document.getElementById('modal-body');
+  const actions  = document.getElementById('modal-actions');
+
+  const iconMap = {
+    success: { cls: 'success', fa: 'fa-solid fa-check' },
+    warn:    { cls: 'warn',    fa: 'fa-solid fa-triangle-exclamation' },
+    error:   { cls: 'error',   fa: 'fa-solid fa-xmark' },
+    info:    { cls: 'info',    fa: 'fa-solid fa-circle-info' }
+  };
+
+  const ic = iconMap[type] || iconMap.info;
+  iconWrap.className = `modal-icon-wrap ${ic.cls}`;
+  iconFa.className = ic.fa;
+  titleEl.textContent = title;
+  bodyEl.textContent  = body;
+
+  actions.innerHTML = '';
+  buttons.forEach(btn => {
+    const b = document.createElement('button');
+    b.className = `modal-btn ${btn.cls || 'secondary'}`;
+    b.textContent = btn.label;
+    b.onclick = () => { closeModal(); if (btn.onClick) btn.onClick(); };
+    actions.appendChild(b);
+  });
+
+  overlay.classList.add('open');
 }
 
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('show');
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
 }
 
-marked.setOptions({ breaks: true, gfm: true });
-renderChatList();
-if (chats.length > 0) loadChat(chats[0].id);
-else newChat();
+function closeModalOnOverlay(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey && e.target.tagName !== 'TEXTAREA') generateQR();
+});
+
+document.querySelectorAll('.mini-select-option.selected').forEach(opt => {
+  const wrap = opt.closest('.mini-custom-select');
+  if (!wrap) return;
+  const id = wrap.id;
+  const idMap2 = { 'wifi-enc-select': 'wifi-enc-text' };
+  if (idMap2[id]) {
+    document.getElementById(idMap2[id]).textContent = opt.childNodes[0].textContent.trim();
+  }
+});
 </script>
 </body>
 </html>
