@@ -1,1576 +1,1701 @@
 <!DOCTYPE html>
-<html lang="uz" data-theme="light">
+<html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QR Studio - QR Kod generatori</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Word Combo — Klaviatura kombinatsiyalari testi</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-  :root {
-    --bg: #f5f7f9;
-    --surface: #ffffff;
-    --border: #e2e8ee;
-    --border-soft: #edf1f5;
-    --cyan: #5bb8c9;
-    --cyan-light: #8fd0dc;
-    --cyan-pale: #e8f5f8;
-    --cyan-deep: #3a9aae;
-    --milk: #fafbfc;
-    --text: #1a2332;
-    --text-mid: #4a5568;
-    --text-soft: #8899aa;
-    --shadow: rgba(91,184,201,0.12);
-    --shadow-md: rgba(26,35,50,0.08);
-    --theme-toggle-bg: #e8f5f8;
-    --theme-toggle-color: #3a9aae;
-  }
-
-  [data-theme="dark"] {
-    --bg: #0f1623;
-    --surface: #1a2332;
-    --border: #2a3a50;
-    --border-soft: #223040;
-    --cyan: #5bb8c9;
-    --cyan-light: #4a9aaa;
-    --cyan-pale: #1a3040;
-    --cyan-deep: #7dd0de;
-    --milk: #141e2b;
-    --text: #e8f0f8;
-    --text-mid: #a0b4c8;
-    --text-soft: #5a7080;
-    --shadow: rgba(91,184,201,0.08);
-    --shadow-md: rgba(0,0,0,0.25);
-    --theme-toggle-bg: #1a3040;
-    --theme-toggle-color: #7dd0de;
-  }
-
-  * { margin:0; padding:0; box-sizing:border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.6;
-    transition: background 0.3s, color 0.3s;
-  }
-
-  .app { display: flex; min-height: 100vh; }
-
-  .sidebar {
-    width: 220px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    padding: 28px 0;
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    z-index: 10;
-    transition: background 0.3s, border-color 0.3s;
-  }
-
-  .sidebar-logo {
-    padding: 0 24px 28px;
-    border-bottom: 1px solid var(--border-soft);
-    margin-bottom: 20px;
-  }
-
-  .logo-mark { display: flex; align-items: center; gap: 10px; }
-
-  .logo-icon {
-    width: 34px; height: 34px;
-    background: var(--cyan);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .logo-icon svg { width: 18px; height: 18px; }
-  .logo-text { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
-  .logo-sub { font-size: 10px; color: var(--text-soft); font-weight: 400; margin-top: 1px; }
-
-  .nav { padding: 0 12px; flex: 1; }
-
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 14px;
-    border-radius: 10px;
-    cursor: pointer;
-    color: var(--text-soft);
-    font-weight: 500;
-    font-size: 13.5px;
-    transition: all 0.2s;
-    margin-bottom: 2px;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  .nav-item:hover { background: var(--cyan-pale); color: var(--cyan-deep); }
-  .nav-item.active { background: var(--cyan-pale); color: var(--cyan-deep); font-weight: 600; }
-  .nav-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
-  .sidebar-footer {
-    padding: 16px 24px 0;
-    border-top: 1px solid var(--border-soft);
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .version-tag { font-size: 11px; color: var(--text-soft); display: flex; align-items: center; gap: 6px; }
-  .version-dot { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; animation: pulse 2.5s ease-in-out infinite; }
-
-  .theme-toggle-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--theme-toggle-bg);
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 8px 12px;
-    cursor: pointer;
-    color: var(--theme-toggle-color);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    width: 100%;
-    transition: all 0.2s;
-    outline: none;
-  }
-
-  .theme-toggle-btn:hover {
-    border-color: var(--cyan);
-    box-shadow: 0 0 0 2px rgba(91,184,201,0.15);
-  }
-
-  .theme-toggle-btn i { font-size: 13px; }
-
-  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
-
-  .main { margin-left: 220px; flex: 1; min-height: 100vh; }
-
-  .page { display: none; animation: fadeIn 0.3s ease; }
-  .page.active { display: block; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 36px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; top: 0; z-index: 5;
-    transition: background 0.3s, border-color 0.3s;
-  }
-
-  .topbar-title { font-size: 15px; font-weight: 600; color: var(--text); }
-  .topbar-badge { background: var(--cyan-pale); color: var(--cyan-deep); font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 100px; letter-spacing: 0.2px; }
-
-  .dash-content { padding: 36px; }
-
-  .dash-hero {
-    background: linear-gradient(135deg, var(--cyan) 0%, var(--cyan-deep) 100%);
-    border-radius: 20px;
-    padding: 40px 44px;
-    color: white;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .dash-hero::before {
-    content: '';
-    position: absolute;
-    top: -40px; right: -40px;
-    width: 220px; height: 220px;
-    background: rgba(255,255,255,0.07);
-    border-radius: 50%;
-  }
-
-  .dash-hero::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; right: 80px;
-    width: 160px; height: 160px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 50%;
-  }
-
-  .hero-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.7; margin-bottom: 12px; }
-  .hero-title { font-family: 'Instrument Serif', serif; font-size: 38px; line-height: 1.1; font-weight: 400; margin-bottom: 14px; letter-spacing: -0.5px; }
-  .hero-title em { font-style: italic; opacity: 0.85; }
-  .hero-sub { font-size: 14px; opacity: 0.75; max-width: 420px; line-height: 1.6; margin-bottom: 24px; }
-
-  .hero-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: white;
-    padding: 10px 22px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    backdrop-filter: blur(4px);
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  .hero-btn:hover { background: rgba(255,255,255,0.28); transform: translateY(-1px); }
-
-  .work-content {
-    padding: 36px;
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 24px;
-    align-items: start;
-  }
-
-  .input-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-    transition: background 0.3s, border-color 0.3s;
-  }
-
-  .panel-header {
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border-soft);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .panel-header-icon {
-    width: 32px; height: 32px;
-    background: var(--cyan-pale);
-    border-radius: 9px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--cyan-deep);
-    flex-shrink: 0;
-    font-size: 14px;
-  }
-
-  .panel-header-title { font-size: 14px; font-weight: 600; color: var(--text); }
-  .panel-body { padding: 24px; }
-
-  .type-selector-wrap { margin-bottom: 20px; }
-  .type-selector-label { font-size: 12px; font-weight: 600; color: var(--text-mid); margin-bottom: 8px; display: block; letter-spacing: 0.1px; }
-
-  .custom-select-btn {
-    width: 100%;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 11px;
-    padding: 11px 14px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: all 0.2s;
-    outline: none;
-  }
-
-  .custom-select-btn:hover,
-  .custom-select-btn.open {
-    border-color: var(--cyan);
-    background: var(--surface);
-    box-shadow: 0 0 0 3px rgba(91,184,201,0.12);
-  }
-
-  .custom-select-btn .sel-left { display: flex; align-items: center; gap: 10px; }
-  .custom-select-btn .sel-icon { width: 26px; height: 26px; background: var(--cyan-pale); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: var(--cyan-deep); font-size: 12px; flex-shrink: 0; }
-  .custom-select-btn .sel-text { font-weight: 600; }
-  .custom-select-btn .sel-arrow { color: var(--text-soft); font-size: 11px; transition: transform 0.2s; }
-  .custom-select-btn.open .sel-arrow { transform: rotate(180deg); }
-
-  .custom-select-dropdown {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0; right: 0;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 13px;
-    box-shadow: 0 12px 40px rgba(26,35,50,0.18);
-    z-index: 50;
-    overflow-y: auto;
-    max-height: 320px;
-    display: none;
-    animation: dropIn 0.18s cubic-bezier(0.16,1,0.3,1);
-  }
-
-  .custom-select-dropdown.open { display: block; }
-
-  @keyframes dropIn {
-    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  .custom-select-option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: background 0.15s;
-    border-bottom: 1px solid var(--border-soft);
-  }
-
-  .custom-select-option:last-child { border-bottom: none; }
-  .custom-select-option:hover { background: var(--cyan-pale); }
-  .custom-select-option.selected { background: var(--cyan-pale); }
-
-  .opt-icon {
-    width: 32px; height: 32px;
-    background: var(--bg);
-    border-radius: 9px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--cyan-deep);
-    font-size: 13px;
-    flex-shrink: 0;
-  }
-
-  .custom-select-option.selected .opt-icon { background: var(--cyan-pale); }
-  .opt-info { flex: 1; }
-  .opt-name { font-size: 13px; font-weight: 600; color: var(--text); }
-  .opt-desc { font-size: 11px; color: var(--text-soft); margin-top: 1px; }
-  .opt-check { color: var(--cyan-deep); font-size: 12px; opacity: 0; }
-  .custom-select-option.selected .opt-check { opacity: 1; }
-
-  .type-selector-pos { position: relative; }
-
-  .input-sec { display: none; }
-  .input-sec.active { display: block; animation: fadeIn 0.25s ease; }
-
-  .field { margin-bottom: 16px; }
-  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-mid); margin-bottom: 7px; letter-spacing: 0.1px; }
-
-  .field input, .field textarea {
-    width: 100%;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 11px;
-    padding: 11px 14px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    transition: all 0.2s;
-    outline: none;
-    resize: none;
-  }
-
-  .field input:focus, .field textarea:focus {
-    border-color: var(--cyan);
-    background: var(--surface);
-    box-shadow: 0 0 0 3px rgba(91,184,201,0.12);
-  }
-
-  .field textarea { min-height: 90px; }
-
-  .mini-custom-select { position: relative; }
-
-  .mini-select-btn {
-    width: 100%;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 11px;
-    padding: 11px 14px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    transition: all 0.2s;
-    outline: none;
-  }
-
-  .mini-select-btn:hover, .mini-select-btn.open {
-    border-color: var(--cyan);
-    background: var(--surface);
-    box-shadow: 0 0 0 3px rgba(91,184,201,0.12);
-  }
-
-  .mini-select-btn .ms-text { font-weight: 500; }
-  .mini-select-btn .ms-arrow { color: var(--text-soft); font-size: 10px; transition: transform 0.2s; }
-  .mini-select-btn.open .ms-arrow { transform: rotate(180deg); }
-
-  .mini-select-dropdown {
-    position: absolute;
-    top: calc(100% + 5px);
-    left: 0; right: 0;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 11px;
-    box-shadow: 0 10px 32px rgba(26,35,50,0.18);
-    z-index: 60;
-    overflow: hidden;
-    display: none;
-    animation: dropIn 0.16s cubic-bezier(0.16,1,0.3,1);
-  }
-
-  .mini-select-dropdown.open { display: block; }
-
-  .mini-select-option {
-    padding: 10px 14px;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--text-mid);
-    transition: background 0.14s;
-    border-bottom: 1px solid var(--border-soft);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .mini-select-option:last-child { border-bottom: none; }
-  .mini-select-option:hover { background: var(--cyan-pale); color: var(--text); }
-  .mini-select-option.selected { background: var(--cyan-pale); color: var(--cyan-deep); font-weight: 600; }
-  .mini-select-option .mso-check { font-size: 11px; opacity: 0; color: var(--cyan-deep); }
-  .mini-select-option.selected .mso-check { opacity: 1; }
-
-  .upload-zone {
-    border: 2px dashed var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--bg);
-  }
-
-  .upload-zone:hover, .upload-zone.drag { border-color: var(--cyan); background: var(--cyan-pale); }
-  .upload-zone input { display: none; }
-  .upload-zone-icon { font-size: 22px; color: var(--cyan-deep); margin-bottom: 8px; }
-  .upload-zone-text { font-size: 12.5px; color: var(--text-soft); }
-  .upload-zone-text span { color: var(--cyan-deep); font-weight: 600; }
-
-  #preview-img { max-width: 100%; max-height: 100px; border-radius: 8px; margin-top: 10px; display: none; }
-
-  .divider { border: none; border-top: 1px solid var(--border-soft); margin: 20px 0; }
-
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
-
-  input[type="range"] {
-    flex: 1;
-    -webkit-appearance: none;
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    outline: none;
-    border: none;
-    padding: 0;
-  }
-
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    background: var(--cyan);
-    cursor: pointer;
-    box-shadow: 0 0 0 3px rgba(91,184,201,0.2);
-    transition: transform 0.15s;
-  }
-
-  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-  .size-slider-box {
-    width: 100%;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 11px;
-    padding: 13px 16px;
-    transition: border-color 0.2s;
-  }
-
-  .size-slider-box:focus-within {
-    border-color: var(--cyan);
-    background: var(--surface);
-    box-shadow: 0 0 0 3px rgba(91,184,201,0.12);
-  }
-
-  .size-slider-inner { display: flex; align-items: center; gap: 10px; }
-
-  .size-min-lbl, .size-max-lbl {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-soft);
-    min-width: 26px;
-    flex-shrink: 0;
-  }
-
-  .size-max-lbl { text-align: right; }
-  .size-slider-inner input[type="range"] { flex: 1; }
-
-  .color-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-
-  .color-pick {
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 11px;
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-
-  .color-pick:hover { border-color: var(--cyan-light); }
-
-  .color-thumb {
-    width: 28px; height: 28px;
-    border-radius: 7px;
-    border: 1.5px solid var(--border);
-    overflow: hidden;
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  .color-thumb input[type="color"] {
-    position: absolute;
-    inset: -4px;
-    width: calc(100% + 8px);
-    height: calc(100% + 8px);
-    border: none; padding: 0;
-    cursor: pointer;
-    opacity: 0;
-  }
-
-  .color-swatch-inner { width: 100%; height: 100%; border-radius: 5px; pointer-events: none; }
-  .color-pick-label { font-size: 12px; color: var(--text-soft); font-weight: 500; }
-
-  .gen-btn {
-    width: 100%;
-    padding: 14px;
-    background: var(--cyan);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.22s;
-    letter-spacing: 0.2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .gen-btn:hover { background: var(--cyan-deep); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(91,184,201,0.35); }
-  .gen-btn:active { transform: translateY(0); }
-
-  .output-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-    position: sticky;
-    top: 84px;
-    transition: background 0.3s, border-color 0.3s;
-  }
-
-  .output-header {
-    padding: 18px 22px;
-    border-bottom: 1px solid var(--border-soft);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-
-  .output-header-title { font-size: 13.5px; font-weight: 600; color: var(--text); }
-  .output-header-status { font-size: 11px; color: var(--text-soft); background: var(--bg); padding: 3px 10px; border-radius: 100px; border: 1px solid var(--border); }
-  .output-header-status.ready { color: #3aad7a; background: #f0faf5; border-color: #c3e8d4; }
-
-  [data-theme="dark"] .output-header-status.ready { background: #0e2a1c; border-color: #1a4a30; }
-
-  .qr-zone { padding: 28px 24px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
-
-  .qr-frame {
-    width: 220px; height: 220px;
-    background: var(--milk);
-    border-radius: 16px;
-    border: 1.5px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    transition: all 0.3s;
-    overflow: hidden;
-  }
-
-  .qr-frame.has-qr { box-shadow: 0 8px 32px rgba(91,184,201,0.18); border-color: var(--cyan-light); }
-
-  .qr-corner-dec { position: absolute; width: 16px; height: 16px; border-color: var(--cyan-light); border-style: solid; opacity: 0.7; }
-  .qr-corner-dec.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; border-radius: 3px 0 0 0; }
-  .qr-corner-dec.tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; border-radius: 0 3px 0 0; }
-  .qr-corner-dec.bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; border-radius: 0 0 0 3px; }
-  .qr-corner-dec.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; border-radius: 0 0 3px 0; }
-
-  #qr-display { width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
-  #qr-display canvas, #qr-display img { max-width: 100% !important; max-height: 100% !important; width: auto !important; height: auto !important; }
-
-  .qr-placeholder-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .qr-placeholder-svg { opacity: 0.18; width: 72px; height: 72px; }
-  .qr-placeholder-text { font-size: 11.5px; color: var(--text-soft); text-align: center; line-height: 1.5; }
-
-  .info-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 100%; }
-  .chip { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; text-align: center; flex: 1; min-width: 60px; }
-  .chip-val { font-size: 16px; font-weight: 600; color: var(--cyan-deep); font-family: 'Instrument Serif', serif; line-height: 1; margin-bottom: 3px; }
-  .chip-lbl { font-size: 10px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
-
-  .dl-area { padding: 0 24px 24px; display: flex; flex-direction: column; gap: 8px; }
-  .dl-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
-  .dl-btn {
-    padding: 11px;
-    border: 1.5px solid var(--border);
-    border-radius: 11px;
-    background: var(--surface);
-    color: var(--text-mid);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12.5px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
-
-  .dl-btn:hover { border-color: var(--cyan); color: var(--cyan-deep); background: var(--cyan-pale); }
-  .dl-btn.primary { background: var(--cyan); border-color: var(--cyan); color: white; }
-  .dl-btn.primary:hover { background: var(--cyan-deep); border-color: var(--cyan-deep); box-shadow: 0 4px 14px rgba(91,184,201,0.3); }
-
-  .copy-btn {
-    padding: 10px;
-    border: 1.5px solid var(--border);
-    border-radius: 11px;
-    background: var(--bg);
-    color: var(--text-soft);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
-
-  .copy-btn:hover { color: var(--text-mid); background: var(--surface); }
-
-  .toast {
-    position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    color: var(--text);
-    font-size: 13px;
-    font-weight: 500;
-    padding: 12px 24px 12px 16px;
-    border-radius: 14px;
-    box-shadow: 0 8px 28px rgba(26,35,50,0.22);
-    z-index: 200;
-    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.35s;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
-
-  .toast-icon {
-    width: 26px; height: 26px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
-    flex-shrink: 0;
-  }
-
-  .toast.toast-success .toast-icon { background: #3aad7a; color: white; }
-  .toast.toast-warn .toast-icon { background: #f0a742; color: white; }
-  .toast.toast-error .toast-icon { background: #e05555; color: white; }
-  .toast.toast-info .toast-icon { background: var(--cyan); color: white; }
-
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(26,35,50,0.45);
-    backdrop-filter: blur(5px);
-    z-index: 100;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-overlay.open { display: flex; animation: overlayIn 0.2s ease; }
-
-  @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
-
-  .modal-box {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 20px;
-    padding: 28px 32px 24px;
-    min-width: 320px;
-    max-width: 420px;
-    width: 90%;
-    box-shadow: 0 24px 60px rgba(26,35,50,0.25);
-    animation: modalIn 0.25s cubic-bezier(0.16,1,0.3,1);
-    position: relative;
-  }
-
-  @keyframes modalIn { from { opacity: 0; transform: scale(0.93) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-
-  .modal-icon-wrap {
-    width: 48px; height: 48px;
-    border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    margin-bottom: 16px;
-  }
-
-  .modal-icon-wrap.success { background: #f0faf5; color: #3aad7a; }
-  .modal-icon-wrap.warn { background: #fffbf0; color: #f0a742; }
-  .modal-icon-wrap.error { background: #fff5f5; color: #e05555; }
-  .modal-icon-wrap.info { background: var(--cyan-pale); color: var(--cyan-deep); }
-
-  [data-theme="dark"] .modal-icon-wrap.success { background: #0e2a1c; }
-  [data-theme="dark"] .modal-icon-wrap.warn { background: #2a1e00; }
-  [data-theme="dark"] .modal-icon-wrap.error { background: #2a0e0e; }
-
-  .modal-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-  .modal-body { font-size: 13.5px; color: var(--text-mid); line-height: 1.6; margin-bottom: 22px; }
-  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
-
-  .modal-btn {
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.18s;
-    border: 1.5px solid transparent;
-  }
-
-  .modal-btn.secondary { background: var(--bg); border-color: var(--border); color: var(--text-mid); }
-  .modal-btn.secondary:hover { border-color: var(--cyan-light); color: var(--cyan-deep); }
-  .modal-btn.primary { background: var(--cyan); color: white; }
-  .modal-btn.primary:hover { background: var(--cyan-deep); box-shadow: 0 4px 14px rgba(91,184,201,0.3); }
-  .modal-btn.danger { background: #e05555; color: white; }
-  .modal-btn.danger:hover { background: #c94444; }
-
-  .modal-close-x {
-    position: absolute;
-    top: 18px; right: 18px;
-    width: 28px; height: 28px;
-    border: none; background: var(--bg);
-    border-radius: 8px;
-    cursor: pointer;
-    color: var(--text-soft);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
-    transition: all 0.15s;
-  }
-
-  .modal-close-x:hover { background: var(--border); color: var(--text); }
-
-  @media (max-width: 800px) {
-    .sidebar { display: none; }
-    .main { margin-left: 0; }
-    .work-content { grid-template-columns: 1fr; }
-    .output-panel { position: static; }
-    .dash-content, .work-content { padding: 20px; }
-  }
+
+:root{
+
+  --bg:            #FAF7F2;   
+  --bg-soft:       #FFF8EF;   
+  --surface:       #FFFFFF;   
+  --ink:           #2D2A4A;   
+  --ink-soft:      #6B6680;   
+  --primary:       #6C63FF;   
+  --primary-soft:  #EDEBFF;   
+  --primary-dark:  #5147E0;
+  --accent-2:      #FFB199;   
+  --success:       #6FCF97;   
+  --success-bg:    #E6F7EC;
+  --error:         #FF8A80;   
+  --error-bg:      #FFEDEA;
+  --skin:          #FFD9B3;   
+  --hair:          #4A4063;   
+  --shadow-sm:      0 2px 8px rgba(45,42,74,0.06);
+  --shadow-md:      0 8px 24px rgba(45,42,74,0.10);
+  --shadow-lg:      0 16px 40px rgba(45,42,74,0.14);
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --font-display: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+*{ box-sizing: border-box; margin:0; padding:0; }
+html, body{ height:100%; }
+body{
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+button{ font-family: inherit; cursor:pointer; border:none; background:none; color:inherit; }
+ul{ list-style:none; }
+img,svg{ display:block; max-width:100%; }
+:focus-visible{ outline: 3px solid var(--primary); outline-offset: 2px; border-radius: 6px; }
+
+.bg-decor{
+  position: fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;
+}
+.bg-decor span{
+  position:absolute; border-radius:50%; opacity:0.35; filter: blur(40px);
+}
+.bg-decor span:nth-child(1){ width:340px; height:340px; background:var(--primary-soft); top:-100px; right:-80px; }
+.bg-decor span:nth-child(2){ width:260px; height:260px; background:#FFE8DA; bottom:10%; left:-100px; }
+.bg-decor span:nth-child(3){ width:200px; height:200px; background:var(--success-bg); bottom:-60px; right:10%; }
+
+.topbar{
+  position: sticky; top:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 14px 18px;
+  background: rgba(250,247,242,0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(45,42,74,0.06);
+}
+.brand{
+  display:flex; align-items:center; gap:10px;
+  font-family: var(--font-display); font-weight:800; font-size:1.05rem; color:var(--ink);
+}
+.brand-mark{
+  width:36px; height:36px; border-radius: 11px;
+  background: linear-gradient(135deg, var(--primary), #8B7FFF);
+  display:flex; align-items:center; justify-content:center;
+  color:white; font-size:1.1rem; box-shadow: var(--shadow-sm);
+}
+.burger-btn{
+  width:44px; height:44px; border-radius: var(--radius-sm);
+  display:flex; align-items:center; justify-content:center;
+  background: var(--surface); box-shadow: var(--shadow-sm);
+  font-size: 1.35rem; color: var(--ink);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.burger-btn:active{ transform: scale(0.92); }
+
+.menu-overlay{
+  position: fixed; inset:0; background: rgba(45,42,74,0.35);
+  opacity:0; visibility:hidden; transition: opacity .25s ease, visibility .25s ease;
+  z-index: 200;
+}
+.menu-overlay.open{ opacity:1; visibility:visible; }
+
+.menu-panel{
+  position: fixed; top:0; right:0; height:100%; width: min(340px, 86vw);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  z-index: 201;
+  transform: translateX(100%);
+  transition: transform .32s cubic-bezier(.16,1,.3,1);
+  display:flex; flex-direction:column;
+  padding: 20px 18px 28px;
+}
+.menu-panel.open{ transform: translateX(0); }
+
+.menu-head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom: 18px;
+}
+.menu-head .brand{ font-size:1rem; }
+.menu-close{
+  width:38px; height:38px; border-radius:10px; background: var(--bg-soft);
+  display:flex; align-items:center; justify-content:center; font-size:1.2rem;
+}
+
+.menu-nav{ display:flex; flex-direction:column; gap:6px; margin-bottom: auto; }
+.menu-link{
+  display:flex; align-items:center; gap:14px;
+  padding: 13px 14px; border-radius: var(--radius-sm);
+  font-weight:600; font-size:0.98rem; color: var(--ink);
+  transition: background .15s ease;
+}
+.menu-link i, .menu-link .menu-icon-svg{ font-size:1.25rem; color: var(--primary); width:24px; flex-shrink:0; text-align:center; }
+.menu-link:hover, .menu-link.active{ background: var(--primary-soft); }
+
+.menu-divider{ height:1px; background: rgba(45,42,74,0.08); margin: 16px 0; }
+
+.lang-section-title{
+  font-size:0.78rem; text-transform: uppercase; letter-spacing:0.06em;
+  color: var(--ink-soft); font-weight:700; margin-bottom:10px; padding-left:4px;
+}
+.lang-options{ display:flex; flex-direction:column; gap:8px; }
+.lang-btn{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  background: var(--bg-soft); font-weight:600; font-size:0.95rem;
+  border: 2px solid transparent;
+  transition: all .15s ease;
+}
+.lang-btn .lang-name{ display:flex; align-items:center; gap:10px; }
+.lang-btn .flag-dot{
+  width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:0.85rem; font-weight:800; color: var(--primary); background: var(--primary-soft);
+}
+.lang-btn.active{ border-color: var(--primary); background: var(--primary-soft); color: var(--primary-dark); }
+.lang-btn.active .check-icon{ opacity:1; }
+.lang-btn .check-icon{ opacity:0; color: var(--primary); font-size:1.1rem; }
+
+.page{ display:none; padding: 0 18px 60px; max-width: 720px; margin: 0 auto; }
+.page.active{ display:block; animation: fadeUp .4s ease; }
+@keyframes fadeUp{ from{ opacity:0; transform: translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+.hero{
+  padding: 28px 0 8px; text-align:center;
+}
+.hero-illustration{ width: 220px; margin: 0 auto 18px; }
+.hero h1{
+  font-family: var(--font-display); font-weight:800; font-size:1.65rem; line-height:1.25;
+  white-space: pre-line; margin-bottom:10px; letter-spacing:-0.01em;
+}
+.hero p.subtitle{ color: var(--ink-soft); font-size:0.96rem; line-height:1.55; max-width:480px; margin:0 auto 22px; }
+
+.hero-stats{ display:flex; justify-content:center; gap:14px; margin-bottom:24px; }
+.stat-pill{
+  background: var(--surface); border-radius: var(--radius-md); padding: 14px 22px;
+  box-shadow: var(--shadow-sm); min-width:96px;
+}
+.stat-pill .num{ font-family: var(--font-display); font-weight:800; font-size:1.5rem; color: var(--primary); }
+.stat-pill .lbl{ font-size:0.76rem; color: var(--ink-soft); font-weight:600; }
+
+.btn-primary{
+  display:inline-flex; align-items:center; gap:10px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color:white; font-weight:700; font-size:1rem;
+  padding: 15px 30px; border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(108,99,255,0.35);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn-primary:active{ transform: scale(0.96); }
+.btn-primary i{ font-size:1.2rem; }
+
+.btn-secondary{
+  display:inline-flex; align-items:center; gap:8px;
+  background: var(--surface); color: var(--ink); font-weight:700; font-size:0.95rem;
+  padding: 13px 26px; border-radius: 999px; box-shadow: var(--shadow-sm);
+  transition: transform .15s ease;
+}
+.btn-secondary:active{ transform: scale(0.96); }
+
+.sections-head{ margin: 34px 0 16px; text-align:left; }
+.sections-head h2{ font-family: var(--font-display); font-weight:800; font-size:1.2rem; margin-bottom:4px; }
+.sections-head p{ color: var(--ink-soft); font-size:0.88rem; }
+
+.section-card{
+  display:flex; align-items:center; gap:14px;
+  background: var(--surface); border-radius: var(--radius-md);
+  padding: 16px; margin-bottom:12px; box-shadow: var(--shadow-sm);
+}
+.section-card .icon-wrap{
+  width:50px; height:50px; border-radius: 14px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:white;
+}
+.section-card .info{ flex:1; }
+.section-card .info h3{ font-size:0.96rem; font-weight:700; margin-bottom:2px; }
+.section-card .info p{ font-size:0.8rem; color: var(--ink-soft); }
+.section-card .count-badge{
+  font-size:0.72rem; font-weight:700; color: var(--primary);
+  background: var(--primary-soft); padding:4px 10px; border-radius:999px; white-space:nowrap;
+}
+
+.quiz-intro-illustration{ width:180px; margin: 10px auto 16px; }
+.quiz-rules{ background: var(--surface); border-radius: var(--radius-md); padding:18px; margin: 20px 0 26px; box-shadow: var(--shadow-sm); }
+.quiz-rule{ display:flex; gap:12px; align-items:flex-start; padding:10px 0; }
+.quiz-rule:not(:last-child){ border-bottom: 1px solid rgba(45,42,74,0.06); }
+.quiz-rule i{ color: var(--primary); font-size:1.2rem; margin-top:1px; }
+.quiz-rule span{ font-size:0.9rem; line-height:1.45; color: var(--ink); }
+
+.quiz-start-wrap{ text-align:center; padding: 6px 0 20px; }
+
+.quiz-runner{ padding-top: 8px; }
+.progress-wrap{ margin-bottom:18px; }
+.progress-meta{ display:flex; justify-content:space-between; font-size:0.78rem; color: var(--ink-soft); font-weight:600; margin-bottom:7px; }
+.progress-bar-track{ height:8px; border-radius:999px; background: var(--bg-soft); overflow:hidden; }
+.progress-bar-fill{ height:100%; background: linear-gradient(90deg, var(--primary), #8B7FFF); border-radius:999px; transition: width .4s cubic-bezier(.16,1,.3,1); }
+
+.section-tag{
+  display:inline-flex; align-items:center; gap:6px;
+  background: var(--primary-soft); color: var(--primary-dark);
+  font-size:0.75rem; font-weight:700; padding:5px 12px; border-radius:999px; margin-bottom:14px;
+}
+
+.question-card{
+  background: var(--surface); border-radius: var(--radius-lg);
+  padding: 22px 20px; box-shadow: var(--shadow-md); margin-bottom:18px;
+}
+.combo-illustration{ width:130px; margin: 0 auto 14px; }
+.question-text{ font-family: var(--font-display); font-weight:700; font-size:1.08rem; line-height:1.4; text-align:center; margin-bottom: 4px; }
+
+.options-list{ display:flex; flex-direction:column; gap:10px; margin-top:18px; }
+.option-btn{
+  display:flex; align-items:center; gap:12px;
+  text-align:left; width:100%;
+  background: var(--bg-soft); border-radius: var(--radius-sm);
+  padding: 14px 16px; font-size:0.93rem; font-weight:600; color: var(--ink);
+  border: 2px solid transparent;
+  transition: all .15s ease;
+}
+.option-btn .opt-letter{
+  width:26px; height:26px; border-radius:50%; background:var(--surface);
+  display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-weight:800;
+  color: var(--ink-soft); flex-shrink:0; box-shadow: 0 1px 3px rgba(45,42,74,0.1);
+}
+.option-btn:active{ transform: scale(0.985); }
+.option-btn.selected{ border-color: var(--primary); background: var(--primary-soft); }
+.option-btn.selected .opt-letter{ background:var(--primary); color:white; }
+
+.option-btn.correct-reveal{ border-color: var(--success); background: var(--success-bg); }
+.option-btn.correct-reveal .opt-letter{ background:var(--success); color:white; }
+.option-btn.wrong-reveal{ border-color: var(--error); background: var(--error-bg); }
+.option-btn.wrong-reveal .opt-letter{ background:var(--error); color:white; }
+.option-btn.dimmed{ opacity:0.45; }
+.option-btn.locked{ pointer-events:none; }
+
+.feedback-banner{
+  display:flex; align-items:center; gap:10px;
+  padding: 13px 16px; border-radius: var(--radius-sm); margin-top:16px;
+  font-weight:700; font-size:0.92rem;
+  opacity:0; max-height:0; overflow:hidden; transition: all .3s ease;
+}
+.feedback-banner.show{ opacity:1; max-height:80px; padding:13px 16px; }
+.feedback-banner.correct{ background: var(--success-bg); color:#2E7D4F; }
+.feedback-banner.wrong{ background: var(--error-bg); color:#C0392B; }
+.feedback-banner i{ font-size:1.3rem; }
+
+.quiz-actions{ display:flex; flex-direction:column; gap:10px; }
+.btn-check, .btn-continue{
+  width:100%; padding:15px; border-radius: var(--radius-sm); font-weight:700; font-size:0.98rem;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn-check{ background: var(--primary); color:white; box-shadow: 0 8px 20px rgba(108,99,255,0.3); }
+.btn-check:disabled{ background: #DAD6F5; color:#A39FE0; box-shadow:none; pointer-events:none; }
+.btn-continue{ background: var(--ink); color:white; box-shadow: 0 8px 20px rgba(45,42,74,0.25); }
+.btn-continue:disabled{ background:#E4E2EC; color:#A8A5BC; box-shadow:none; pointer-events:none; }
+
+.result-wrap{ text-align:center; padding: 30px 0; }
+.result-illustration{ width:200px; margin:0 auto 18px; }
+.result-wrap h2{ font-family: var(--font-display); font-weight:800; font-size:1.4rem; margin-bottom:8px; }
+.result-wrap p.desc{ color: var(--ink-soft); font-size:0.92rem; margin-bottom: 26px; }
+.result-stats{ display:flex; gap:14px; justify-content:center; margin-bottom:28px; }
+.result-stat{ flex:1; max-width:150px; background:var(--surface); border-radius: var(--radius-md); padding:18px 10px; box-shadow: var(--shadow-sm); }
+.result-stat .icon{ font-size:1.6rem; margin-bottom:6px; }
+.result-stat.correct .icon{ color: var(--success); }
+.result-stat.wrong .icon{ color: var(--error); }
+.result-stat .num{ font-family: var(--font-display); font-weight:800; font-size:1.6rem; }
+.result-stat .lbl{ font-size:0.76rem; color: var(--ink-soft); font-weight:600; }
+.result-actions{ display:flex; flex-direction:column; gap:12px; align-items:center; }
+
+@media (min-width:600px){
+  .page{ padding-top:10px; }
+  .hero h1{ font-size:2rem; }
+}
+
+@media (min-width:900px){
+  body{ overflow-x:visible; }
+  .topbar{ padding: 18px 48px; }
+  .brand{ font-size:1.2rem; }
+  .brand-mark{ width:42px; height:42px; font-size:1.3rem; }
+  .burger-btn{ width:48px; height:48px; font-size:1.5rem; }
+
+  .page{ max-width: 1080px; padding: 0 48px 70px; }
+  .page.active{ display:block; }
+
+  .hero{ padding: 48px 0 16px; display:grid; grid-template-columns: 1fr 320px; align-items:center; gap:40px; text-align:left; }
+  .hero-illustration{ width: 280px; margin:0; grid-column:2; grid-row:1 / span 4; }
+  .hero h1{ font-size:2.5rem; }
+  .hero p.subtitle{ margin:0 0 22px; max-width:520px; }
+  .hero-stats{ justify-content:flex-start; }
+  .hero .btn-primary{ align-self:flex-start; }
+
+  .sections-head{ margin: 48px 0 20px; }
+  .sections-head h2{ font-size:1.5rem; }
+  .sections-head p{ font-size:1rem; }
+  #sectionCardsSlot{ display:grid; grid-template-columns: repeat(2, 1fr); gap:16px; }
+  .section-card{ margin-bottom:0; padding:20px; }
+
+  .quiz-intro-illustration{ width:240px; }
+  .quiz-rules{ max-width:560px; margin:0 auto; }
+  .quiz-start-wrap{ display:flex; justify-content:center; }
+
+  .quiz-runner{ max-width:640px; margin:0 auto; }
+
+  .result-wrap{ max-width:560px; margin:0 auto; padding:50px 0; }
+  .result-illustration{ width:240px; }
+
+  .menu-panel{ width: 380px; }
+}
+
+@media (min-width:900px){
+  .bg-decor span:nth-child(1){ width:480px; height:480px; }
+  .bg-decor span:nth-child(2){ width:380px; height:380px; }
+  .bg-decor span:nth-child(3){ width:320px; height:320px; }
+}
+
+@media (min-width:1280px){
+  .page{ max-width: 1280px; padding: 0 64px 80px; }
+  #sectionCardsSlot{ grid-template-columns: repeat(3, 1fr); }
+  .hero{ grid-template-columns: 1fr 380px; }
+  .hero-illustration{ width: 340px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+}
 </style>
 </head>
 <body>
-<div class="app">
 
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-mark">
-        <div class="logo-icon">
-          <svg viewBox="0 0 18 18" fill="none">
-            <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white"/>
-            <rect x="11" y="1" width="6" height="6" rx="1.5" fill="white"/>
-            <rect x="1" y="11" width="6" height="6" rx="1.5" fill="white"/>
-            <rect x="11" y="11" width="2.5" height="2.5" rx="0.5" fill="white"/>
-            <rect x="15.5" y="11" width="1.5" height="6" rx="0.5" fill="white"/>
-            <rect x="11" y="15.5" width="4.5" height="1.5" rx="0.5" fill="white"/>
-          </svg>
-        </div>
-        <div>
-          <div class="logo-text">QR Studio</div>
-          <div class="logo-sub">Generator v2.0</div>
-        </div>
-      </div>
-    </div>
 
-    <nav class="nav">
-      <button class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard">
-        <span class="nav-icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
-            <rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
-            <rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
-            <rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
-          </svg>
-        </span>
-        BOSH SAHIFA
-      </button>
-      <button class="nav-item" onclick="goPage('work')" id="nav-work">
-        <span class="nav-icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
-            <rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
-            <rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
-            <rect x="9" y="9" width="2" height="2" rx="0.5" fill="currentColor"/>
-            <rect x="13" y="9" width="1" height="5" rx="0.5" fill="currentColor"/>
-            <rect x="9" y="13" width="4" height="1" rx="0.5" fill="currentColor"/>
-          </svg>
-        </span>
-        QR Generator
-      </button>
-    </nav>
+<div class="bg-decor" aria-hidden="true"><span></span><span></span><span></span></div>
 
-    <div class="sidebar-footer">
-      <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">
-        <i class="fa-solid fa-moon" id="theme-icon"></i>
-        <span id="theme-label">Tungi rejim</span>
-      </button>
-      <div class="version-tag">
-        <div class="version-dot"></div>
-        Hammasi tayyor
-      </div>
-    </div>
-  </aside>
-
-  <main class="main">
-
-    <div class="page active" id="page-dashboard">
-      <div class="topbar">
-        <div>
-          <div class="topbar-title">BOSH SAHIFA</div>
-        </div>
-        <span class="topbar-badge">v2.0</span>
-      </div>
-
-      <div class="dash-content">
-        <div class="dash-hero">
-          <div class="hero-label">QR Studio Pro</div>
-          <h1 class="hero-title">QR Kodni<br><em>tez yarating</em></h1>
-          <p class="hero-sub">Havola, matn, WiFi, kontakt va rasmlar uchun professional QR kodlarni soniyalar ichida yarating.</p>
-          <button class="hero-btn" onclick="goPage('work')">
-            <i class="fa-solid fa-qrcode" style="font-size:13px;"></i>
-            QR yaratishni boshlash
-            <i class="fa-solid fa-arrow-right" style="font-size:11px;"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="page" id="page-work">
-      <div class="topbar">
-        <div>
-          <div class="topbar-title">ISH SAHIFASI</div>
-        </div>
-        <span class="topbar-badge">Ish sahifasi</span>
-      </div>
-
-      <div class="work-content">
-
-        <div class="input-panel">
-          <div class="panel-header">
-            <div class="panel-header-icon">
-              <i class="fa-solid fa-pen-to-square"></i>
-            </div>
-            <div>
-              <div class="panel-header-title">Ma'lumot kiritish</div>
-            </div>
-          </div>
-
-          <div class="panel-body">
-
-            <div class="type-selector-wrap">
-              <span class="type-selector-label">Kontent turi</span>
-              <div class="type-selector-pos">
-                <button class="custom-select-btn" id="content-type-btn" onclick="toggleContentTypeDropdown()">
-                  <div class="sel-left">
-                    <div class="sel-icon" id="sel-icon-display"><i class="fa-solid fa-link"></i></div>
-                    <span class="sel-text" id="sel-text-display">Havola</span>
-                  </div>
-                  <i class="fa-solid fa-chevron-down sel-arrow"></i>
-                </button>
-                <div class="custom-select-dropdown" id="content-type-dropdown">
-                  <div class="custom-select-option selected" data-value="link" onclick="selectContentType(this)">
-                    <div class="opt-icon"><i class="fa-solid fa-link"></i></div>
-                    <div class="opt-info">
-                      <div class="opt-name">Havola</div>
-                      <div class="opt-desc">Veb-sayt URL manzili</div>
-                    </div>
-                    <i class="fa-solid fa-check opt-check"></i>
-                  </div>
-                  <div class="custom-select-option" data-value="text" onclick="selectContentType(this)">
-                    <div class="opt-icon"><i class="fa-solid fa-align-left"></i></div>
-                    <div class="opt-info">
-                      <div class="opt-name">Matn</div>
-                      <div class="opt-desc">Erkin matn yoki xabar</div>
-                    </div>
-                    <i class="fa-solid fa-check opt-check"></i>
-                  </div>
-                  <div class="custom-select-option" data-value="image" onclick="selectContentType(this)">
-                    <div class="opt-icon"><i class="fa-solid fa-image"></i></div>
-                    <div class="opt-info">
-                      <div class="opt-name">Rasm</div>
-                      <div class="opt-desc">Rasm URL yoki fayl</div>
-                    </div>
-                    <i class="fa-solid fa-check opt-check"></i>
-                  </div>
-                  <div class="custom-select-option" data-value="wifi" onclick="selectContentType(this)">
-                    <div class="opt-icon"><i class="fa-solid fa-wifi"></i></div>
-                    <div class="opt-info">
-                      <div class="opt-name">WiFi</div>
-                      <div class="opt-desc">Tarmoq nomi va parol</div>
-                    </div>
-                    <i class="fa-solid fa-check opt-check"></i>
-                  </div>
-                  <div class="custom-select-option" data-value="contact" onclick="selectContentType(this)">
-                    <div class="opt-icon"><i class="fa-solid fa-address-card"></i></div>
-                    <div class="opt-info">
-                      <div class="opt-name">Kontakt (vCard)</div>
-                      <div class="opt-desc">Aloqa ma'lumotlari</div>
-                    </div>
-                    <i class="fa-solid fa-check opt-check"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="input-sec active" id="sec-link">
-              <div class="field">
-                <label>Veb-sayt manzili (URL)</label>
-                <input type="url" id="input-link" placeholder="https://example.com">
-              </div>
-            </div>
-
-            <div class="input-sec" id="sec-text">
-              <div class="field">
-                <label>Matn yoki xabar</label>
-                <textarea id="input-text" placeholder="Bu yerga istalgan matnni yozing..."></textarea>
-              </div>
-            </div>
-
-            <div class="input-sec" id="sec-image">
-              <div class="field">
-                <label>Rasm manzili (URL)</label>
-                <input type="url" id="input-image-url" placeholder="https://example.com/photo.jpg">
-              </div>
-              <div class="field">
-                <label>yoki rasm yuklang</label>
-                <div class="upload-zone" id="dropzone" onclick="document.getElementById('file-input').click()">
-                  <input type="file" id="file-input" accept="image/*" onchange="handleFileUpload(event)">
-                  <div class="upload-zone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                  <div class="upload-zone-text"><span>Bosing</span> yoki sudrab tashlang</div>
-                  <img id="preview-img" alt="preview">
-                </div>
-              </div>
-            </div>
-
-            <div class="input-sec" id="sec-wifi">
-              <div class="field">
-                <label>WiFi nomi (SSID)</label>
-                <input type="text" id="wifi-ssid" placeholder="Mening_WiFi">
-              </div>
-              <div class="field">
-                <label>Parol</label>
-                <input type="text" id="wifi-pass" placeholder="wifi_parol123">
-              </div>
-              <div class="field">
-                <label>Xavfsizlik turi</label>
-                <div class="mini-custom-select" id="wifi-enc-select">
-                  <button class="mini-select-btn" id="wifi-enc-btn" onclick="toggleMiniSelect('wifi-enc-select')">
-                    <span class="ms-text" id="wifi-enc-text">WPA / WPA2</span>
-                    <i class="fa-solid fa-chevron-down ms-arrow"></i>
-                  </button>
-                  <div class="mini-select-dropdown" id="wifi-enc-dropdown">
-                    <div class="mini-select-option selected" data-value="WPA" onclick="selectMiniOption('wifi-enc-select', this)">
-                      WPA / WPA2
-                      <i class="fa-solid fa-check mso-check"></i>
-                    </div>
-                    <div class="mini-select-option" data-value="WEP" onclick="selectMiniOption('wifi-enc-select', this)">
-                      WEP
-                      <i class="fa-solid fa-check mso-check"></i>
-                    </div>
-                    <div class="mini-select-option" data-value="" onclick="selectMiniOption('wifi-enc-select', this)">
-                      Ochiq (parolsiz)
-                      <i class="fa-solid fa-check mso-check"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="input-sec" id="sec-contact">
-              <div class="field">
-                <label>To'liq ism</label>
-                <input type="text" id="ct-name" placeholder="Askar Yaxshilikbekov">
-              </div>
-              <div class="two-col">
-                <div class="field" style="margin:0">
-                  <label>Telefon</label>
-                  <input type="tel" id="ct-phone" placeholder="+998 90 000 0000">
-                </div>
-                <div class="field" style="margin:0">
-                  <label>Email</label>
-                  <input type="email" id="ct-email" placeholder="email@example.com">
-                </div>
-              </div>
-              <div class="field" style="margin-top:12px">
-                <label>Kompaniya</label>
-                <input type="text" id="ct-org" placeholder="Kompaniya nomi">
-              </div>
-            </div>
-
-            <hr class="divider">
-
-            <div class="type-selector-wrap">
-              <span class="type-selector-label">Xatolik darajasi</span>
-              <div class="type-selector-pos">
-                <button class="custom-select-btn" id="err-level-btn" onclick="toggleErrDropdown()">
-                  <div class="sel-left">
-                    <div class="sel-icon" id="err-icon-display"><i class="fa-solid fa-shield-halved"></i></div>
-                    <span class="sel-text" id="err-level-text">O'rtacha (M)</span>
-                  </div>
-                  <i class="fa-solid fa-chevron-down sel-arrow"></i>
-                </button>
-                <div class="custom-select-dropdown" id="err-level-dropdown">
-                  <div class="custom-select-option" data-value="L" onclick="selectErrLevel(this)">
-                    <div class="opt-icon"><i class="fa-solid fa-signal" style="opacity:.5;"></i></div>
-                    <div class="opt-info">
-                      <div class="opt-name">Past (L)</div>
-                      <div class="opt-desc">7% tiklash — kichik QR</div>
-                    </div>
-                    <i class="fa-solid fa-check opt-check"></i>
-                  </div>
-                  <div class="custom-select-option selected" data-value="M" onclick="selectErrLevel(this)">
-                    <div class="opt-icon"><i class="fa-solid fa-signal" style="opacity:.7;"></i></div>
-                    <div class="opt-info">
-                      <div class="opt-name">O'rtacha (M)</div>
-                      <div class="opt-desc">15% tiklash — tavsiya etiladi</div>
-                    </div>
-                    <i class="fa-solid fa-check opt-check"></i>
-                  </div>
-                  <div class="custom-select-option" data-value="Q" onclick="selectErrLevel(this)">
-                    <div class="opt-icon"><i class="fa-solid fa-signal" style="opacity:.85;"></i></div>
-                    <div class="opt-info">
-                      <div class="opt-name">Yuqori (Q)</div>
-                      <div class="opt-desc">25% tiklash</div>
-                    </div>
-                    <i class="fa-solid fa-check opt-check"></i>
-                  </div>
-                  <div class="custom-select-option" data-value="H" onclick="selectErrLevel(this)">
-                    <div class="opt-icon"><i class="fa-solid fa-signal"></i></div>
-                    <div class="opt-info">
-                      <div class="opt-name">Eng yuqori (H)</div>
-                      <div class="opt-desc">30% tiklash — logo bilan ishlatish uchun</div>
-                    </div>
-                    <i class="fa-solid fa-check opt-check"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="type-selector-wrap">
-              <span class="type-selector-label">O'lcham — <span id="size-val">256</span>px</span>
-              <div class="size-slider-box">
-                <div class="size-slider-inner">
-                  <span class="size-min-lbl">128</span>
-                  <input type="range" id="qr-size" min="128" max="400" value="256" step="16"
-                         oninput="document.getElementById('size-val').textContent=this.value">
-                  <span class="size-max-lbl">400</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="color-row">
-              <div class="color-pick" onclick="document.getElementById('qr-fg').click()">
-                <div class="color-thumb">
-                  <div class="color-swatch-inner" id="fg-swatch" style="background:#000000;"></div>
-                  <input type="color" id="qr-fg" value="#000000" oninput="updateColor('fg')">
-                </div>
-                <span class="color-pick-label">QR rangi (old)</span>
-              </div>
-              <div class="color-pick" onclick="document.getElementById('qr-bg').click()">
-                <div class="color-thumb">
-                  <div class="color-swatch-inner" id="bg-swatch" style="background:#ffffff; border: 1px solid #e2e8ee;"></div>
-                  <input type="color" id="qr-bg" value="#ffffff" oninput="updateColor('bg')">
-                </div>
-                <span class="color-pick-label">Fon rangi</span>
-              </div>
-            </div>
-
-            <button class="gen-btn" onclick="generateQR()">
-              <i class="fa-solid fa-qrcode" style="font-size:15px;"></i>
-              QR Kod Yaratish
-            </button>
-          </div>
-        </div>
-
-        <div class="output-panel">
-          <div class="output-header">
-            <div class="output-header-title">QR Kod natijasi</div>
-            <span class="output-header-status" id="qr-status">Kutilmoqda</span>
-          </div>
-
-          <div class="qr-zone">
-            <div class="qr-frame" id="qr-frame">
-              <div class="qr-corner-dec tl"></div>
-              <div class="qr-corner-dec tr"></div>
-              <div class="qr-corner-dec bl"></div>
-              <div class="qr-corner-dec br"></div>
-              <div id="qr-display">
-                <div class="qr-placeholder-wrap">
-                  <svg class="qr-placeholder-svg" viewBox="0 0 100 100" fill="none">
-                    <rect x="5" y="5" width="35" height="35" rx="4" stroke="#aabbcc" stroke-width="4"/>
-                    <rect x="13" y="13" width="19" height="19" rx="2" fill="#aabbcc" opacity="0.3"/>
-                    <rect x="60" y="5" width="35" height="35" rx="4" stroke="#aabbcc" stroke-width="4"/>
-                    <rect x="68" y="13" width="19" height="19" rx="2" fill="#aabbcc" opacity="0.3"/>
-                    <rect x="5" y="60" width="35" height="35" rx="4" stroke="#aabbcc" stroke-width="4"/>
-                    <rect x="13" y="68" width="19" height="19" rx="2" fill="#aabbcc" opacity="0.3"/>
-                    <rect x="60" y="60" width="8" height="8" rx="1" fill="#aabbcc" opacity="0.5"/>
-                    <rect x="72" y="60" width="8" height="8" rx="1" fill="#aabbcc" opacity="0.5"/>
-                    <rect x="84" y="60" width="11" height="8" rx="1" fill="#aabbcc" opacity="0.5"/>
-                    <rect x="60" y="72" width="11" height="8" rx="1" fill="#aabbcc" opacity="0.5"/>
-                    <rect x="76" y="72" width="8" height="8" rx="1" fill="#aabbcc" opacity="0.5"/>
-                    <rect x="84" y="72" width="11" height="11" rx="1" fill="#aabbcc" opacity="0.5"/>
-                    <rect x="60" y="84" width="8" height="11" rx="1" fill="#aabbcc" opacity="0.5"/>
-                    <rect x="76" y="84" width="19" height="11" rx="1" fill="#aabbcc" opacity="0.5"/>
-                  </svg>
-                  <div class="qr-placeholder-text">QR yaratishni<br>boshlang</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="info-chips">
-              <div class="chip">
-                <div class="chip-val" id="chip-chars">—</div>
-                <div class="chip-lbl">Belgi</div>
-              </div>
-              <div class="chip">
-                <div class="chip-val" id="chip-size">—</div>
-                <div class="chip-lbl">O'lcham</div>
-              </div>
-              <div class="chip">
-                <div class="chip-val" id="chip-type">—</div>
-                <div class="chip-lbl">Turi</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="dl-area">
-            <div class="dl-row">
-              <button class="dl-btn primary" onclick="downloadQR('png')">
-                <i class="fa-solid fa-file-image" style="font-size:12px;"></i>
-                PNG yuklab olish
-              </button>
-              <button class="dl-btn" onclick="downloadQR('svg')">
-                <i class="fa-solid fa-bezier-curve" style="font-size:12px;"></i>
-                SVG yuklab olish
-              </button>
-            </div>
-            <button class="copy-btn" onclick="copyQRData()">
-              <i class="fa-regular fa-copy" style="font-size:12px;"></i>
-              Matnni nusxalash
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </main>
-</div>
-
-<div class="toast" id="toast">
-  <div class="toast-icon" id="toast-icon"></div>
-  <span id="toast-msg"></span>
-</div>
-
-<div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
-  <div class="modal-box" id="modal-box">
-    <button class="modal-close-x" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
-    <div class="modal-icon-wrap" id="modal-icon-wrap"><i id="modal-icon-fa"></i></div>
-    <div class="modal-title" id="modal-title"></div>
-    <div class="modal-body" id="modal-body"></div>
-    <div class="modal-actions" id="modal-actions"></div>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark"><i class="ph-bold ph-keyboard"></i></div>
+    <span data-i18n="appName">Word Combo</span>
   </div>
-</div>
+  <button class="burger-btn" id="burgerBtn" aria-label="Menu" aria-expanded="false">
+    <i class="ph-bold ph-list"></i>
+  </button>
+</header>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+<nav class="menu-panel" id="menuPanel" aria-label="Main menu">
+  <div class="menu-head">
+    <div class="brand"><div class="brand-mark"><i class="ph-bold ph-keyboard"></i></div><span data-i18n="appName">Word Combo</span></div>
+    <button class="menu-close" id="menuCloseBtn" aria-label="Close menu"><i class="ph-bold ph-x"></i></button>
+  </div>
+
+  <div class="menu-nav">
+    <button class="menu-link active" data-nav="home">
+      <svg class="menu-icon-svg" viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M218.83,103.77l-80-75.48a20,20,0,0,0-21.66,0l-80,75.48A20,20,0,0,0,32,118.43V208a20,20,0,0,0,20,20H100a12,12,0,0,0,12-12V165.33a16,16,0,0,1,32,0V216a12,12,0,0,0,12,12h48a20,20,0,0,0,20-20V118.43A20,20,0,0,0,218.83,103.77Z"></path></svg><span data-i18n="menuHome">Bosh sahifa</span>
+    </button>
+    <button class="menu-link" data-nav="quiz-intro">
+      <svg class="menu-icon-svg" viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a12,12,0,0,0,24,0v-4c0-6.62,7.4-12,16-12s16,5.38,16,12-7.4,12-16,12a12,12,0,0,0-12,12v8a12,12,0,0,0,24,0v-1.39c14.06-4.36,24-16.43,24-30.61C168,88.15,150.06,72,128,72Zm104,16A104,104,0,0,1,79.12,179.74L45.07,219.31l0,.06A16,16,0,0,1,16,210.67V208a8,8,0,0,1,.13-1.43L24.6,166A104,104,0,1,1,232,88Z"></path></svg><span data-i18n="menuQuiz">Savollar va javoblar</span>
+    </button>
+  </div>
+
+  <div class="menu-divider"></div>
+
+  <div class="lang-block">
+    <div class="lang-section-title" data-i18n="menuLang">Til</div>
+    <div class="lang-options" id="langOptions">
+      <button class="lang-btn" data-lang="uz">
+        <span class="lang-name"><span class="flag-dot"><svg viewBox="0 0 256 256" width="14" height="14" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm88,104a87.61,87.61,0,0,1-3.33,24H174.16a151.26,151.26,0,0,0,0-48h38.51A87.61,87.61,0,0,1,216,128ZM98.5,168h59a103.4,103.4,0,0,1-29.5,46A103.4,103.4,0,0,1,98.5,168Zm-3.66-16a135.31,135.31,0,0,1,0-48h66.32a135.31,135.31,0,0,1,0,48ZM40,128a87.61,87.61,0,0,1,3.33-24H81.84a151.26,151.26,0,0,0,0,48H43.33A87.61,87.61,0,0,1,40,128Zm88.5-104.34A103.4,103.4,0,0,1,158,70H99A103.4,103.4,0,0,1,128.5,23.66ZM98.5,88a103.4,103.4,0,0,1,29.5-46,103.4,103.4,0,0,1,29.5,46Zm77.66,40h38.51a87.42,87.42,0,0,1,0,0Z"></path></svg></span> O'zbekcha</span>
+        <i class="ph-bold ph-check-circle check-icon"></i>
+      </button>
+      <button class="lang-btn" data-lang="kz">
+        <span class="lang-name"><span class="flag-dot"><svg viewBox="0 0 256 256" width="14" height="14" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm88,104a87.61,87.61,0,0,1-3.33,24H174.16a151.26,151.26,0,0,0,0-48h38.51A87.61,87.61,0,0,1,216,128ZM98.5,168h59a103.4,103.4,0,0,1-29.5,46A103.4,103.4,0,0,1,98.5,168Zm-3.66-16a135.31,135.31,0,0,1,0-48h66.32a135.31,135.31,0,0,1,0,48ZM40,128a87.61,87.61,0,0,1,3.33-24H81.84a151.26,151.26,0,0,0,0,48H43.33A87.61,87.61,0,0,1,40,128Zm88.5-104.34A103.4,103.4,0,0,1,158,70H99A103.4,103.4,0,0,1,128.5,23.66ZM98.5,88a103.4,103.4,0,0,1,29.5-46,103.4,103.4,0,0,1,29.5,46Zm77.66,40h38.51a87.42,87.42,0,0,1,0,0Z"></path></svg></span> Қазақша</span>
+        <i class="ph-bold ph-check-circle check-icon"></i>
+      </button>
+      <button class="lang-btn active" data-lang="ru">
+        <span class="lang-name"><span class="flag-dot"><svg viewBox="0 0 256 256" width="14" height="14" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm88,104a87.61,87.61,0,0,1-3.33,24H174.16a151.26,151.26,0,0,0,0-48h38.51A87.61,87.61,0,0,1,216,128ZM98.5,168h59a103.4,103.4,0,0,1-29.5,46A103.4,103.4,0,0,1,98.5,168Zm-3.66-16a135.31,135.31,0,0,1,0-48h66.32a135.31,135.31,0,0,1,0,48ZM40,128a87.61,87.61,0,0,1,3.33-24H81.84a151.26,151.26,0,0,0,0,48H43.33A87.61,87.61,0,0,1,40,128Zm88.5-104.34A103.4,103.4,0,0,1,158,70H99A103.4,103.4,0,0,1,128.5,23.66ZM98.5,88a103.4,103.4,0,0,1,29.5-46,103.4,103.4,0,0,1,29.5,46Zm77.66,40h38.51a87.42,87.42,0,0,1,0,0Z"></path></svg></span> Русский</span>
+        <i class="ph-bold ph-check-circle check-icon"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-illustration" id="heroIllustrationSlot"></div>
+    <h1 data-i18n="heroTitle">Word kombinatsiyalarini\no'yin orqali yodlang</h1>
+    <p class="subtitle" data-i18n="heroSubtitle">...</p>
+    <div class="hero-stats">
+      <div class="stat-pill"><div class="num" data-i18n="heroStat1">41</div><div class="lbl" data-i18n="heroStat1Label">kombinatsiya</div></div>
+      <div class="stat-pill"><div class="num" data-i18n="heroStat2">5</div><div class="lbl" data-i18n="heroStat2Label">bo'lim</div></div>
+    </div>
+    <button class="btn-primary" id="heroStartBtn">
+      <span data-i18n="heroStartBtn">Testni boshlash</span>
+      <i class="ph-bold ph-arrow-right"></i>
+    </button>
+  </section>
+
+  <section class="sections-list">
+    <div class="sections-head">
+      <h2 data-i18n="sectionsTitle">Bo'limlar</h2>
+      <p data-i18n="sectionsSubtitle">...</p>
+    </div>
+    <div id="sectionCardsSlot"></div>
+  </section>
+</main>
+
+<main class="page" id="page-quiz-intro">
+  <div class="quiz-intro-illustration" id="quizIntroIllustrationSlot"></div>
+  <h2 style="font-family:var(--font-display);font-weight:800;font-size:1.3rem;text-align:center;margin-bottom:8px;" data-i18n="quizPageTitle">Savollar va javoblar</h2>
+  <p style="text-align:center;color:var(--ink-soft);font-size:0.9rem;line-height:1.5;" data-i18n="quizPageDesc">...</p>
+
+  <div class="quiz-rules">
+    <div class="quiz-rule"><i class="ph-bold ph-eye-slash"></i><span data-i18n="quizRule1">...</span></div>
+    <div class="quiz-rule"><i class="ph-bold ph-list-numbers"></i><span data-i18n="quizRule2">...</span></div>
+    <div class="quiz-rule"><i class="ph-bold ph-lightbulb"></i><span data-i18n="quizRule3">...</span></div>
+  </div>
+
+  <div class="quiz-start-wrap">
+    <button class="btn-primary" id="startQuizBtn">
+      <span data-i18n="startBtn">Bastau</span>
+      <i class="ph-bold ph-play"></i>
+    </button>
+  </div>
+</main>
+
+<main class="page" id="page-quiz-runner">
+  <div class="quiz-runner">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span><span data-i18n="progressLabel">Jarayon</span></span>
+        <span id="progressCounter">1 / 41</span>
+      </div>
+      <div class="progress-bar-track"><div class="progress-bar-fill" id="progressBarFill" style="width:2.5%"></div></div>
+    </div>
+
+    <div class="section-tag" id="sectionTag"><i class="ph-bold ph-tag"></i><span id="sectionTagText">—</span></div>
+
+    <div class="question-card">
+      <div class="combo-illustration" id="comboIllustrationSlot"></div>
+      <div class="question-text" id="questionText">—</div>
+      <div class="options-list" id="optionsList"></div>
+      <div class="feedback-banner" id="feedbackBanner">
+        <i class="ph-bold ph-info"></i><span id="feedbackText"></span>
+      </div>
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn-check" id="checkBtn" disabled>
+        <i class="ph-bold ph-check-circle"></i><span data-i18n="checkBtn">Tekshirish</span>
+      </button>
+      <button class="btn-continue" id="continueBtn" disabled>
+        <span data-i18n="nextBtn">Davom etish</span><i class="ph-bold ph-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</main>
+
+<main class="page" id="page-result">
+  <div class="result-wrap">
+    <div class="result-illustration" id="resultIllustrationSlot"></div>
+    <h2 data-i18n="resultTitle">Test yakunlandi!</h2>
+    <p class="desc" data-i18n="resultDesc">...</p>
+    <div class="result-stats">
+      <div class="result-stat correct"><div class="icon"><i class="ph-bold ph-check-circle"></i></div><div class="num" id="resultCorrectNum">0</div><div class="lbl" data-i18n="correctCount">To'g'ri</div></div>
+      <div class="result-stat wrong"><div class="icon"><i class="ph-bold ph-x-circle"></i></div><div class="num" id="resultWrongNum">0</div><div class="lbl" data-i18n="wrongCount">Xato</div></div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-primary" id="restartBtn"><i class="ph-bold ph-arrow-counter-clockwise"></i><span data-i18n="restartBtn">Qaytadan boshlash</span></button>
+      <button class="btn-secondary" id="backHomeBtn"><i class="ph-bold ph-house"></i><span data-i18n="backHomeBtn">Bosh sahifaga</span></button>
+    </div>
+  </div>
+</main>
 
 <script>
-let currentTab = 'link';
-let currentQRData = '';
-let currentImageData = null;
-let miniSelectValues = { 'wifi-enc-select': 'WPA' };
-let currentErrLevel = 'M';
 
-function goPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  document.getElementById('nav-' + name).classList.add('active');
-}
+const QUIZ_DATA = {
 
-function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-  document.getElementById('theme-label').textContent = isDark ? 'Tungi rejim' : 'Kunduzgi rejim';
-}
-
-function toggleErrDropdown() {
-  const btn = document.getElementById('err-level-btn');
-  const dd  = document.getElementById('err-level-dropdown');
-  const isOpen = dd.classList.contains('open');
-  closeAllDropdowns();
-  if (!isOpen) {
-    btn.classList.add('open');
-    dd.classList.add('open');
-  }
-}
-
-function selectErrLevel(el) {
-  document.querySelectorAll('#err-level-dropdown .custom-select-option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  currentErrLevel = el.dataset.value;
-  document.getElementById('err-level-text').textContent = el.querySelector('.opt-name').textContent;
-  closeAllDropdowns();
-}
-
-function toggleContentTypeDropdown() {
-  const btn = document.getElementById('content-type-btn');
-  const dd  = document.getElementById('content-type-dropdown');
-  const isOpen = dd.classList.contains('open');
-  closeAllDropdowns();
-  if (!isOpen) {
-    btn.classList.add('open');
-    dd.classList.add('open');
-  }
-}
-
-function selectContentType(el) {
-  const val = el.dataset.value;
-  document.querySelectorAll('#content-type-dropdown .custom-select-option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-
-  const iconMap = {
-    link:    '<i class="fa-solid fa-link"></i>',
-    text:    '<i class="fa-solid fa-align-left"></i>',
-    image:   '<i class="fa-solid fa-image"></i>',
-    wifi:    '<i class="fa-solid fa-wifi"></i>',
-    contact: '<i class="fa-solid fa-address-card"></i>'
-  };
-  const nameMap = {
-    link: 'Havola', text: 'Matn', image: 'Rasm', wifi: 'WiFi', contact: 'Kontakt'
-  };
-
-  document.getElementById('sel-icon-display').innerHTML = iconMap[val];
-  document.getElementById('sel-text-display').textContent = nameMap[val];
-
-  closeAllDropdowns();
-  switchTab(val);
-}
-
-function switchTab(tab) {
-  document.querySelectorAll('.input-sec').forEach(s => s.classList.remove('active'));
-  document.getElementById('sec-' + tab).classList.add('active');
-  currentTab = tab;
-}
-
-function toggleMiniSelect(selectId) {
-  const wrap = document.getElementById(selectId);
-  const btn  = wrap.querySelector('.mini-select-btn');
-  const dd   = wrap.querySelector('.mini-select-dropdown');
-  const isOpen = dd.classList.contains('open');
-  closeAllDropdowns();
-  if (!isOpen) {
-    btn.classList.add('open');
-    dd.classList.add('open');
-  }
-}
-
-function selectMiniOption(selectId, el) {
-  const wrap = document.getElementById(selectId);
-  wrap.querySelectorAll('.mini-select-option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  miniSelectValues[selectId] = el.dataset.value;
-
-  const idMap = { 'wifi-enc-select': 'wifi-enc-text' };
-  if (idMap[selectId]) {
-    document.getElementById(idMap[selectId]).textContent = el.childNodes[0].textContent.trim();
-  }
-
-  closeAllDropdowns();
-}
-
-function closeAllDropdowns() {
-  document.querySelectorAll('.custom-select-btn.open').forEach(b => b.classList.remove('open'));
-  document.querySelectorAll('.custom-select-dropdown.open').forEach(d => d.classList.remove('open'));
-  document.querySelectorAll('.mini-select-btn.open').forEach(b => b.classList.remove('open'));
-  document.querySelectorAll('.mini-select-dropdown.open').forEach(d => d.classList.remove('open'));
-}
-
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.type-selector-pos') && !e.target.closest('.mini-custom-select')) {
-    closeAllDropdowns();
-  }
-});
-
-function updateColor(which) {
-  const val = document.getElementById('qr-' + which).value;
-  document.getElementById(which + '-swatch').style.background = val;
-}
-
-function handleFileUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const img = document.getElementById('preview-img');
-    img.src = ev.target.result;
-    img.style.display = 'block';
-    document.getElementById('input-image-url').value = 'data:image embedded';
-    currentImageData = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-const dz = document.getElementById('dropzone');
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
-dz.addEventListener('drop', e => {
-  e.preventDefault();
-  dz.classList.remove('drag');
-  const file = e.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) {
-    const input = document.getElementById('file-input');
-    const dt = new DataTransfer();
-    dt.items.add(file);
-    input.files = dt.files;
-    handleFileUpload({ target: input });
-  }
-});
-
-function getQRContent() {
-  switch (currentTab) {
-    case 'link':   return document.getElementById('input-link').value.trim() || 'https://example.com';
-    case 'text':   return document.getElementById('input-text').value.trim() || 'Salom Dunyo!';
-    case 'image':
-      if (currentImageData) return currentImageData;
-      return document.getElementById('input-image-url').value.trim() || 'https://example.com/image.jpg';
-    case 'wifi': {
-      const ssid = document.getElementById('wifi-ssid').value.trim();
-      const pass = document.getElementById('wifi-pass').value.trim();
-      const enc  = miniSelectValues['wifi-enc-select'];
-      return `WIFI:T:${enc};S:${ssid};P:${pass};;`;
+  
+  section1: [
+    {
+      combo: "Ctrl + N",
+      q: {
+        uz: "Ctrl + N kombinatsiyasi nima ishlaydi?",
+        kz: "Ctrl + N комбинациясы не істейді?",
+        ru: "Что делает комбинация Ctrl + N?"
+      },
+      options: {
+        uz: ["Yangi bo'sh hujjat ochadi", "Hujjatni saqlaydi", "Hujjatni yopadi"],
+        kz: "Жаңа бос құжат ашады|Құжатты сақтайды|Құжатты жабады".split("|"),
+        ru: ["Открывает новый пустой документ", "Сохраняет документ", "Закрывает документ"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + O",
+      q: {
+        uz: "Mavjud hujjatni ochish uchun qaysi tugmalar bosiladi?",
+        kz: "Бар құжатты ашу үшін қандай пернелер басылады?",
+        ru: "Какие клавиши нажимаются для открытия существующего документа?"
+      },
+      options: {
+        uz: ["Ctrl + O", "Ctrl + N", "Ctrl + S"],
+        kz: ["Ctrl + O", "Ctrl + N", "Ctrl + S"],
+        ru: ["Ctrl + O", "Ctrl + N", "Ctrl + S"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + S",
+      q: {
+        uz: "Joriy hujjatni saqlash uchun qaysi kombinatsiya kerak?",
+        kz: "Ағымдағы құжатты сақтау үшін қандай комбинация керек?",
+        ru: "Какая комбинация нужна для сохранения текущего документа?"
+      },
+      options: {
+        uz: ["Ctrl + S", "Ctrl + P", "F12"],
+        kz: ["Ctrl + S", "Ctrl + P", "F12"],
+        ru: ["Ctrl + S", "Ctrl + P", "F12"]
+      },
+      correct: 0
+    },
+    {
+      combo: "F12",
+      q: {
+        uz: "Hujjatni \"Boshqa nom bilan saqlash\" oynasini qaysi tugma ochadi?",
+        kz: "Құжатты «Басқа атаумен сақтау» терезесін қай перне ашады?",
+        ru: "Какая клавиша открывает окно «Сохранить как»?"
+      },
+      options: {
+        uz: ["F12", "Ctrl + S", "Ctrl + O"],
+        kz: ["F12", "Ctrl + S", "Ctrl + O"],
+        ru: ["F12", "Ctrl + S", "Ctrl + O"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + W / Alt + F4",
+      q: {
+        uz: "Hujjatni yopish uchun qaysi kombinatsiyalar ishlatiladi?",
+        kz: "Құжатты жабу үшін қандай комбинациялар қолданылады?",
+        ru: "Какие комбинации используются для закрытия документа?"
+      },
+      options: {
+        uz: ["Ctrl + W yoki Alt + F4", "Ctrl + Z", "Ctrl + Y"],
+        kz: ["Ctrl + W немесе Alt + F4", "Ctrl + Z", "Ctrl + Y"],
+        ru: ["Ctrl + W или Alt + F4", "Ctrl + Z", "Ctrl + Y"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + Z",
+      q: {
+        uz: "Oxirgi amalni bekor qilish (orqaga) uchun qaysi tugma?",
+        kz: "Соңғы әрекетті болдырмау (артқа) үшін қай перне?",
+        ru: "Какая клавиша отменяет последнее действие (назад)?"
+      },
+      options: {
+        uz: ["Ctrl + Z", "Ctrl + Y", "Ctrl + X"],
+        kz: ["Ctrl + Z", "Ctrl + Y", "Ctrl + X"],
+        ru: ["Ctrl + Z", "Ctrl + Y", "Ctrl + X"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + Y",
+      q: {
+        uz: "Bekor qilingan amalni qaytadan bajarish (oldinga) qaysi kombinatsiya bilan amalga oshadi?",
+        kz: "Болдырылмаған әрекетті қайта орындау (алға) қандай комбинациямен жүзеге асады?",
+        ru: "Какой комбинацией повторяется отменённое действие (вперёд)?"
+      },
+      options: {
+        uz: ["Ctrl + Y", "Ctrl + Z", "Ctrl + V"],
+        kz: ["Ctrl + Y", "Ctrl + Z", "Ctrl + V"],
+        ru: ["Ctrl + Y", "Ctrl + Z", "Ctrl + V"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + P",
+      q: {
+        uz: "Hujjatni chop etish (bosib chiqarish) oynasini qaysi tugmalar ochadi?",
+        kz: "Құжатты басып шығару терезесін қандай пернелер ашады?",
+        ru: "Какие клавиши открывают окно печати документа?"
+      },
+      options: {
+        uz: ["Ctrl + P", "Ctrl + F", "Ctrl + H"],
+        kz: ["Ctrl + P", "Ctrl + F", "Ctrl + H"],
+        ru: ["Ctrl + P", "Ctrl + F", "Ctrl + H"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + F",
+      q: {
+        uz: "Matn ichidan qidirish oynasini ochish uchun qaysi kombinatsiya kerak?",
+        kz: "Мәтін ішінен іздеу терезесін ашу үшін қандай комбинация керек?",
+        ru: "Какая комбинация открывает окно поиска текста?"
+      },
+      options: {
+        uz: ["Ctrl + F", "Ctrl + H", "Ctrl + G"],
+        kz: ["Ctrl + F", "Ctrl + H", "Ctrl + G"],
+        ru: ["Ctrl + F", "Ctrl + H", "Ctrl + G"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + H",
+      q: {
+        uz: "Matnni qidirish va almashtirish (\"Zamenit\") oynasi qaysi tugmalar bilan ochiladi?",
+        kz: "Мәтінді іздеу және ауыстыру терезесі қандай пернелермен ашылады?",
+        ru: "Какими клавишами открывается окно поиска и замены текста?"
+      },
+      options: {
+        uz: ["Ctrl + H", "Ctrl + F", "Ctrl + R"],
+        kz: ["Ctrl + H", "Ctrl + F", "Ctrl + R"],
+        ru: ["Ctrl + H", "Ctrl + F", "Ctrl + R"]
+      },
+      correct: 0
     }
-    case 'contact': {
-      const name  = document.getElementById('ct-name').value.trim();
-      const phone = document.getElementById('ct-phone').value.trim();
-      const email = document.getElementById('ct-email').value.trim();
-      const org   = document.getElementById('ct-org').value.trim();
-      return `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}\nORG:${org}\nEND:VCARD`;
+  ],
+
+  
+  section2: [
+    {
+      combo: "Ctrl + A",
+      q: {
+        uz: "Hujjatdagi barcha matnni belgilash uchun qaysi kombinatsiya ishlatiladi?",
+        kz: "Құжаттағы барлық мәтінді белгілеу үшін қандай комбинация қолданылады?",
+        ru: "Какая комбинация используется для выделения всего текста документа?"
+      },
+      options: {
+        uz: ["Ctrl + A", "Ctrl + S", "Ctrl + C"],
+        kz: ["Ctrl + A", "Ctrl + S", "Ctrl + C"],
+        ru: ["Ctrl + A", "Ctrl + S", "Ctrl + C"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Shift + → / ←",
+      q: {
+        uz: "Kursordan o'ngga/chapga bir belgini belgilash uchun nima bosiladi?",
+        kz: "Меңзерден оңға/солға бір таңбаны белгілеу үшін не басылады?",
+        ru: "Что нажимается для выделения одного символа влево/вправо от курсора?"
+      },
+      options: {
+        uz: ["Shift + → / ←", "Ctrl + → / ←", "Alt + → / ←"],
+        kz: ["Shift + → / ←", "Ctrl + → / ←", "Alt + → / ←"],
+        ru: ["Shift + → / ←", "Ctrl + → / ←", "Alt + → / ←"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Shift + ↑ / ↓",
+      q: {
+        uz: "Matnni bir qator yuqori/pastga belgilash uchun qaysi kombinatsiya?",
+        kz: "Мәтінді бір жол жоғары/төмен белгілеу үшін қандай комбинация?",
+        ru: "Какая комбинация выделяет текст на одну строку выше/ниже?"
+      },
+      options: {
+        uz: ["Shift + ↑ / ↓", "Ctrl + ↑ / ↓", "Shift + Home"],
+        kz: ["Shift + ↑ / ↓", "Ctrl + ↑ / ↓", "Shift + Home"],
+        ru: ["Shift + ↑ / ↓", "Ctrl + ↑ / ↓", "Shift + Home"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + Shift + → / ←",
+      q: {
+        uz: "Bitta so'zni o'ngga/chapga belgilash uchun qaysi tugmalar bosiladi?",
+        kz: "Бір сөзді оңға/солға белгілеу үшін қандай пернелер басылады?",
+        ru: "Какие клавиши нажимаются для выделения одного слова влево/вправо?"
+      },
+      options: {
+        uz: ["Ctrl + Shift + → / ←", "Shift + → / ←", "Ctrl + → / ←"],
+        kz: ["Ctrl + Shift + → / ←", "Shift + → / ←", "Ctrl + → / ←"],
+        ru: ["Ctrl + Shift + → / ←", "Shift + → / ←", "Ctrl + → / ←"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Shift + Home",
+      q: {
+        uz: "Kursor turgan joydan qator boshigacha belgilash uchun nima ishlatiladi?",
+        kz: "Меңзер тұрған жерден жолдың басына дейін белгілеу үшін не қолданылады?",
+        ru: "Что используется для выделения от курсора до начала строки?"
+      },
+      options: {
+        uz: ["Shift + Home", "Shift + End", "Ctrl + Home"],
+        kz: ["Shift + Home", "Shift + End", "Ctrl + Home"],
+        ru: ["Shift + Home", "Shift + End", "Ctrl + Home"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Shift + End",
+      q: {
+        uz: "Kursor turgan joydan qator oxirigacha belgilash uchun qaysi kombinatsiya?",
+        kz: "Меңзер тұрған жерден жолдың соңына дейін белгілеу үшін қандай комбинация?",
+        ru: "Какая комбинация выделяет от курсора до конца строки?"
+      },
+      options: {
+        uz: ["Shift + End", "Shift + Home", "Ctrl + End"],
+        kz: ["Shift + End", "Shift + Home", "Ctrl + End"],
+        ru: ["Shift + End", "Shift + Home", "Ctrl + End"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + Shift + Home",
+      q: {
+        uz: "Kursordan hujjatning eng boshigacha belgilash uchun qaysi kombinatsiya kerak?",
+        kz: "Меңзерден құжаттың ең басына дейін белгілеу үшін қандай комбинация керек?",
+        ru: "Какая комбинация выделяет от курсора до самого начала документа?"
+      },
+      options: {
+        uz: ["Ctrl + Shift + Home", "Ctrl + Shift + End", "Ctrl + Home"],
+        kz: ["Ctrl + Shift + Home", "Ctrl + Shift + End", "Ctrl + Home"],
+        ru: ["Ctrl + Shift + Home", "Ctrl + Shift + End", "Ctrl + Home"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + Shift + End",
+      q: {
+        uz: "Kursordan hujjatning eng oxirigacha belgilash uchun qaysi tugmalar bosiladi?",
+        kz: "Меңзерден құжаттың ең соңына дейін белгілеу үшін қандай пернелер басылады?",
+        ru: "Какие клавиши выделяют от курсора до самого конца документа?"
+      },
+      options: {
+        uz: ["Ctrl + Shift + End", "Ctrl + Shift + Home", "Ctrl + End"],
+        kz: ["Ctrl + Shift + End", "Ctrl + Shift + Home", "Ctrl + End"],
+        ru: ["Ctrl + Shift + End", "Ctrl + Shift + Home", "Ctrl + End"]
+      },
+      correct: 0
     }
-    default: return 'https://example.com';
+  ],
+
+  
+  section3: [
+    {
+      combo: "Ctrl + C",
+      q: {
+        uz: "Belgilangan matnni nusxalash (copy) uchun qaysi kombinatsiya?",
+        kz: "Белгіленген мәтінді көшіру үшін қандай комбинация?",
+        ru: "Какая комбинация копирует выделенный текст?"
+      },
+      options: {
+        uz: ["Ctrl + C", "Ctrl + X", "Ctrl + V"],
+        kz: ["Ctrl + C", "Ctrl + X", "Ctrl + V"],
+        ru: ["Ctrl + C", "Ctrl + X", "Ctrl + V"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + X",
+      q: {
+        uz: "Belgilangan matnni kesib olish (qirqib olish) uchun nima bosiladi?",
+        kz: "Белгіленген мәтінді қиып алу үшін не басылады?",
+        ru: "Что нажимается для вырезания выделенного текста?"
+      },
+      options: {
+        uz: ["Ctrl + X", "Ctrl + C", "Ctrl + Z"],
+        kz: ["Ctrl + X", "Ctrl + C", "Ctrl + Z"],
+        ru: ["Ctrl + X", "Ctrl + C", "Ctrl + Z"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + V",
+      q: {
+        uz: "Nusxalangan matnni joylashtirish (paste) uchun qaysi kombinatsiya kerak?",
+        kz: "Көшірілген мәтінді кірістіру үшін қандай комбинация керек?",
+        ru: "Какая комбинация нужна для вставки скопированного текста?"
+      },
+      options: {
+        uz: ["Ctrl + V", "Ctrl + C", "Ctrl + X"],
+        kz: ["Ctrl + V", "Ctrl + C", "Ctrl + X"],
+        ru: ["Ctrl + V", "Ctrl + C", "Ctrl + X"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + B",
+      q: {
+        uz: "Matnni qalin (Bold) qilish uchun qaysi tugmalar bosiladi?",
+        kz: "Мәтінді қою (Bold) қылу үшін қандай пернелер басылады?",
+        ru: "Какие клавиши делают текст полужирным (Bold)?"
+      },
+      options: {
+        uz: ["Ctrl + B", "Ctrl + I", "Ctrl + U"],
+        kz: ["Ctrl + B", "Ctrl + I", "Ctrl + U"],
+        ru: ["Ctrl + B", "Ctrl + I", "Ctrl + U"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + I",
+      q: {
+        uz: "Matnni kursiv (qiyshiq) qilish uchun qaysi kombinatsiya ishlatiladi?",
+        kz: "Мәтінді курсив (қиғаш) қылу үшін қандай комбинация қолданылады?",
+        ru: "Какая комбинация делает текст курсивом?"
+      },
+      options: {
+        uz: ["Ctrl + I", "Ctrl + B", "Ctrl + U"],
+        kz: ["Ctrl + I", "Ctrl + B", "Ctrl + U"],
+        ru: ["Ctrl + I", "Ctrl + B", "Ctrl + U"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + U",
+      q: {
+        uz: "Matnning tagiga chizish (Underline) uchun qaysi tugma?",
+        kz: "Мәтіннің астын сызу (Underline) үшін қай перне?",
+        ru: "Какая клавиша подчёркивает текст (Underline)?"
+      },
+      options: {
+        uz: ["Ctrl + U", "Ctrl + I", "Ctrl + B"],
+        kz: ["Ctrl + U", "Ctrl + I", "Ctrl + B"],
+        ru: ["Ctrl + U", "Ctrl + I", "Ctrl + B"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + [ ]",
+      q: {
+        uz: "Shrift o'lchamini 1 punktga kichraytirish/kattalashtirish uchun qaysi kombinatsiya?",
+        kz: "Қаріп өлшемін 1 пунктке кішірейту/үлкейту үшін қандай комбинация?",
+        ru: "Какая комбинация уменьшает/увеличивает размер шрифта на 1 пункт?"
+      },
+      options: {
+        uz: ["Ctrl + [ yoki ]", "Ctrl + Shift + > yoki <", "Ctrl + - yoki +"],
+        kz: ["Ctrl + [ немесе ]", "Ctrl + Shift + > немесе <", "Ctrl + - немесе +"],
+        ru: ["Ctrl + [ или ]", "Ctrl + Shift + > или <", "Ctrl + - или +"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + Shift + C",
+      q: {
+        uz: "Matn formatini (uslubini) nusxalash uchun qaysi kombinatsiya kerak?",
+        kz: "Мәтіннің пішімін (форматын) көшіру үшін қандай комбинация керек?",
+        ru: "Какая комбинация копирует формат текста?"
+      },
+      options: {
+        uz: ["Ctrl + Shift + C", "Ctrl + Shift + V", "Ctrl + C"],
+        kz: ["Ctrl + Shift + C", "Ctrl + Shift + V", "Ctrl + C"],
+        ru: ["Ctrl + Shift + C", "Ctrl + Shift + V", "Ctrl + C"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + Shift + V",
+      q: {
+        uz: "Nusxalangan formatni boshqa matnga qo'llash uchun nima bosiladi?",
+        kz: "Көшірілген пішімді басқа мәтінге қолдану үшін не басылады?",
+        ru: "Что нажимается, чтобы применить скопированный формат к другому тексту?"
+      },
+      options: {
+        uz: ["Ctrl + Shift + V", "Ctrl + Shift + C", "Ctrl + V"],
+        kz: ["Ctrl + Shift + V", "Ctrl + Shift + C", "Ctrl + V"],
+        ru: ["Ctrl + Shift + V", "Ctrl + Shift + C", "Ctrl + V"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + Space",
+      q: {
+        uz: "Belgilangan matnning formatini tozalash (standart holatga qaytarish) uchun qaysi tugma?",
+        kz: "Белгіленген мәтіннің форматын тазалау (әдепкі күйге келтіру) үшін қай перне?",
+        ru: "Какая клавиша очищает формат выделенного текста (возврат к стандарту)?"
+      },
+      options: {
+        uz: ["Ctrl + Space (bo'sh joy)", "Ctrl + Shift + C", "Ctrl + Z"],
+        kz: ["Ctrl + Space (бос орын)", "Ctrl + Shift + C", "Ctrl + Z"],
+        ru: ["Ctrl + Space (пробел)", "Ctrl + Shift + C", "Ctrl + Z"]
+      },
+      correct: 0
+    }
+  ],
+
+  
+  section4: [
+    {
+      combo: "Ctrl + L",
+      q: {
+        uz: "Matnni chap chetga tekislash uchun qaysi kombinatsiya?",
+        kz: "Мәтінді сол жақ шеті бойынша тегістеу үшін қандай комбинация?",
+        ru: "Какая комбинация выравнивает текст по левому краю?"
+      },
+      options: {
+        uz: ["Ctrl + L", "Ctrl + R", "Ctrl + E"],
+        kz: ["Ctrl + L", "Ctrl + R", "Ctrl + E"],
+        ru: ["Ctrl + L", "Ctrl + R", "Ctrl + E"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + E",
+      q: {
+        uz: "Matnni markazga (o'rtaga) tekislash uchun qaysi tugmalar bosiladi?",
+        kz: "Мәтінді ортаға тегістеу үшін қандай пернелер басылады?",
+        ru: "Какие клавиши выравнивают текст по центру?"
+      },
+      options: {
+        uz: ["Ctrl + E", "Ctrl + L", "Ctrl + J"],
+        kz: ["Ctrl + E", "Ctrl + L", "Ctrl + J"],
+        ru: ["Ctrl + E", "Ctrl + L", "Ctrl + J"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + R",
+      q: {
+        uz: "Matnni o'ng chetga tekislash uchun qaysi kombinatsiya ishlatiladi?",
+        kz: "Мәтінді оң жақ шеті бойынша тегістеу үшін қандай комбинация қолданылады?",
+        ru: "Какая комбинация выравнивает текст по правому краю?"
+      },
+      options: {
+        uz: ["Ctrl + R", "Ctrl + L", "Ctrl + E"],
+        kz: ["Ctrl + R", "Ctrl + L", "Ctrl + E"],
+        ru: ["Ctrl + R", "Ctrl + L", "Ctrl + E"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + J",
+      q: {
+        uz: "Matnni eni bo'yicha (\"По ширине\") tekislash uchun qaysi tugma?",
+        kz: "Мәтінді ені бойынша (По ширине) тегістеу үшін қай перне?",
+        ru: "Какая клавиша выравнивает текст по ширине?"
+      },
+      options: {
+        uz: ["Ctrl + J", "Ctrl + E", "Ctrl + R"],
+        kz: ["Ctrl + J", "Ctrl + E", "Ctrl + R"],
+        ru: ["Ctrl + J", "Ctrl + E", "Ctrl + R"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + 1",
+      q: {
+        uz: "Qatorlar orasiga bitta interval qo'yish uchun qaysi kombinatsiya kerak?",
+        kz: "Жолдар арасына бір еселік интервал қою үшін қандай комбинация керек?",
+        ru: "Какая комбинация устанавливает одинарный межстрочный интервал?"
+      },
+      options: {
+        uz: ["Ctrl + 1", "Ctrl + 2", "Ctrl + 5"],
+        kz: ["Ctrl + 1", "Ctrl + 2", "Ctrl + 5"],
+        ru: ["Ctrl + 1", "Ctrl + 2", "Ctrl + 5"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + 2",
+      q: {
+        uz: "Qatorlar orasiga ikkilangan (qo'sh) interval qo'yish uchun nima bosiladi?",
+        kz: "Жолдар арасына екі еселік интервал қою үшін не басылады?",
+        ru: "Что нажимается для установки двойного межстрочного интервала?"
+      },
+      options: {
+        uz: ["Ctrl + 2", "Ctrl + 1", "Ctrl + 5"],
+        kz: ["Ctrl + 2", "Ctrl + 1", "Ctrl + 5"],
+        ru: ["Ctrl + 2", "Ctrl + 1", "Ctrl + 5"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + 5",
+      q: {
+        uz: "Qatorlar orasiga 1.5 eselik interval qo'yish uchun qaysi kombinatsiya?",
+        kz: "Жолдар арасына 1.5 еселік интервал қою үшін қандай комбинация?",
+        ru: "Какая комбинация устанавливает межстрочный интервал 1.5?"
+      },
+      options: {
+        uz: ["Ctrl + 5", "Ctrl + 1", "Ctrl + 2"],
+        kz: ["Ctrl + 5", "Ctrl + 1", "Ctrl + 2"],
+        ru: ["Ctrl + 5", "Ctrl + 1", "Ctrl + 2"]
+      },
+      correct: 0
+    }
+  ],
+
+  
+  section5: [
+    {
+      combo: "Ctrl + → / ←",
+      q: {
+        uz: "Kursorni bitta so'zga o'ngga/chapga siljitish uchun qaysi tugmalar?",
+        kz: "Меңзерді бір сөзге оңға/солға жылжыту үшін қандай пернелер?",
+        ru: "Какие клавиши перемещают курсор на одно слово вправо/влево?"
+      },
+      options: {
+        uz: ["Ctrl + → / ←", "Shift + → / ←", "Alt + → / ←"],
+        kz: ["Ctrl + → / ←", "Shift + → / ←", "Alt + → / ←"],
+        ru: ["Ctrl + → / ←", "Shift + → / ←", "Alt + → / ←"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + ↑ / ↓",
+      q: {
+        uz: "Kursorni bitta abzasga yuqori/pastga siljitish uchun qaysi kombinatsiya kerak?",
+        kz: "Меңзерді бір абзацқа жоғары/төмен жылжыту үшін қандай комбинация керек?",
+        ru: "Какая комбинация перемещает курсор на один абзац выше/ниже?"
+      },
+      options: {
+        uz: ["Ctrl + ↑ / ↓", "Shift + ↑ / ↓", "Ctrl + Home"],
+        kz: ["Ctrl + ↑ / ↓", "Shift + ↑ / ↓", "Ctrl + Home"],
+        ru: ["Ctrl + ↑ / ↓", "Shift + ↑ / ↓", "Ctrl + Home"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Home",
+      q: {
+        uz: "Kursorni qator boshiga olib borish uchun qaysi tugma bosiladi?",
+        kz: "Меңзерді жолдың басына апару үшін қай перне басылады?",
+        ru: "Какая клавиша перемещает курсор в начало строки?"
+      },
+      options: {
+        uz: ["Home", "End", "Ctrl + Home"],
+        kz: ["Home", "End", "Ctrl + Home"],
+        ru: ["Home", "End", "Ctrl + Home"]
+      },
+      correct: 0
+    },
+    {
+      combo: "End",
+      q: {
+        uz: "Kursorni qator oxiriga olib borish uchun qaysi tugma ishlatiladi?",
+        kz: "Меңзерді жолдың соңына апару үшін қай перне қолданылады?",
+        ru: "Какая клавиша перемещает курсор в конец строки?"
+      },
+      options: {
+        uz: ["End", "Home", "Ctrl + End"],
+        kz: ["End", "Home", "Ctrl + End"],
+        ru: ["End", "Home", "Ctrl + End"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + Home",
+      q: {
+        uz: "Hujjatning eng boshiga o'tish uchun qaysi kombinatsiya kerak?",
+        kz: "Құжаттың ең басына өту үшін қандай комбинация керек?",
+        ru: "Какая комбинация перемещает в самое начало документа?"
+      },
+      options: {
+        uz: ["Ctrl + Home", "Home", "Ctrl + End"],
+        kz: ["Ctrl + Home", "Home", "Ctrl + End"],
+        ru: ["Ctrl + Home", "Home", "Ctrl + End"]
+      },
+      correct: 0
+    },
+    {
+      combo: "Ctrl + End",
+      q: {
+        uz: "Hujjatning eng oxiriga o'tish uchun qaysi tugmalar bosiladi?",
+        kz: "Құжаттың ең соңына өту үшін қандай пернелер басылады?",
+        ru: "Какие клавиши перемещают в самый конец документа?"
+      },
+      options: {
+        uz: ["Ctrl + End", "End", "Ctrl + Home"],
+        kz: ["Ctrl + End", "End", "Ctrl + Home"],
+        ru: ["Ctrl + End", "End", "Ctrl + Home"]
+      },
+      correct: 0
+    }
+  ]
+};
+
+const SECTION_META = {
+  section1: { uz: "Hujjatni boshqarish", kz: "Құжатты басқару", ru: "Управление документом" },
+  section2: { uz: "Matnni belgilash",   kz: "Мәтінді белгілеу",  ru: "Выделение текста" },
+  section3: { uz: "Tahrirlash va format", kz: "Өңдеу және пішімдеу", ru: "Редактирование и форматирование" },
+  section4: { uz: "Tekislash va интервал", kz: "Тегістеу және аралық", ru: "Выравнивание и интервалы" },
+  section5: { uz: "Hujjat bo'ylab harakat", kz: "Құжат ішінде қозғалу", ru: "Навигация по документу" }
+};
+
+const I18N = {
+  uz: {
+    appName: "Word Combo",
+    tagline: "Klaviatura kombinatsiyalarini o'rganish",
+    menuHome: "Bosh sahifa",
+    menuQuiz: "Savollar va javoblar",
+    menuLang: "Til",
+    heroTitle: "Word kombinatsiyalarini\no'yin orqali yodlang",
+    heroSubtitle: "41 ta muhim klaviatura kombinatsiyasini sinab ko'ring, xato qiling, to'g'rilang va eslab qoling — barchasi telefoningizda.",
+    heroStat1: "41",
+    heroStat1Label: "kombinatsiya",
+    heroStat2: "5",
+    heroStat2Label: "bo'lim",
+    heroStartBtn: "Testni boshlash",
+    sectionsTitle: "Bo'limlar",
+    sectionsSubtitle: "Har bir bo'lim alohida mavzuga bag'ishlangan",
+    sec1Name: "Hujjatni boshqarish",
+    sec2Name: "Matnni belgilash",
+    sec3Name: "Tahrirlash va format",
+    sec4Name: "Tekislash va interval",
+    sec5Name: "Harakatlanish",
+    secCount: "ta kombinatsiya",
+    quizPageTitle: "Savollar va javoblar",
+    quizPageDesc: "41 savoldan iborat test orqali barcha kombinatsiyalarni mustahkamlang. Har bir savolda 3 variant bo'ladi, faqat bittasi to'g'ri.",
+    quizRule1: "Javobni ko'rsatmaydi — faqat tanlab, tekshirgandan keyin bilasiz",
+    quizRule2: "41 savol, 5 mavzuli bo'lim bo'yicha tartiblangan",
+    quizRule3: "Har bir javobdan keyin tushuntirish ko'rsatiladi",
+    startBtn: "Bastau",
+    questionLabel: "Savol",
+    ofLabel: "/",
+    checkBtn: "Tekshirish",
+    nextBtn: "Davom etish",
+    finishBtn: "Yakunlash",
+    correctMsg: "To'g'ri!",
+    wrongMsg: "Noto'g'ri!",
+    correctAnswerIs: "To'g'ri javob:",
+    resultTitle: "Test yakunlandi!",
+    resultDesc: "Siz barcha 41 savolni yakunladingiz.",
+    correctCount: "To'g'ri javoblar",
+    wrongCount: "Xato javoblar",
+    restartBtn: "Qaytadan boshlash",
+    backHomeBtn: "Bosh sahifaga",
+    closeBtn: "Yopish",
+    selectOption: "Davom etish uchun variant tanlang",
+    progressLabel: "Jarayon"
+  },
+  kz: {
+    appName: "Word Combo",
+    tagline: "Пернетақта комбинацияларын үйрену",
+    menuHome: "Басты бет",
+    menuQuiz: "Сұрақтар және Жауаптар",
+    menuLang: "Тіл",
+    heroTitle: "Word комбинацияларын\nойын арқылы жаттаңыз",
+    heroSubtitle: "41 маңызды пернетақта комбинациясын сынап көріңіз, қателесіңіз, түзетіңіз және есте сақтаңыз — бәрі телефоныңызда.",
+    heroStat1: "41",
+    heroStat1Label: "комбинация",
+    heroStat2: "5",
+    heroStat2Label: "бөлім",
+    heroStartBtn: "Тестті бастау",
+    sectionsTitle: "Бөлімдер",
+    sectionsSubtitle: "Әр бөлім жеке тақырыпқа арналған",
+    sec1Name: "Құжатты басқару",
+    sec2Name: "Мәтінді белгілеу",
+    sec3Name: "Өңдеу және пішімдеу",
+    sec4Name: "Тегістеу және аралық",
+    sec5Name: "Навигация",
+    secCount: "комбинация",
+    quizPageTitle: "Сұрақтар және Жауаптар",
+    quizPageDesc: "41 сұрақтан тұратын тест арқылы барлық комбинацияларды бекітіңіз. Әр сұрақта 3 вариант болады, тек біреуі дұрыс.",
+    quizRule1: "Жауапты көрсетпейді — тек таңдап, тексергеннен кейін біле аласыз",
+    quizRule2: "41 сұрақ, 5 тақырыптық бөлім бойынша реттелген",
+    quizRule3: "Әр жауаптан кейін түсіндірме көрсетіледі",
+    startBtn: "Бастау",
+    questionLabel: "Сұрақ",
+    ofLabel: "/",
+    checkBtn: "Тексеру",
+    nextBtn: "Жалғастыру",
+    finishBtn: "Аяқтау",
+    correctMsg: "Дұрыс!",
+    wrongMsg: "Қате!",
+    correctAnswerIs: "Дұрыс жауап:",
+    resultTitle: "Тест аяқталды!",
+    resultDesc: "Сіз барлық 41 сұрақты аяқтадыңыз.",
+    correctCount: "Дұрыс жауаптар",
+    wrongCount: "Қате жауаптар",
+    restartBtn: "Қайта бастау",
+    backHomeBtn: "Басты бетке",
+    closeBtn: "Жабу",
+    selectOption: "Жалғастыру үшін вариант таңдаңыз",
+    progressLabel: "Барысы"
+  },
+  ru: {
+    appName: "Word Combo",
+    tagline: "Изучение комбинаций клавиатуры",
+    menuHome: "Главная",
+    menuQuiz: "Вопросы и Ответы",
+    menuLang: "Язык",
+    heroTitle: "Изучайте комбинации Word\nчерез игру",
+    heroSubtitle: "Проверьте себя на 41 важной комбинации клавиш, ошибайтесь, исправляйтесь и запоминайте — всё на вашем телефоне.",
+    heroStat1: "41",
+    heroStat1Label: "комбинаций",
+    heroStat2: "5",
+    heroStat2Label: "разделов",
+    heroStartBtn: "Начать тест",
+    sectionsTitle: "Разделы",
+    sectionsSubtitle: "Каждый раздел посвящён отдельной теме",
+    sec1Name: "Управление документом",
+    sec2Name: "Выделение текста",
+    sec3Name: "Редактирование и формат",
+    sec4Name: "Выравнивание и интервалы",
+    sec5Name: "Навигация",
+    secCount: "комбинаций",
+    quizPageTitle: "Вопросы и Ответы",
+    quizPageDesc: "Закрепите все комбинации с помощью теста из 41 вопроса. В каждом вопросе 3 варианта, верен только один.",
+    quizRule1: "Ответ не показывается — узнаете только после проверки",
+    quizRule2: "41 вопрос, упорядочены по 5 тематическим разделам",
+    quizRule3: "После каждого ответа показывается пояснение",
+    startBtn: "Начать",
+    questionLabel: "Вопрос",
+    ofLabel: "/",
+    checkBtn: "Проверить",
+    nextBtn: "Продолжить",
+    finishBtn: "Завершить",
+    correctMsg: "Верно!",
+    wrongMsg: "Неверно!",
+    correctAnswerIs: "Правильный ответ:",
+    resultTitle: "Тест завершён!",
+    resultDesc: "Вы прошли все 41 вопрос.",
+    correctCount: "Правильные ответы",
+    wrongCount: "Неправильные ответы",
+    restartBtn: "Начать заново",
+    backHomeBtn: "На главную",
+    closeBtn: "Закрыть",
+    selectOption: "Выберите вариант, чтобы продолжить",
+    progressLabel: "Прогресс"
   }
-}
+};
 
-function generateQR() {
-  const content = getQRContent();
-  if (!content) { showToast("Ma'lumot kiriting!", 'warn'); return; }
+const ILLUSTRATIONS = {
 
-  currentQRData = content;
-  const size = parseInt(document.getElementById('qr-size').value);
-  const fg   = document.getElementById('qr-fg').value;
-  const bg   = document.getElementById('qr-bg').value;
-  const err  = currentErrLevel;
+  
+  hero: `
+<svg viewBox="0 0 240 220" xmlns="http://www.w3.org/2000/svg">
 
-  const display = document.getElementById('qr-display');
-  display.innerHTML = '';
+  <ellipse cx="120" cy="200" rx="85" ry="12" fill="#EDEBFF"/>
 
-  try {
-    new QRCode(display, {
-      text: content,
-      width: Math.min(size, 180),
-      height: Math.min(size, 180),
-      colorDark: fg,
-      colorLight: bg,
-      correctLevel: QRCode.CorrectLevel[err]
+  <path d="M60 165 Q90 190 120 178 Q150 190 180 165 L175 150 Q150 168 120 158 Q90 168 65 150 Z" fill="#6C63FF"/>
+
+  <rect x="78" y="95" width="84" height="75" rx="26" fill="#FFB199"/>
+
+  <g transform="translate(82,128)">
+    <rect x="0" y="18" width="76" height="6" rx="3" fill="#2D2A4A"/>
+    <path d="M6 18 L10 -28 Q10 -34 16 -34 L60 -34 Q66 -34 66 -28 L70 18 Z" fill="#FAF7F2" stroke="#2D2A4A" stroke-width="2.5"/>
+    <rect x="16" y="-26" width="44" height="34" rx="3" fill="#EDEBFF"/>
+    <rect x="20" y="-21" width="36" height="3.5" rx="1.5" fill="#6C63FF" opacity="0.5"/>
+    <rect x="20" y="-14" width="24" height="3.5" rx="1.5" fill="#6C63FF" opacity="0.5"/>
+    <rect x="20" y="-7" width="30" height="3.5" rx="1.5" fill="#FFB199"/>
+  </g>
+
+  <path d="M80 110 Q60 122 64 140" stroke="#FFB199" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <path d="M160 110 Q180 122 176 140" stroke="#FFB199" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <circle cx="64" cy="143" r="7" fill="#FFD9B3"/>
+  <circle cx="176" cy="143" r="7" fill="#FFD9B3"/>
+
+  <rect x="110" y="80" width="20" height="18" fill="#FFD9B3"/>
+  <circle cx="120" cy="62" r="34" fill="#FFD9B3"/>
+
+  <path d="M86 58 Q82 18 120 16 Q158 18 154 58 Q150 36 120 36 Q90 36 86 58 Z" fill="#4A4063"/>
+  <path d="M86 56 Q84 70 90 78" stroke="#4A4063" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <path d="M154 56 Q156 70 150 78" stroke="#4A4063" stroke-width="8" stroke-linecap="round" fill="none"/>
+
+  <circle cx="108" cy="64" r="3.2" fill="#2D2A4A"/>
+  <circle cx="132" cy="64" r="3.2" fill="#2D2A4A"/>
+  <path d="M104 78 Q120 90 136 78" stroke="#2D2A4A" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <circle cx="96" cy="72" r="6" fill="#FFB199" opacity="0.55"/>
+  <circle cx="144" cy="72" r="6" fill="#FFB199" opacity="0.55"/>
+
+  <g fill="#6C63FF">
+    <circle cx="38" cy="70" r="4"/>
+    <circle cx="206" cy="100" r="5"/>
+    <circle cx="200" cy="50" r="3"/>
+  </g>
+</svg>`,
+
+  
+  quizIntro: `
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="110" cy="200" rx="75" ry="11" fill="#EDEBFF"/>
+
+  <rect x="86" y="160" width="18" height="46" rx="8" fill="#4A4063"/>
+  <rect x="116" y="160" width="18" height="46" rx="8" fill="#4A4063"/>
+
+  <rect x="70" y="92" width="80" height="76" rx="28" fill="#6FCF97"/>
+
+  <path d="M76 110 Q48 118 44 100" stroke="#FFD9B3" stroke-width="14" stroke-linecap="round" fill="none"/>
+
+  <g transform="translate(14,46)">
+    <rect x="0" y="0" width="58" height="74" rx="10" fill="#FFFFFF" stroke="#6C63FF" stroke-width="3"/>
+    <text x="29" y="48" font-family="Manrope, sans-serif" font-size="40" font-weight="800" fill="#6C63FF" text-anchor="middle">?</text>
+  </g>
+
+  <path d="M144 110 Q170 124 166 144" stroke="#FFD9B3" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <circle cx="166" cy="147" r="7" fill="#FFD9B3"/>
+
+  <rect x="100" y="78" width="20" height="16" fill="#FFD9B3"/>
+  <circle cx="110" cy="60" r="32" fill="#FFD9B3"/>
+
+  <path d="M80 54 Q76 22 110 20 Q144 22 140 54 Q132 30 110 32 Q92 32 80 54 Z" fill="#2D2A4A"/>
+
+  <circle cx="99" cy="60" r="3" fill="#2D2A4A"/>
+  <circle cx="121" cy="60" r="3" fill="#2D2A4A"/>
+  <path d="M98 74 Q110 80 122 74" stroke="#2D2A4A" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <circle cx="88" cy="68" r="5.5" fill="#FFB199" opacity="0.5"/>
+  <circle cx="132" cy="68" r="5.5" fill="#FFB199" opacity="0.5"/>
+
+  <circle cx="190" cy="70" r="4" fill="#FFB199"/>
+  <circle cx="30" cy="36" r="3" fill="#6FCF97"/>
+</svg>`,
+
+  
+  resultHappy: `
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="110" cy="202" rx="78" ry="11" fill="#EDEBFF"/>
+  <rect x="86" y="158" width="17" height="44" rx="8" fill="#6C63FF"/>
+  <rect x="118" y="158" width="17" height="44" rx="8" fill="#6C63FF"/>
+  <rect x="68" y="92" width="84" height="74" rx="28" fill="#FFB199"/>
+
+  <path d="M74 108 Q44 96 40 64" stroke="#FFD9B3" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <path d="M146 108 Q176 96 180 64" stroke="#FFD9B3" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <circle cx="40" cy="60" r="7" fill="#FFD9B3"/>
+  <circle cx="180" cy="60" r="7" fill="#FFD9B3"/>
+  <rect x="100" y="78" width="20" height="16" fill="#FFD9B3"/>
+  <circle cx="110" cy="58" r="33" fill="#FFD9B3"/>
+  <path d="M80 52 Q76 18 110 16 Q144 18 140 52 Q134 30 110 30 Q86 30 80 52 Z" fill="#4A4063"/>
+
+  <path d="M94 56 Q99 50 104 56" stroke="#2D2A4A" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M116 56 Q121 50 126 56" stroke="#2D2A4A" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M92 68 Q110 86 128 68" stroke="#2D2A4A" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="86" cy="64" r="6" fill="#FFB199" opacity="0.55"/>
+  <circle cx="134" cy="64" r="6" fill="#FFB199" opacity="0.55"/>
+
+  <g>
+    <rect x="30" y="40" width="7" height="7" rx="1.5" fill="#6C63FF" transform="rotate(20 33 43)"/>
+    <rect x="186" y="90" width="7" height="7" rx="1.5" fill="#6FCF97" transform="rotate(-15 190 94)"/>
+    <circle cx="194" cy="44" r="4.5" fill="#FFB199"/>
+    <circle cx="22" cy="100" r="4" fill="#6FCF97"/>
+    <rect x="170" y="20" width="6" height="6" rx="1.5" fill="#FFD9B3" transform="rotate(35 173 23)"/>
+  </g>
+</svg>`,
+
+  
+  resultEncourage: `
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="110" cy="202" rx="78" ry="11" fill="#EDEBFF"/>
+  <rect x="86" y="158" width="17" height="44" rx="8" fill="#4A4063"/>
+  <rect x="118" y="158" width="17" height="44" rx="8" fill="#4A4063"/>
+  <rect x="68" y="92" width="84" height="74" rx="28" fill="#8B7FFF"/>
+
+  <path d="M148 108 Q172 100 168 78" stroke="#FFD9B3" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <circle cx="168" cy="74" r="7" fill="#FFD9B3"/>
+  <path d="M72 108 Q52 118 56 138" stroke="#FFD9B3" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <g transform="translate(48,132)">
+    <rect x="0" y="0" width="9" height="16" rx="4" fill="#FFD9B3"/>
+    <circle cx="4.5" cy="-3" r="6" fill="#FFD9B3"/>
+  </g>
+  <rect x="100" y="78" width="20" height="16" fill="#FFD9B3"/>
+  <circle cx="110" cy="58" r="33" fill="#FFD9B3"/>
+  <path d="M80 52 Q76 18 110 16 Q144 18 140 52 Q134 30 110 30 Q86 30 80 52 Z" fill="#2D2A4A"/>
+
+  <circle cx="99" cy="58" r="3" fill="#2D2A4A"/>
+  <circle cx="121" cy="58" r="3" fill="#2D2A4A"/>
+  <path d="M99 72 Q110 76 121 72" stroke="#2D2A4A" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <circle cx="87" cy="64" r="5.5" fill="#FFB199" opacity="0.5"/>
+  <circle cx="133" cy="64" r="5.5" fill="#FFB199" opacity="0.5"/>
+
+  <path d="M178 140 L178 110 M168 120 L178 108 L188 120" stroke="#6FCF97" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>`,
+
+  
+  comboKeyboard: `
+<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="20" width="180" height="84" rx="16" fill="#EDEBFF"/>
+  <rect x="10" y="20" width="180" height="84" rx="16" fill="none" stroke="#6C63FF" stroke-width="2" opacity="0.25"/>
+  <g>
+    <rect x="26" y="36" width="34" height="24" rx="7" fill="#6C63FF"/>
+    <text x="43" y="52" font-family="Manrope, sans-serif" font-size="11" font-weight="800" fill="white" text-anchor="middle">Ctrl</text>
+    <rect x="68" y="36" width="24" height="24" rx="7" fill="#FFFFFF"/>
+    <text x="80" y="52" font-family="Manrope, sans-serif" font-size="13" font-weight="800" fill="#2D2A4A" text-anchor="middle">+</text>
+    <rect x="100" y="36" width="34" height="24" rx="7" fill="#FFB199"/>
+    <text x="117" y="52" font-family="Manrope, sans-serif" font-size="12" font-weight="800" fill="white" text-anchor="middle">Key</text>
+    <rect x="26" y="68" width="108" height="14" rx="6" fill="#FFFFFF" opacity="0.7"/>
+  </g>
+  <circle cx="166" cy="42" r="9" fill="#6FCF97" opacity="0.9"/>
+  <path d="M162 42 L165 45 L171 38" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>`
+};
+
+const SECTION_ICONS = {
+  section1: { icon: "ph-bold ph-files",            bg: "linear-gradient(135deg,#6C63FF,#8B7FFF)" },
+  section2: { icon: "ph-bold ph-text-aa",          bg: "linear-gradient(135deg,#FF8A80,#FFB199)" },
+  section3: { icon: "ph-bold ph-pencil-simple",     bg: "linear-gradient(135deg,#6FCF97,#8FE3B0)" },
+  section4: { icon: "ph-bold ph-text-align-center",bg: "linear-gradient(135deg,#FFC36F,#FFD9A0)" },
+  section5: { icon: "ph-bold ph-compass",          bg: "linear-gradient(135deg,#6C9FFF,#8FC0FF)" }
+};
+
+(function(){
+  "use strict";
+
+  
+  const state = {
+    lang: "ru",              
+    questions: [],           
+    currentIndex: 0,
+    correctCount: 0,
+    wrongCount: 0,
+    selectedOptionIndex: null,
+    isChecked: false,
+    optionOrder: []          
+  };
+
+  
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+  const burgerBtn   = $("#burgerBtn");
+  const menuOverlay = $("#menuOverlay");
+  const menuPanel   = $("#menuPanel");
+  const menuCloseBtn= $("#menuCloseBtn");
+
+  
+  function openMenu(){
+    menuOverlay.classList.add("open");
+    menuPanel.classList.add("open");
+    burgerBtn.setAttribute("aria-expanded","true");
+  }
+  function closeMenu(){
+    menuOverlay.classList.remove("open");
+    menuPanel.classList.remove("open");
+    burgerBtn.setAttribute("aria-expanded","false");
+  }
+  burgerBtn.addEventListener("click", openMenu);
+  menuCloseBtn.addEventListener("click", closeMenu);
+  menuOverlay.addEventListener("click", closeMenu);
+  document.addEventListener("keydown", (e) => { if(e.key === "Escape") closeMenu(); });
+
+  
+  function goToPage(pageId){
+    $$(".page").forEach(p => p.classList.remove("active"));
+    $(`#page-${pageId}`).classList.add("active");
+    window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+
+    $$(".menu-link").forEach(l => l.classList.remove("active"));
+    const navMap = { home: "home", "quiz-intro": "quiz-intro", "quiz-runner": "quiz-intro", "result": "quiz-intro" };
+    const activeLink = $(`.menu-link[data-nav="${navMap[pageId]}"]`);
+    if(activeLink) activeLink.classList.add("active");
+  }
+
+  $$(".menu-link").forEach(link => {
+    link.addEventListener("click", () => {
+      const target = link.dataset.nav;
+      closeMenu();
+      goToPage(target);
     });
-  } catch(e) {
-    showToast('Matn juda uzun bo\'lishi mumkin.', 'error');
-    return;
-  }
-
-  document.getElementById('qr-frame').style.background = bg;
-  document.getElementById('qr-frame').classList.add('has-qr');
-
-  const typeMap = {link:'URL', text:'MATN', image:'RASM', wifi:'WIFI', contact:'VCARD'};
-  document.getElementById('chip-chars').textContent = content.length;
-  document.getElementById('chip-size').textContent  = size + 'px';
-  document.getElementById('chip-type').textContent  = typeMap[currentTab] || 'DATA';
-
-  const status = document.getElementById('qr-status');
-  status.textContent = 'Tayyor';
-  status.className = 'output-header-status ready';
-
-  const frame = document.getElementById('qr-frame');
-  frame.style.transform = 'scale(0.94)';
-  frame.style.transition = 'all 0.25s cubic-bezier(0.16,1,0.3,1)';
-  setTimeout(() => { frame.style.transform = 'scale(1)'; }, 30);
-
-  showToast('QR kod yaratildi!', 'success');
-}
-
-function downloadQR(format) {
-  const canvas = document.querySelector('#qr-display canvas');
-  if (!canvas) { showToast('Avval QR yarating!', 'warn'); return; }
-
-  if (format === 'png') {
-    const a = document.createElement('a');
-    a.download = 'qr-studio-' + Date.now() + '.png';
-    a.href = canvas.toDataURL('image/png');
-    a.click();
-    showToast('PNG yuklab olindi!', 'info');
-  } else {
-    const size = canvas.width;
-    const ctx  = canvas.getContext('2d');
-    const img  = ctx.getImageData(0, 0, size, size);
-    const fg   = document.getElementById('qr-fg').value;
-    const bg   = document.getElementById('qr-bg').value;
-    let rects  = `<rect width="${size}" height="${size}" fill="${bg}"/>`;
-    for (let y = 0; y < size; y++) {
-      for (let x = 0; x < size; x++) {
-        const idx = (y * size + x) * 4;
-        if (img.data[idx] < 128) rects += `<rect x="${x}" y="${y}" width="1" height="1" fill="${fg}"/>`;
-      }
-    }
-    const svg  = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">${rects}</svg>`;
-    const blob = new Blob([svg], {type:'image/svg+xml'});
-    const a    = document.createElement('a');
-    a.download = 'qr-studio-' + Date.now() + '.svg';
-    a.href = URL.createObjectURL(blob);
-    a.click();
-    showToast('SVG yuklab olindi!', 'info');
-  }
-}
-
-function copyQRData() {
-  if (!currentQRData) { showToast('Avval QR yarating!', 'warn'); return; }
-  navigator.clipboard.writeText(currentQRData)
-    .then(() => showToast('Nusxalandi!', 'success'))
-    .catch(() => showToast('Nusxalash mumkin bo\'lmadi', 'error'));
-}
-
-function showToast(msg, type = 'info') {
-  const t     = document.getElementById('toast');
-  const icon  = document.getElementById('toast-icon');
-  const msgEl = document.getElementById('toast-msg');
-
-  const iconMap = {
-    success: '<i class="fa-solid fa-check"></i>',
-    warn:    '<i class="fa-solid fa-triangle-exclamation"></i>',
-    error:   '<i class="fa-solid fa-xmark"></i>',
-    info:    '<i class="fa-solid fa-arrow-down-to-bracket"></i>'
-  };
-
-  t.className = `toast toast-${type}`;
-  icon.innerHTML = iconMap[type] || iconMap.info;
-  msgEl.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
-
-let modalResolve = null;
-
-function showModal({ type = 'info', title, body, buttons = [] }) {
-  const overlay  = document.getElementById('modal-overlay');
-  const iconWrap = document.getElementById('modal-icon-wrap');
-  const iconFa   = document.getElementById('modal-icon-fa');
-  const titleEl  = document.getElementById('modal-title');
-  const bodyEl   = document.getElementById('modal-body');
-  const actions  = document.getElementById('modal-actions');
-
-  const iconMap = {
-    success: { cls: 'success', fa: 'fa-solid fa-check' },
-    warn:    { cls: 'warn',    fa: 'fa-solid fa-triangle-exclamation' },
-    error:   { cls: 'error',   fa: 'fa-solid fa-xmark' },
-    info:    { cls: 'info',    fa: 'fa-solid fa-circle-info' }
-  };
-
-  const ic = iconMap[type] || iconMap.info;
-  iconWrap.className = `modal-icon-wrap ${ic.cls}`;
-  iconFa.className = ic.fa;
-  titleEl.textContent = title;
-  bodyEl.textContent  = body;
-
-  actions.innerHTML = '';
-  buttons.forEach(btn => {
-    const b = document.createElement('button');
-    b.className = `modal-btn ${btn.cls || 'secondary'}`;
-    b.textContent = btn.label;
-    b.onclick = () => { closeModal(); if (btn.onClick) btn.onClick(); };
-    actions.appendChild(b);
   });
 
-  overlay.classList.add('open');
-}
+  $("#heroStartBtn").addEventListener("click", () => goToPage("quiz-intro"));
+  $("#startQuizBtn").addEventListener("click", startQuiz);
+  $("#restartBtn").addEventListener("click", startQuiz);
+  $("#backHomeBtn").addEventListener("click", () => goToPage("home"));
 
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-}
+  
+  function applyLanguage(lang){
+    state.lang = lang;
+    document.documentElement.setAttribute("lang", lang);
+    const dict = I18N[lang];
 
-function closeModalOnOverlay(e) {
-  if (e.target === document.getElementById('modal-overlay')) closeModal();
-}
+    $$("[data-i18n]").forEach(el => {
+      const key = el.dataset.i18n;
+      if(dict[key] !== undefined){
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey && e.target.tagName !== 'TEXTAREA') generateQR();
-});
+        el.innerHTML = dict[key].replace(/\n/g, "<br>");
+      }
+    });
 
-document.querySelectorAll('.mini-select-option.selected').forEach(opt => {
-  const wrap = opt.closest('.mini-custom-select');
-  if (!wrap) return;
-  const id = wrap.id;
-  const idMap2 = { 'wifi-enc-select': 'wifi-enc-text' };
-  if (idMap2[id]) {
-    document.getElementById(idMap2[id]).textContent = opt.childNodes[0].textContent.trim();
+    $$(".lang-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.lang === lang));
+
+    renderSectionCards();
+
+    if($("#page-quiz-runner").classList.contains("active")){
+      renderQuestion();
+    }
   }
-});
+
+  $$(".lang-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      applyLanguage(btn.dataset.lang);
+      closeMenu();
+    });
+  });
+
+  
+  $("#heroIllustrationSlot").innerHTML = ILLUSTRATIONS.hero;
+  $("#quizIntroIllustrationSlot").innerHTML = ILLUSTRATIONS.quizIntro;
+
+  function renderSectionCards(){
+    const dict = I18N[state.lang];
+    const sectionKeys = ["section1","section2","section3","section4","section5"];
+    const nameKeys = ["sec1Name","sec2Name","sec3Name","sec4Name","sec5Name"];
+    const slot = $("#sectionCardsSlot");
+    slot.innerHTML = "";
+    sectionKeys.forEach((key, i) => {
+      const meta = SECTION_ICONS[key];
+      const count = QUIZ_DATA[key].length;
+      const card = document.createElement("div");
+      card.className = "section-card";
+      card.innerHTML = `
+        <div class="icon-wrap" style="background:${meta.bg}"><i class="${meta.icon}"></i></div>
+        <div class="info">
+          <h3>${dict[nameKeys[i]]}</h3>
+          <p>${count} ${dict.secCount}</p>
+        </div>
+      `;
+      slot.appendChild(card);
+    });
+  }
+
+  
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  
+  function buildQuestionSet(){
+    const sectionKeys = ["section1","section2","section3","section4","section5"];
+    let flat = [];
+    sectionKeys.forEach(key => {
+      const sectionQuestions = shuffle(QUIZ_DATA[key]).map(q => Object.assign({}, q, { sectionKey: key }));
+      flat = flat.concat(sectionQuestions);
+    });
+    return flat;
+  }
+
+  function startQuiz(){
+    state.questions = buildQuestionSet();
+    state.currentIndex = 0;
+    state.correctCount = 0;
+    state.wrongCount = 0;
+    goToPage("quiz-runner");
+    renderQuestion();
+  }
+
+  function currentQuestion(){
+    return state.questions[state.currentIndex];
+  }
+
+  function renderQuestion(){
+    const dict = I18N[state.lang];
+    const q = currentQuestion();
+    state.selectedOptionIndex = null;
+    state.isChecked = false;
+
+    
+    const total = state.questions.length;
+    const idx1 = state.currentIndex + 1;
+    $("#progressCounter").textContent = `${idx1} ${dict.ofLabel} ${total}`;
+    $("#progressBarFill").style.width = `${(idx1/total)*100}%`;
+
+    
+    const nameKeys = { section1:"sec1Name", section2:"sec2Name", section3:"sec3Name", section4:"sec4Name", section5:"sec5Name" };
+    $("#sectionTagText").textContent = dict[nameKeys[q.sectionKey]];
+
+    
+    $("#comboIllustrationSlot").innerHTML = ILLUSTRATIONS.comboKeyboard;
+
+    
+    $("#questionText").textContent = q.q[state.lang];
+
+    
+    const order = shuffle([0,1,2]);
+    state.optionOrder = order;
+
+    const optionsList = $("#optionsList");
+    optionsList.innerHTML = "";
+    const letters = ["A","B","C"];
+    order.forEach((origIndex, displayIndex) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.dataset.origIndex = origIndex;
+      btn.innerHTML = `<span class="opt-letter">${letters[displayIndex]}</span><span class="opt-text">${q.options[state.lang][origIndex]}</span>`;
+      btn.addEventListener("click", () => selectOption(btn, origIndex));
+      optionsList.appendChild(btn);
+    });
+
+    
+    const banner = $("#feedbackBanner");
+    banner.classList.remove("show","correct","wrong");
+    $("#checkBtn").disabled = true;
+    $("#continueBtn").disabled = true;
+
+    
+    const continueLabel = $("#continueBtn span");
+    continueLabel.textContent = (idx1 === total) ? dict.finishBtn : dict.nextBtn;
+  }
+
+  function selectOption(btn, origIndex){
+    if(state.isChecked) return; 
+    $$(".option-btn").forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+    state.selectedOptionIndex = origIndex;
+    $("#checkBtn").disabled = false;
+  }
+
+  $("#checkBtn").addEventListener("click", () => {
+    if(state.selectedOptionIndex === null || state.isChecked) return;
+    const dict = I18N[state.lang];
+    const q = currentQuestion();
+    state.isChecked = true;
+
+    const isCorrect = state.selectedOptionIndex === q.correct;
+    if(isCorrect) state.correctCount++; else state.wrongCount++;
+
+    $$(".option-btn").forEach(b => {
+      b.classList.add("locked");
+      const oi = Number(b.dataset.origIndex);
+      if(oi === q.correct){
+        b.classList.add("correct-reveal");
+      } else if(oi === state.selectedOptionIndex){
+        b.classList.add("wrong-reveal");
+      } else {
+        b.classList.add("dimmed");
+      }
+    });
+
+    const banner = $("#feedbackBanner");
+    const icon = banner.querySelector("i");
+    const text = $("#feedbackText");
+    if(isCorrect){
+      banner.classList.add("show","correct");
+      banner.classList.remove("wrong");
+      icon.className = "ph-bold ph-check-circle";
+      text.textContent = dict.correctMsg;
+    } else {
+      banner.classList.add("show","wrong");
+      banner.classList.remove("correct");
+      icon.className = "ph-bold ph-x-circle";
+      text.textContent = `${dict.wrongMsg} ${dict.correctAnswerIs} ${q.options[state.lang][q.correct]}`;
+    }
+
+    $("#checkBtn").disabled = true;
+    $("#continueBtn").disabled = false;
+  });
+
+  $("#continueBtn").addEventListener("click", () => {
+    if($("#continueBtn").disabled) return;
+    if(state.currentIndex < state.questions.length - 1){
+      state.currentIndex++;
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  });
+
+  function showResult(){
+    const dict = I18N[state.lang];
+    $("#resultCorrectNum").textContent = state.correctCount;
+    $("#resultWrongNum").textContent = state.wrongCount;
+
+    const ratio = state.correctCount / state.questions.length;
+    $("#resultIllustrationSlot").innerHTML = ratio >= 0.6 ? ILLUSTRATIONS.resultHappy : ILLUSTRATIONS.resultEncourage;
+
+    goToPage("result");
+  }
+
+  
+  applyLanguage(state.lang);
+  goToPage("home");
+
+})();
+
 </script>
 </body>
 </html>
