@@ -58,6 +58,18 @@ function GameMap({
     });
 
     map.on("load", () => {
+      // Container өлшемі layout-тан кейін дұрыс анықталуы үшін
+      // мәжбүрлі resize шақырамыз (кейбір Android braurер/WebView-де
+      // canvas 0x0 өлшемінде "тұрып қалатын" race condition болады)
+      map.resize();
+      requestAnimationFrame(() => map.resize());
+
+      if (import.meta.env.DEV) {
+        const canvas = map.getCanvas();
+        console.log("MapLibre canvas size:", canvas.width, canvas.height);
+        console.log("Container size:", containerRef.current.clientWidth, containerRef.current.clientHeight);
+      }
+
       map.addSource(TERRITORY_SOURCE_ID, {
         type: "geojson",
         data: { type: "FeatureCollection", features: [] },
@@ -108,7 +120,15 @@ function GameMap({
     mapRef.current = map;
     onMapReady?.(map);
 
+    // Контейнер өлшемі кез келген себеппен өзгерсе (viewport, orientation,
+    // toolbar жасыру/көрсету), картаны дұрыс қайта өлшеу үшін
+    const resizeObserver = new ResizeObserver(() => {
+      map.resize();
+    });
+    resizeObserver.observe(containerRef.current);
+
     return () => {
+      resizeObserver.disconnect();
       map.remove();
       mapRef.current = null;
       styleLoadedRef.current = false;
