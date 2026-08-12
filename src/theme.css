@@ -137,11 +137,27 @@ html.dark .input-3d {
   font-family: 'Inter', sans-serif;
 }
 
+/* Attribution заңды түрде міндетті — толықтай жасырмаймыз,
+   тек кішкентай, дизайнға сай, жинақталған (collapsible) түрде қалдырамыз */
 .maplibregl-ctrl-attrib,
+.maptiler-ctrl-attrib {
+  background: rgba(23, 50, 64, 0.55) !important;
+  backdrop-filter: blur(4px);
+  border-radius: 8px;
+  font-size: 9px !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.maplibregl-ctrl-attrib a,
+.maptiler-ctrl-attrib a {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
 .maplibregl-ctrl-logo,
-.maptiler-ctrl-attrib,
 .maptiler-ctrl-logo {
-  display: none !important;
+  opacity: 0.5;
+  transform: scale(0.75);
+  transform-origin: bottom left;
 }
 
 html.dark .maplibregl-canvas,

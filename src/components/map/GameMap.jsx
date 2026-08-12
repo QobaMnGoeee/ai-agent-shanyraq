@@ -57,6 +57,14 @@ function GameMap({
       attributionControl: false,
     });
 
+    // Заңды түрде міндетті attribution-ды кішкентай, жиналатын
+    // (collapsible) түрде қосамыз — MapTiler ережесі бойынша
+    // мобильде бір батырма/иконкаға жинақтауға рұқсат етілген.
+    map.addControl(
+      new maptilersdk.AttributionControl({ compact: true }),
+      "bottom-right"
+    );
+
     map.on("load", () => {
       map.resize();
 
