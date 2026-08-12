@@ -7,7 +7,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          maplibre: ["maplibre-gl"],
+          maptiler: ["@maptiler/sdk"],
           supabase: ["@supabase/supabase-js"],
           vendor: ["react", "react-dom", "react-router-dom"],
         },

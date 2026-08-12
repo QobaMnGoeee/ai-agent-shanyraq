@@ -10,9 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@maptiler/sdk": "^4.1.0",
     "@supabase/supabase-js": "^2.111.0",
     "lucide-react": "^1.28.0",
-    "maplibre-gl": "^6.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.18.2"

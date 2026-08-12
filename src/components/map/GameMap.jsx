@@ -1,12 +1,10 @@
 import { useEffect, useRef, memo } from "react";
-import * as maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
+import * as maptilersdk from "@maptiler/sdk";
+import "@maptiler/sdk/dist/maptiler-sdk.css";
 import { GRID_SIZE } from "../../lib/useGeolocation";
 
-const DEFAULT_CENTER = [69.2401, 41.2995]; // [lng, lat] — MapLibre осылай күтеді
-const MAP_STYLE = "https://api.maptiler.com/maps/dataviz-v4/style.json?key=N5HlBjvet6ZuNOIJlSa5";
-// Диагностика үшін уақытша баламалы (кілтсіз) стиль:
-// const MAP_STYLE = "https://demotiles.maplibre.org/style.json";
+const DEFAULT_CENTER = [69.2401, 41.2995]; // [lng, lat]
+const MAPTILER_KEY = "N5HlBjvet6ZuNOIJlSa5";
 
 const TERRITORY_SOURCE_ID = "territories-source";
 const TERRITORY_FILL_LAYER_ID = "territories-fill";
@@ -14,8 +12,13 @@ const TERRITORY_LINE_LAYER_ID = "territories-line";
 const PATH_SOURCE_ID = "path-source";
 const PATH_LAYER_ID = "path-layer";
 
+maptilersdk.config.apiKey = MAPTILER_KEY;
+
 /**
- * MapLibre GL негізіндегі негізгі ойын картасы (MapTiler dataviz style).
+ * MapTiler SDK негізіндегі негізгі ойын картасы (dataviz style).
+ * MapTiler SDK — @maptiler/sdk-тың dashboard-тың өзінде де қолданатын
+ * ресми кітапханасы, MapLibre GL-ды өз ішіне алады, бірақ container
+ * resize/layout мәселелерін дұрысырақ өңдейді.
  *
  * Props:
  * - position: { lat, lng } | null — ойыншының ағымдағы GPS позициясы
@@ -41,34 +44,21 @@ function GameMap({
   const hasCenteredRef = useRef(false);
   const pendingRef = useRef({ territories: [], pathPoints: [] });
 
-  // Картаны бір рет ғана инициализациялау
   useEffect(() => {
     if (mapRef.current || !containerRef.current) return;
 
-    const map = new maplibregl.Map({
+    const map = new maptilersdk.Map({
       container: containerRef.current,
-      style: MAP_STYLE,
+      style: maptilersdk.MapStyle.DATAVIZ,
       center: DEFAULT_CENTER,
       zoom: 17,
+      navigationControl: false,
+      geolocateControl: false,
       attributionControl: false,
     });
 
-    map.on("error", (e) => {
-      console.error("MapLibre error:", e?.error || e);
-    });
-
     map.on("load", () => {
-      // Container өлшемі layout-тан кейін дұрыс анықталуы үшін
-      // мәжбүрлі resize шақырамыз (кейбір Android braurер/WebView-де
-      // canvas 0x0 өлшемінде "тұрып қалатын" race condition болады)
       map.resize();
-      requestAnimationFrame(() => map.resize());
-
-      if (import.meta.env.DEV) {
-        const canvas = map.getCanvas();
-        console.log("MapLibre canvas size:", canvas.width, canvas.height);
-        console.log("Container size:", containerRef.current.clientWidth, containerRef.current.clientHeight);
-      }
 
       map.addSource(TERRITORY_SOURCE_ID, {
         type: "geojson",
@@ -111,17 +101,17 @@ function GameMap({
       });
 
       styleLoadedRef.current = true;
-
-      // Стиль жүктелгенше кешіктірілген жаңартуларды енгізу
       updateTerritorySource(map, pendingRef.current.territories);
       updatePathSource(map, pendingRef.current.pathPoints);
+    });
+
+    map.on("error", (e) => {
+      console.error("Map error:", e?.error || e);
     });
 
     mapRef.current = map;
     onMapReady?.(map);
 
-    // Контейнер өлшемі кез келген себеппен өзгерсе (viewport, orientation,
-    // toolbar жасыру/көрсету), картаны дұрыс қайта өлшеу үшін
     const resizeObserver = new ResizeObserver(() => {
       map.resize();
     });
@@ -136,7 +126,6 @@ function GameMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // GPS позиция өзгергенде маркерді жаңарту + бірінші рет картаны центрлеу
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !position) return;
@@ -144,7 +133,7 @@ function GameMap({
     if (!markerRef.current) {
       const el = document.createElement("div");
       markerElRef.current = el;
-      markerRef.current = new maplibregl.Marker({ element: el, anchor: "center" })
+      markerRef.current = new maptilersdk.Marker({ element: el, anchor: "center" })
         .setLngLat([position.lng, position.lat])
         .addTo(map);
     } else {
@@ -159,7 +148,6 @@ function GameMap({
     }
   }, [position, userColor, username]);
 
-  // Path сызығын жаңарту (recording кезінде)
   useEffect(() => {
     const map = mapRef.current;
     pendingRef.current.pathPoints = pathPoints;
@@ -167,7 +155,6 @@ function GameMap({
     updatePathSource(map, pathPoints);
   }, [pathPoints]);
 
-  // Territory ұяшықтарын жаңарту
   useEffect(() => {
     const map = mapRef.current;
     pendingRef.current.territories = territories;
