@@ -177,29 +177,10 @@ export default function MapPage() {
         onMapReady={setMapInstance}
       />
 
-      {/* Top bar — ұзын search + Menu батырмасы */}
-      {searchOpen ? (
-        <SearchBar onSelectPlace={handleSelectPlace} onClose={() => setSearchOpen(false)} />
-      ) : (
-        <div className="absolute top-4 left-4 right-4 z-10 flex items-center gap-2">
-          <button
-            onClick={() => setSearchOpen(true)}
-            className="flex-1 glass-panel rounded-xl h-11 flex items-center gap-2.5 px-4 text-left"
-          >
-            <Search className="w-4 h-4 text-gray-300 shrink-0" strokeWidth={2.4} />
-            <span className="text-gray-300 text-[13px] truncate">{t("search_placeholder")}</span>
-            <span className="ml-auto text-white text-[15px] font-bold shrink-0">{score}</span>
-          </button>
-
-          <button
-            onClick={() => navigate("/menu")}
-            className="w-11 h-11 rounded-full glass-panel flex items-center justify-center shrink-0"
-            aria-label="Menu"
-          >
-            <MenuIcon className="w-4.5 h-4.5 text-gray-100" strokeWidth={2.3} />
-          </button>
-        </div>
-      )}
+      {/* Top bar — тек ұпай */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-[500px] glass-panel rounded-xl h-11 flex items-center justify-center z-10">
+        <span className="text-white text-xl font-bold">{score}</span>
+      </div>
 
       {/* Zoom controls */}
       <div className="absolute top-20 left-4 flex flex-col z-10">
@@ -285,50 +266,72 @@ export default function MapPage() {
         </div>
       )}
 
-      {/* Bottom — тек START/STOP, bottom nav толықтай алынды */}
-      <div className="absolute bottom-4 left-4 right-4 z-10">
-        {!recording ? (
-          <Btn3D
-            onClick={handleStart}
-            className="w-full h-[52px] rounded-[16px] flex items-center justify-center gap-2"
-          >
-            <Play className="w-5 h-5 text-white fill-white" strokeWidth={0} />
-            <span className="start-text text-white text-[17px] font-bold">{t("start")}</span>
-          </Btn3D>
-        ) : (
-          <div className="flex gap-2">
+      {/* Bottom — search + Menu батырмасы (START-тың үстінде), содан кейін START/STOP */}
+      {searchOpen ? (
+        <SearchBar onSelectPlace={handleSelectPlace} onClose={() => setSearchOpen(false)} />
+      ) : (
+        <div className="absolute bottom-4 left-4 right-4 z-10 flex flex-col gap-2">
+          <div className="flex items-center gap-2">
             <button
-              onClick={handleCloseLoop}
-              disabled={capturing || pathPoints.length < 3}
-              className="flex-1 h-[52px] rounded-[16px] flex items-center justify-center gap-2 bg-amber-400/20 border border-amber-300/40 backdrop-blur-sm text-amber-200 hover:bg-amber-400/25 active:scale-[0.98] transition-all disabled:opacity-50"
+              onClick={() => setSearchOpen(true)}
+              className="flex-1 glass-panel rounded-xl h-11 flex items-center gap-2.5 px-4 text-left"
             >
-              {capturing ? (
-                <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.3} />
-              ) : (
-                <Link2 className="w-4 h-4" strokeWidth={2.3} />
-              )}
-              <span className="start-text text-[15px] font-bold">
-                {capturing ? t("capturing") : t("close_loop")}
-              </span>
+              <Search className="w-4 h-4 text-gray-300 shrink-0" strokeWidth={2.4} />
+              <span className="text-gray-300 text-[13px] truncate">{t("search_placeholder")}</span>
             </button>
 
             <button
-              onClick={handleStop}
-              disabled={capturing}
-              className="w-[100px] h-[52px] rounded-[16px] flex items-center justify-center gap-1.5 bg-white/10 border border-white/15 backdrop-blur-sm text-gray-200 hover:bg-white/15 active:scale-[0.98] transition-all disabled:opacity-50"
+              onClick={() => navigate("/menu")}
+              className="w-11 h-11 rounded-full glass-panel flex items-center justify-center shrink-0"
+              aria-label="Menu"
             >
-              <Square className="w-3.5 h-3.5 fill-current" strokeWidth={0} />
-              <span className="start-text text-[14px] font-bold">{t("stop")}</span>
+              <MenuIcon className="w-4.5 h-4.5 text-gray-100" strokeWidth={2.3} />
             </button>
           </div>
-        )}
-      </div>
+
+          {!recording ? (
+            <Btn3D
+              onClick={handleStart}
+              className="w-full h-[52px] rounded-[16px] flex items-center justify-center gap-2"
+            >
+              <Play className="w-5 h-5 text-white fill-white" strokeWidth={0} />
+              <span className="start-text text-white text-[17px] font-bold">{t("start")}</span>
+            </Btn3D>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                onClick={handleCloseLoop}
+                disabled={capturing || pathPoints.length < 3}
+                className="flex-1 h-[52px] rounded-[16px] flex items-center justify-center gap-2 bg-amber-400/20 border border-amber-300/40 backdrop-blur-sm text-amber-200 hover:bg-amber-400/25 active:scale-[0.98] transition-all disabled:opacity-50"
+              >
+                {capturing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.3} />
+                ) : (
+                  <Link2 className="w-4 h-4" strokeWidth={2.3} />
+                )}
+                <span className="start-text text-[15px] font-bold">
+                  {capturing ? t("capturing") : t("close_loop")}
+                </span>
+              </button>
+
+              <button
+                onClick={handleStop}
+                disabled={capturing}
+                className="w-[100px] h-[52px] rounded-[16px] flex items-center justify-center gap-1.5 bg-white/10 border border-white/15 backdrop-blur-sm text-gray-200 hover:bg-white/15 active:scale-[0.98] transition-all disabled:opacity-50"
+              >
+                <Square className="w-3.5 h-3.5 fill-current" strokeWidth={0} />
+                <span className="start-text text-[14px] font-bold">{t("stop")}</span>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Center-on-me — жеке floating батырма */}
-      {position && (
+      {position && !searchOpen && (
         <button
           onClick={handleCenterMe}
-          className="absolute bottom-[88px] right-4 btn-3d w-10 h-10 rounded-full z-10"
+          className="absolute bottom-[140px] right-4 btn-3d w-10 h-10 rounded-full z-10"
           aria-label="Центрировать на мне"
         >
           <Crosshair className="w-4 h-4 text-gray-200" strokeWidth={2.2} />

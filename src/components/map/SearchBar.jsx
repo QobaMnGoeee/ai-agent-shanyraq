@@ -37,27 +37,33 @@ export default function SearchBar({ onSelectPlace, onClose }) {
   }, [query]);
 
   return (
-    <div className="absolute inset-x-0 top-0 z-30 px-4 pt-4">
-      <GlassPanel className="rounded-xl h-10 flex items-center px-3 gap-2">
-        <Search className="w-4 h-4 text-gray-300 shrink-0" strokeWidth={2.4} />
-        <input
-          ref={inputRef}
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Найти город или место…"
-          className="flex-1 bg-transparent outline-none text-white text-[14px] placeholder:text-gray-400"
-        />
-        {loading && (
-          <Loader2 className="w-4 h-4 text-gray-400 animate-spin shrink-0" strokeWidth={2.4} />
-        )}
-        <button onClick={onClose} className="text-gray-300 hover:text-white transition-colors shrink-0">
+    <div className="absolute inset-x-0 bottom-0 z-30 px-4 pb-4 flex flex-col-reverse gap-2">
+      <div className="flex items-center gap-2">
+        <GlassPanel className="flex-1 rounded-xl h-11 flex items-center px-3.5 gap-2">
+          <Search className="w-4 h-4 text-gray-300 shrink-0" strokeWidth={2.4} />
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Найти город или место…"
+            className="flex-1 bg-transparent outline-none text-white text-[14px] placeholder:text-gray-400"
+          />
+          {loading && (
+            <Loader2 className="w-4 h-4 text-gray-400 animate-spin shrink-0" strokeWidth={2.4} />
+          )}
+        </GlassPanel>
+        <button
+          onClick={onClose}
+          className="w-11 h-11 rounded-full glass-panel flex items-center justify-center shrink-0 text-gray-300 hover:text-white transition-colors"
+          aria-label="Закрыть"
+        >
           <X className="w-4 h-4" strokeWidth={2.4} />
         </button>
-      </GlassPanel>
+      </div>
 
       {(results.length > 0 || error) && (
-        <GlassPanel className="rounded-xl mt-2 max-h-[50dvh] overflow-y-auto">
+        <GlassPanel className="rounded-xl max-h-[45dvh] overflow-y-auto">
           {error && <p className="text-red-300 text-[12px] px-4 py-3">{error}</p>}
           {results.map((place) => (
             <button
