@@ -3,14 +3,16 @@ import { useEffect, useRef, useState } from "react";
 /**
  * Пайдаланушының GPS позициясын үздіксіз бақылайды.
  * - accuracy 50м-ден нашар болса — қабылданбайды
- * - жылдамдық 5 м/с-тан жоғары болса (көлікпен жүру) — қабылданбайды
+ * - жылдамдық км/сағ түрінде де қайтарылады (UI-де көрсету үшін)
  *
- * Қайтарады: { position, error, accuracy }
+ * Қайтарады: { position, error, accuracy, speedKmh }
  * position = { lat, lng } | null
+ * speedKmh = number | null
  */
 export function useGeolocation() {
   const [position, setPosition] = useState(null);
   const [accuracy, setAccuracy] = useState(null);
+  const [speedKmh, setSpeedKmh] = useState(null);
   const [error, setError] = useState(null);
   const watchIdRef = useRef(null);
 
@@ -30,13 +32,9 @@ export function useGeolocation() {
           return;
         }
 
-        if (speed != null && speed > 5) {
-          // Көлікпен жүру — жаяу қозғалыс талап етіледі, позицияны жаңартпаймыз
-          return;
-        }
-
         setError(null);
         setAccuracy(acc);
+        setSpeedKmh(speed != null ? speed * 3.6 : null);
         setPosition({ lat: latitude, lng: longitude });
       },
       (err) => {
@@ -54,7 +52,7 @@ export function useGeolocation() {
     };
   }, []);
 
-  return { position, accuracy, error };
+  return { position, accuracy, speedKmh, error };
 }
 
 export const GRID_SIZE = 27e-5; // ~30 метр

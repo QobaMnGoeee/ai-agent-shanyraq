@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState, memo } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Plus,
   Minus,
@@ -6,21 +7,16 @@ import {
   Satellite,
   RefreshCw,
   Settings,
-  User,
-  Trophy,
-  Award,
   Crosshair,
   Play,
   Square,
   Search,
   Link2,
   Loader2,
+  Menu as MenuIcon,
+  Gauge,
 } from "lucide-react";
 import Btn3D from "../components/ui/Btn3D";
-import ProfileSheet from "../components/overlays/ProfileSheet";
-import LeaderboardSheet from "../components/overlays/LeaderboardSheet";
-import AchievementsSheet from "../components/overlays/AchievementsSheet";
-import SettingsSheet from "../components/overlays/SettingsSheet";
 import GameMap, { centerOnPosition, flyToPlace } from "../components/map/GameMap";
 import SearchBar from "../components/map/SearchBar";
 import { useGeolocation, snapToGrid } from "../lib/useGeolocation";
@@ -29,18 +25,11 @@ import { useAuth } from "../context/AuthContext";
 import { useLang } from "../context/LangContext";
 import { supabase } from "../lib/supabase";
 
-const SHEETS = {
-  NONE: null,
-  PROFILE: "profile",
-  LEADERBOARD: "leaderboard",
-  ACHIEVEMENTS: "achievements",
-  SETTINGS: "settings",
-};
-
 export default function MapPage() {
   const { user } = useAuth();
   const { t } = useLang();
-  const { position, error: gpsErrorCode } = useGeolocation();
+  const navigate = useNavigate();
+  const { position, error: gpsErrorCode, speedKmh } = useGeolocation();
   const [profileColor, setProfileColor] = useState("#00FF88");
   const [profileUsername, setProfileUsername] = useState("Вы");
   const [score, setScore] = useState(0);
@@ -50,7 +39,6 @@ export default function MapPage() {
   const [pathPoints, setPathPoints] = useState([]);
   const [capturing, setCapturing] = useState(false);
   const [captureMessage, setCaptureMessage] = useState(null);
-  const [activeSheet, setActiveSheet] = useState(SHEETS.NONE);
   const [mapInstance, setMapInstance] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [territories, setTerritories] = useState([]);
@@ -126,8 +114,6 @@ export default function MapPage() {
     return () => clearTimeout(timer);
   }, [captureMessage]);
 
-  const closeSheet = useCallback(() => setActiveSheet(SHEETS.NONE), []);
-
   const handleStart = useCallback(() => {
     setPathPoints(position ? [snapToGrid(position.lat, position.lng)] : []);
     setRecording(true);
@@ -191,21 +177,31 @@ export default function MapPage() {
         onMapReady={setMapInstance}
       />
 
+      {/* Top bar — ұзын search + Menu батырмасы */}
       {searchOpen ? (
         <SearchBar onSelectPlace={handleSelectPlace} onClose={() => setSearchOpen(false)} />
       ) : (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-[500px] glass-panel rounded-xl h-10 flex items-center justify-center px-4 z-10">
-          <span className="text-white text-xl font-bold">{score}</span>
+        <div className="absolute top-4 left-4 right-4 z-10 flex items-center gap-2">
           <button
             onClick={() => setSearchOpen(true)}
-            className="absolute right-2 w-8 h-8 rounded-full bg-white/10 border border-white/15 backdrop-blur-sm flex items-center justify-center text-gray-200 hover:bg-white/15 hover:text-white active:scale-95 transition-all"
-            aria-label={t("search_placeholder")}
+            className="flex-1 glass-panel rounded-xl h-11 flex items-center gap-2.5 px-4 text-left"
           >
-            <Search className="w-3.5 h-3.5" strokeWidth={2.6} />
+            <Search className="w-4 h-4 text-gray-300 shrink-0" strokeWidth={2.4} />
+            <span className="text-gray-300 text-[13px] truncate">{t("search_placeholder")}</span>
+            <span className="ml-auto text-white text-[15px] font-bold shrink-0">{score}</span>
+          </button>
+
+          <button
+            onClick={() => navigate("/menu")}
+            className="w-11 h-11 rounded-full glass-panel flex items-center justify-center shrink-0"
+            aria-label="Menu"
+          >
+            <MenuIcon className="w-4.5 h-4.5 text-gray-100" strokeWidth={2.3} />
           </button>
         </div>
       )}
 
+      {/* Zoom controls */}
       <div className="absolute top-20 left-4 flex flex-col z-10">
         <button
           onClick={handleZoomIn}
@@ -223,6 +219,16 @@ export default function MapPage() {
         </button>
       </div>
 
+      {/* Жылдамдық индикаторы (км/сағ) — жүріп/жүгіріп бара жатқанда көрінеді */}
+      {recording && speedKmh != null && (
+        <div className="absolute top-20 right-4 z-10 glass-panel rounded-[12px] px-3 py-2 flex items-center gap-1.5">
+          <Gauge className="w-3.5 h-3.5 text-emerald-300" strokeWidth={2.2} />
+          <span className="text-white text-[13px] font-bold">{speedKmh.toFixed(1)}</span>
+          <span className="text-gray-400 text-[10px]">км/ч</span>
+        </div>
+      )}
+
+      {/* GPS error modal */}
       {showGpsError && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75%] max-w-[280px] modal-panel p-4 text-center z-20 flex flex-col items-center">
           <button
@@ -251,7 +257,7 @@ export default function MapPage() {
               <span className="text-[11px]">{t("refresh")}</span>
             </button>
             <button
-              onClick={() => setActiveSheet(SHEETS.SETTINGS)}
+              onClick={() => navigate("/menu")}
               className="flex flex-col items-center text-gray-300 hover:text-white transition-colors group"
             >
               <Settings
@@ -264,8 +270,9 @@ export default function MapPage() {
         </div>
       )}
 
+      {/* Capture нәтижесі туралы toast */}
       {captureMessage && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] z-20">
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] z-20">
           <div
             className={`rounded-[12px] px-4 py-2.5 backdrop-blur-md border text-center text-[13px] font-medium ${
               captureMessage.type === "success"
@@ -278,35 +285,29 @@ export default function MapPage() {
         </div>
       )}
 
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-[500px] glass-panel rounded-[20px] p-2 pt-3 z-10 flex flex-col gap-2">
-        <div className="flex justify-between gap-2 px-1">
-          <NavButton icon={User} label={t("profile_nav")} onClick={() => setActiveSheet(SHEETS.PROFILE)} />
-          <NavButton icon={Trophy} label={t("leaderboard_nav")} onClick={() => setActiveSheet(SHEETS.LEADERBOARD)} />
-          <NavButton icon={Award} label={t("achievements_nav")} onClick={() => setActiveSheet(SHEETS.ACHIEVEMENTS)} />
-          <NavButton icon={Settings} label={t("settings_nav")} onClick={() => setActiveSheet(SHEETS.SETTINGS)} />
-        </div>
-
+      {/* Bottom — тек START/STOP, bottom nav толықтай алынды */}
+      <div className="absolute bottom-4 left-4 right-4 z-10">
         {!recording ? (
           <Btn3D
             onClick={handleStart}
-            className="w-full h-[45px] rounded-[12px] flex items-center justify-center gap-2 mt-1"
+            className="w-full h-[52px] rounded-[16px] flex items-center justify-center gap-2"
           >
             <Play className="w-5 h-5 text-white fill-white" strokeWidth={0} />
-            <span className="start-text text-white text-[16px] font-bold">{t("start")}</span>
+            <span className="start-text text-white text-[17px] font-bold">{t("start")}</span>
           </Btn3D>
         ) : (
-          <div className="flex gap-2 mt-1">
+          <div className="flex gap-2">
             <button
               onClick={handleCloseLoop}
               disabled={capturing || pathPoints.length < 3}
-              className="flex-1 h-[45px] rounded-[12px] flex items-center justify-center gap-2 bg-amber-400/20 border border-amber-300/40 backdrop-blur-sm text-amber-200 hover:bg-amber-400/25 active:scale-[0.98] transition-all disabled:opacity-50"
+              className="flex-1 h-[52px] rounded-[16px] flex items-center justify-center gap-2 bg-amber-400/20 border border-amber-300/40 backdrop-blur-sm text-amber-200 hover:bg-amber-400/25 active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {capturing ? (
                 <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.3} />
               ) : (
                 <Link2 className="w-4 h-4" strokeWidth={2.3} />
               )}
-              <span className="start-text text-[14px] font-bold">
+              <span className="start-text text-[15px] font-bold">
                 {capturing ? t("capturing") : t("close_loop")}
               </span>
             </button>
@@ -314,44 +315,28 @@ export default function MapPage() {
             <button
               onClick={handleStop}
               disabled={capturing}
-              className="w-[90px] h-[45px] rounded-[12px] flex items-center justify-center gap-1.5 bg-white/10 border border-white/15 backdrop-blur-sm text-gray-200 hover:bg-white/15 active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-[100px] h-[52px] rounded-[16px] flex items-center justify-center gap-1.5 bg-white/10 border border-white/15 backdrop-blur-sm text-gray-200 hover:bg-white/15 active:scale-[0.98] transition-all disabled:opacity-50"
             >
               <Square className="w-3.5 h-3.5 fill-current" strokeWidth={0} />
-              <span className="start-text text-[13px] font-bold">{t("stop")}</span>
+              <span className="start-text text-[14px] font-bold">{t("stop")}</span>
             </button>
           </div>
         )}
       </div>
 
+      {/* Center-on-me — жеке floating батырма */}
       {position && (
         <button
           onClick={handleCenterMe}
-          className="absolute bottom-[168px] right-4 btn-3d w-10 h-10 rounded-full z-10"
-          aria-label="Center"
+          className="absolute bottom-[88px] right-4 btn-3d w-10 h-10 rounded-full z-10"
+          aria-label="Центрировать на мне"
         >
           <Crosshair className="w-4 h-4 text-gray-200" strokeWidth={2.2} />
         </button>
       )}
-
-      {activeSheet === SHEETS.PROFILE && <ProfileSheet onBack={closeSheet} />}
-      {activeSheet === SHEETS.LEADERBOARD && <LeaderboardSheet onBack={closeSheet} />}
-      {activeSheet === SHEETS.ACHIEVEMENTS && <AchievementsSheet onBack={closeSheet} />}
-      {activeSheet === SHEETS.SETTINGS && <SettingsSheet onBack={closeSheet} />}
     </div>
   );
 }
-
-const NavButton = memo(function NavButton({ icon: Icon, label, onClick }) {
-  return (
-    <button
-      aria-label={label}
-      onClick={onClick}
-      className="btn-3d flex-1 aspect-square rounded-[12px] max-h-[45px]"
-    >
-      <Icon className="w-6 h-6 text-gray-100" strokeWidth={2.2} />
-    </button>
-  );
-});
 
 function gpsErrorMessage(code, t) {
   switch (code) {

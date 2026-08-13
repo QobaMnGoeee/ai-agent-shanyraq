@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Mail, Trophy, Grid3x3, Flame, LogOut, Award } from "lucide-react";
+import { Mail, Trophy, Grid3x3, Flame, LogOut, Award, Star, Pencil } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useLang } from "../../context/LangContext";
 import { supabase } from "../../lib/supabase";
 import { getUserStats } from "../../lib/userStats";
+import { getLeagueForScore } from "../../lib/mainMenuData";
 import Sheet from "../ui/Sheet";
 import GlassPanel from "../ui/GlassPanel";
 import { ACHIEVEMENTS } from "../../lib/mockData";
@@ -49,6 +50,10 @@ export default function ProfileSheet({ onBack }) {
     await signOut();
   }
 
+  const score = Math.floor(profile?.total_score || 0);
+  const league = getLeagueForScore(score);
+  const level = Math.floor(score / 1000) + 1;
+
   return (
     <Sheet
       title={t("profile_title")}
@@ -66,17 +71,40 @@ export default function ProfileSheet({ onBack }) {
     >
       <div className="flex flex-col items-center py-4">
         <div
-          className="w-20 h-20 rounded-full border-4 border-white/10 flex items-center justify-center text-white text-2xl font-bold mb-3"
+          className="w-20 h-20 rounded-full border-4 border-white/10 flex items-center justify-center text-white text-2xl font-bold mb-3 relative"
           style={{ backgroundColor: profile?.color || "#2b5569" }}
         >
           {(profile?.username || user?.email || "?").charAt(0).toUpperCase()}
+          <div
+            className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full border-2 border-[#1a2e38] flex items-center justify-center"
+            style={{ backgroundColor: league.color }}
+          >
+            <Star className="w-3.5 h-3.5 text-white" strokeWidth={2.5} fill="white" />
+          </div>
         </div>
-        <h2 className="text-white text-[18px] font-semibold">
-          {loading ? "..." : profile?.username || "—"}
-        </h2>
-        <div className="flex items-center gap-1.5 text-gray-400 text-[12.5px] mt-1">
+        <div className="flex items-center gap-2">
+          <h2 className="text-white text-[18px] font-semibold">
+            {loading ? "..." : profile?.username || "—"}
+          </h2>
+          <span
+            className="text-[10px] font-bold text-gray-900 px-2 py-0.5 rounded-full"
+            style={{ backgroundColor: league.color }}
+          >
+            Уровень {level}
+          </span>
+        </div>
+        <p className="text-gray-400 text-[12px] mt-1">{league.name} лига</p>
+        <div className="flex items-center gap-1.5 text-gray-400 text-[12.5px] mt-2">
           <Mail className="w-3.5 h-3.5" strokeWidth={2} />
           <span>{user?.email}</span>
+        </div>
+
+        {/* Описание профиля */}
+        <div className="w-full mt-3">
+          <button className="w-full flex items-center gap-2 justify-center text-gray-500 text-[11.5px] hover:text-gray-300 transition-colors">
+            <Pencil className="w-3 h-3" strokeWidth={2.2} />
+            <span>Добавить описание профиля</span>
+          </button>
         </div>
       </div>
 

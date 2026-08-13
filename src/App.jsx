@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import MapPage from "./pages/MapPage";
+import MainMenuPage from "./pages/MainMenuPage";
 import CookieConsent from "./components/ui/CookieConsent";
 import SiteVerifyGate from "./components/ui/SiteVerifyGate";
 
@@ -77,6 +78,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <MapPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/menu"
+                element={
+                  <ProtectedRoute>
+                    <MainMenuPage />
                   </ProtectedRoute>
                 }
               />
