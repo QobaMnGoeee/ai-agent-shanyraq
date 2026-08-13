@@ -13,6 +13,7 @@ import {
   Star,
   Send,
   Check,
+  Lock,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useLang } from "../context/LangContext";
@@ -38,6 +39,8 @@ const SHEETS = {
   CLAN: "clan",
   FRIENDS: "friends",
 };
+
+const CLAN_UNLOCK_SCORE = 15000;
 
 export default function MainMenuPage() {
   const { user } = useAuth();
@@ -158,28 +161,28 @@ export default function MainMenuPage() {
 
         {/* Main grid — Shop, Achievements, Leaderboard, Settings */}
         <Section title="Игра">
-          <div className="grid grid-cols-2 gap-3">
-            <MenuCard
+          <div className="flex flex-col gap-2.5">
+            <MenuRow
               icon={ShoppingBag}
               label="Магазин"
               sublabel="Золотая зона"
               accent="#FFD700"
               onClick={() => setActiveSheet(SHEETS.SHOP)}
             />
-            <MenuCard
+            <MenuRow
               icon={Award}
               label="Достижения"
               accent="#F59E0B"
               onClick={() => setActiveSheet(SHEETS.ACHIEVEMENTS)}
             />
-            <MenuCard
+            <MenuRow
               icon={Trophy}
               label="Рейтинг"
               sublabel={`${league.name} лига`}
               accent={league.color}
               onClick={() => setActiveSheet(SHEETS.LEADERBOARD)}
             />
-            <MenuCard
+            <MenuRow
               icon={Settings}
               label="Настройки"
               onClick={() => setActiveSheet(SHEETS.SETTINGS)}
@@ -189,15 +192,21 @@ export default function MainMenuPage() {
 
         {/* Social — Clan/Friends */}
         <Section title="Сообщество">
-          <div className="grid grid-cols-2 gap-3">
-            <MenuCard
+          <div className="flex flex-col gap-2.5">
+            <MenuRow
               icon={Users}
               label="Клуб"
-              sublabel="Создать/вступить"
+              sublabel={
+                score >= CLAN_UNLOCK_SCORE
+                  ? "Создать/вступить"
+                  : `Откроется на ${CLAN_UNLOCK_SCORE.toLocaleString("ru-RU")} очках`
+              }
               accent="#60A5FA"
-              onClick={() => setActiveSheet(SHEETS.CLAN)}
+              locked={score < CLAN_UNLOCK_SCORE}
+              progress={Math.min(100, Math.round((score / CLAN_UNLOCK_SCORE) * 100))}
+              onClick={() => score >= CLAN_UNLOCK_SCORE && setActiveSheet(SHEETS.CLAN)}
             />
-            <MenuCard
+            <MenuRow
               icon={UserPlus}
               label="Друзья"
               sublabel="Найти рядом"
@@ -252,20 +261,35 @@ function Section({ title, children }) {
   );
 }
 
-function MenuCard({ icon: Icon, label, sublabel, accent, onClick }) {
+function MenuRow({ icon: Icon, label, sublabel, accent, onClick, locked, progress }) {
   return (
-    <button onClick={onClick} className="w-full">
-      <GlassPanel className="rounded-[16px] p-4 flex flex-col items-start gap-2.5">
+    <button onClick={onClick} disabled={locked} className="w-full">
+      <GlassPanel className={`rounded-[16px] p-3.5 flex items-center gap-3.5 ${locked ? "opacity-75" : ""}`}>
         <div
-          className="w-9 h-9 rounded-[10px] flex items-center justify-center"
+          className="w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0"
           style={{ backgroundColor: accent ? `${accent}25` : "rgba(255,255,255,0.08)" }}
         >
-          <Icon className="w-4.5 h-4.5" style={{ color: accent || "#e5e7eb" }} strokeWidth={2.2} />
+          {locked ? (
+            <Lock className="w-4.5 h-4.5 text-gray-400" strokeWidth={2.2} />
+          ) : (
+            <Icon className="w-4.5 h-4.5" style={{ color: accent || "#e5e7eb" }} strokeWidth={2.2} />
+          )}
         </div>
-        <div className="text-left">
-          <p className="text-white text-[13.5px] font-semibold">{label}</p>
-          {sublabel && <p className="text-gray-500 text-[10.5px] mt-0.5">{sublabel}</p>}
+
+        <div className="flex-1 min-w-0 text-left">
+          <p className="text-white text-[14px] font-semibold">{label}</p>
+          {sublabel && <p className="text-gray-500 text-[11px] mt-0.5">{sublabel}</p>}
+          {locked && typeof progress === "number" && (
+            <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden max-w-[160px]">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{ width: `${progress}%`, backgroundColor: accent }}
+              />
+            </div>
+          )}
         </div>
+
+        {!locked && <ChevronRight className="w-4 h-4 text-gray-500 shrink-0" strokeWidth={2.2} />}
       </GlassPanel>
     </button>
   );
