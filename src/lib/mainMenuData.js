@@ -29,7 +29,7 @@ export const MISSIONS = [
     description: "Подпишись на канал Stepland в Telegram",
     reward: 1000,
     type: "social",
-    url: "https://t.me/stepland",
+    url: "https://t.me/StepLand_App",
   },
 ];
 
