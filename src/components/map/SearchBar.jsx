@@ -37,7 +37,7 @@ export default function SearchBar({ onSelectPlace, onClose }) {
   }, [query]);
 
   return (
-    <div className="absolute inset-x-0 bottom-0 z-30 px-4 pb-4 flex flex-col-reverse gap-2">
+    <div className="absolute inset-x-0 top-0 z-30 px-4 pt-4">
       <div className="flex items-center gap-2">
         <GlassPanel className="flex-1 rounded-xl h-11 flex items-center px-3.5 gap-2">
           <Search className="w-4 h-4 text-gray-300 shrink-0" strokeWidth={2.4} />
@@ -63,7 +63,7 @@ export default function SearchBar({ onSelectPlace, onClose }) {
       </div>
 
       {(results.length > 0 || error) && (
-        <GlassPanel className="rounded-xl max-h-[45dvh] overflow-y-auto">
+        <GlassPanel className="rounded-xl mt-2 max-h-[45dvh] overflow-y-auto">
           {error && <p className="text-red-300 text-[12px] px-4 py-3">{error}</p>}
           {results.map((place) => (
             <button

@@ -177,10 +177,28 @@ export default function MapPage() {
         onMapReady={setMapInstance}
       />
 
-      {/* Top bar — тек ұпай */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-[500px] glass-panel rounded-xl h-11 flex items-center justify-center z-10">
-        <span className="text-white text-xl font-bold">{score}</span>
-      </div>
+      {/* Top bar — search + Menu батырмасы */}
+      {searchOpen ? (
+        <SearchBar onSelectPlace={handleSelectPlace} onClose={() => setSearchOpen(false)} />
+      ) : (
+        <div className="absolute top-4 left-4 right-4 z-10 flex items-center gap-2">
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="flex-1 glass-panel rounded-xl h-11 flex items-center gap-2.5 px-4 text-left"
+          >
+            <Search className="w-4 h-4 text-gray-300 shrink-0" strokeWidth={2.4} />
+            <span className="text-gray-300 text-[13px] truncate">{t("search_placeholder")}</span>
+          </button>
+
+          <button
+            onClick={() => navigate("/menu")}
+            className="w-11 h-11 rounded-full glass-panel flex items-center justify-center shrink-0"
+            aria-label="Menu"
+          >
+            <MenuIcon className="w-4.5 h-4.5 text-gray-100" strokeWidth={2.3} />
+          </button>
+        </div>
+      )}
 
       {/* Zoom controls */}
       <div className="absolute top-20 left-4 flex flex-col z-10">
@@ -266,27 +284,11 @@ export default function MapPage() {
         </div>
       )}
 
-      {/* Bottom — search + Menu батырмасы (START-тың үстінде), содан кейін START/STOP */}
-      {searchOpen ? (
-        <SearchBar onSelectPlace={handleSelectPlace} onClose={() => setSearchOpen(false)} />
-      ) : (
+      {/* Bottom — score bar (search орнына), содан кейін START/STOP */}
+      {!searchOpen && (
         <div className="absolute bottom-4 left-4 right-4 z-10 flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="flex-1 glass-panel rounded-xl h-11 flex items-center gap-2.5 px-4 text-left"
-            >
-              <Search className="w-4 h-4 text-gray-300 shrink-0" strokeWidth={2.4} />
-              <span className="text-gray-300 text-[13px] truncate">{t("search_placeholder")}</span>
-            </button>
-
-            <button
-              onClick={() => navigate("/menu")}
-              className="w-11 h-11 rounded-full glass-panel flex items-center justify-center shrink-0"
-              aria-label="Menu"
-            >
-              <MenuIcon className="w-4.5 h-4.5 text-gray-100" strokeWidth={2.3} />
-            </button>
+          <div className="glass-panel rounded-xl h-11 flex items-center justify-center">
+            <span className="text-white text-xl font-bold">{score}</span>
           </div>
 
           {!recording ? (
@@ -302,7 +304,7 @@ export default function MapPage() {
               <button
                 onClick={handleCloseLoop}
                 disabled={capturing || pathPoints.length < 3}
-                className="flex-1 h-[52px] rounded-[16px] flex items-center justify-center gap-2 bg-amber-400/20 border border-amber-300/40 backdrop-blur-sm text-amber-200 hover:bg-amber-400/25 active:scale-[0.98] transition-all disabled:opacity-50"
+                className="flex-1 h-[52px] rounded-[16px] flex items-center justify-center gap-2 bg-amber-500 text-white shadow-lg shadow-amber-500/30 hover:bg-amber-400 active:scale-[0.98] transition-all disabled:opacity-50"
               >
                 {capturing ? (
                   <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.3} />
@@ -317,7 +319,7 @@ export default function MapPage() {
               <button
                 onClick={handleStop}
                 disabled={capturing}
-                className="w-[100px] h-[52px] rounded-[16px] flex items-center justify-center gap-1.5 bg-white/10 border border-white/15 backdrop-blur-sm text-gray-200 hover:bg-white/15 active:scale-[0.98] transition-all disabled:opacity-50"
+                className="btn-3d w-[100px] h-[52px] rounded-[16px] flex items-center justify-center gap-1.5 text-gray-100 active:scale-[0.98] transition-all disabled:opacity-50"
               >
                 <Square className="w-3.5 h-3.5 fill-current" strokeWidth={0} />
                 <span className="start-text text-[14px] font-bold">{t("stop")}</span>
@@ -331,7 +333,7 @@ export default function MapPage() {
       {position && !searchOpen && (
         <button
           onClick={handleCenterMe}
-          className="absolute bottom-[140px] right-4 btn-3d w-10 h-10 rounded-full z-10"
+          className="absolute bottom-[130px] right-4 btn-3d w-10 h-10 rounded-full z-10"
           aria-label="Центрировать на мне"
         >
           <Crosshair className="w-4 h-4 text-gray-200" strokeWidth={2.2} />
