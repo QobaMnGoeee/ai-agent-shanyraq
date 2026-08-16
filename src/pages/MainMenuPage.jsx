@@ -28,6 +28,7 @@ import ShopSheet from "../components/overlays/ShopSheet";
 import ClanSheet from "../components/overlays/ClanSheet";
 import FriendsSheet from "../components/overlays/FriendsSheet";
 import { LEAGUES, getLeagueForScore, MISSIONS } from "../lib/mainMenuData";
+import { TreeDecor, SunDecor } from "../components/illustrations";
 
 const SHEETS = {
   NONE: null,
@@ -100,6 +101,8 @@ export default function MainMenuPage() {
         className="absolute top-[40%] -left-24 w-56 h-56 blob-shape bg-sky2-200/30 pointer-events-none"
         aria-hidden="true"
       />
+      <SunDecor className="absolute top-4 right-4 w-10 opacity-90 pointer-events-none animate-float-slow" />
+      <TreeDecor className="absolute top-2 left-2 w-9 opacity-70 pointer-events-none" />
       <div className="relative min-h-full px-4 pt-5 pb-8">
         {/* Header */}
         <div className="flex items-center gap-3 mb-5">

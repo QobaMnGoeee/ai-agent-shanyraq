@@ -182,6 +182,13 @@ html.dark .input-3d:focus {
   transform-origin: bottom left;
 }
 
+/* Картаны жалпы жылырақ, жасылдау, табиғи реңкке келтіру —
+   applyNatureTint() қабат түстерін өзгерте алмаса да, бұл әрқашан жұмыс істейді */
+.maplibregl-canvas,
+.maptiler-sdk-canvas {
+  filter: saturate(1.08) sepia(0.06) hue-rotate(-6deg) brightness(1.02);
+}
+
 html.dark .maplibregl-canvas,
 html.dark .maptiler-sdk-canvas {
   filter: brightness(0.9) saturate(1.05);

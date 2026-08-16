@@ -8,6 +8,7 @@ import AuthCard from "../components/ui/AuthCard";
 import Input3D from "../components/ui/Input3D";
 import Btn3D from "../components/ui/Btn3D";
 import CustomColorPicker from "../components/ui/CustomColorPicker";
+import { FlagPlantIllustration } from "../components/illustrations";
 
 const COLORS = [
   "#FF5733", "#00FF88", "#3388FF", "#FFD23F",
@@ -90,7 +91,11 @@ export default function OnboardingPage() {
   }
 
   return (
-    <AuthCard title="Почти готово" subtitle="Настройте профиль, чтобы начать играть">
+    <AuthCard
+      title="Почти готово"
+      subtitle="Настройте профиль, чтобы начать играть"
+      illustration={<FlagPlantIllustration className="w-full h-auto" flagColor={color} />}
+    >
       <form onSubmit={handleSubmit} className="flex flex-col gap-3.5" noValidate>
         <Input3D
           icon={User}

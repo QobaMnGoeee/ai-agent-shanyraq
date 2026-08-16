@@ -7,6 +7,7 @@ import AuthCard from "../components/ui/AuthCard";
 import Input3D from "../components/ui/Input3D";
 import Btn3D from "../components/ui/Btn3D";
 import GoogleButton from "../components/ui/GoogleButton";
+import { RunnerIllustration } from "../components/illustrations";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -75,7 +76,11 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthCard title={t("login_title")} subtitle={t("login_subtitle")}>
+    <AuthCard
+      title={t("login_title")}
+      subtitle={t("login_subtitle")}
+      illustration={<RunnerIllustration className="w-full h-auto" />}
+    >
       <form
         onSubmit={handleSubmit}
         className={`flex flex-col gap-3.5 ${shake ? "animate-shake" : ""}`}

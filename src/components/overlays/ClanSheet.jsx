@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Users, Plus, Search, Shield } from "lucide-react";
+import { Plus, Search, Shield } from "lucide-react";
 import Sheet from "../ui/Sheet";
 import GlassPanel from "../ui/GlassPanel";
 import Input3D from "../ui/Input3D";
 import Btn3D from "../ui/Btn3D";
 import { MOCK_CLAN } from "../../lib/mainMenuData";
+import { FriendsIllustration } from "../illustrations";
 
 export default function ClanSheet({ onBack }) {
   const [mode, setMode] = useState(null); // null | 'create' | 'join'
@@ -22,8 +23,8 @@ export default function ClanSheet({ onBack }) {
     <Sheet title="Клуб" onBack={onBack}>
       {!mode && (
         <div className="flex flex-col gap-3">
-          <div className="flex flex-col items-center py-8 text-center">
-            <Users className="w-10 h-10 text-ink-300 mb-3" strokeWidth={1.6} />
+          <div className="flex flex-col items-center py-2 text-center">
+            <FriendsIllustration className="w-full max-w-[200px] h-auto mb-2" />
             <p className="text-ink-700 text-[14px] font-bold">Вы ещё не в клубе</p>
             <p className="text-ink-400 text-[12px] font-medium mt-1 max-w-[240px]">
               Создайте свой клуб или вступите в существующий, чтобы соревноваться командой

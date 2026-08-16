@@ -7,6 +7,7 @@ import { getUserStats } from "../../lib/userStats";
 import { ACHIEVEMENTS } from "../../lib/mockData";
 import Sheet from "../ui/Sheet";
 import GlassPanel from "../ui/GlassPanel";
+import { TrophyIllustration } from "../illustrations";
 
 export default function AchievementsSheet({ onBack }) {
   const { user } = useAuth();
@@ -57,6 +58,10 @@ export default function AchievementsSheet({ onBack }) {
 
   return (
     <Sheet title={t("achievements_title")} onBack={onBack}>
+      <div className="flex justify-center mb-1 -mt-1">
+        <TrophyIllustration className="w-28 h-auto" />
+      </div>
+
       <GlassPanel className="rounded-2xl p-4 mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <Award className="w-5 h-5 text-sun-500" strokeWidth={2.2} />

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { Trophy, Grid3x3, Medal, RotateCcw, Users } from "lucide-react";
+import { Trophy, Grid3x3, Medal, RotateCcw } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { useLang } from "../../context/LangContext";
 import Sheet from "../ui/Sheet";
 import GlassPanel from "../ui/GlassPanel";
+import { TrophyIllustration, EmptyStateIllustration } from "../illustrations";
 
 export default function LeaderboardSheet({ onBack }) {
   const { t } = useLang();
@@ -69,6 +70,10 @@ export default function LeaderboardSheet({ onBack }) {
 
   return (
     <Sheet title={t("leaderboard_title")} onBack={onBack}>
+      <div className="flex justify-center mb-1 -mt-1">
+        <TrophyIllustration className="w-28 h-auto" />
+      </div>
+
       <div className="flex items-center gap-2 bg-cream-100 rounded-2xl px-3 py-2 mb-3">
         <RotateCcw className="w-3.5 h-3.5 text-ink-300 shrink-0" strokeWidth={2.2} />
         <p className="text-ink-400 text-[11px] font-semibold">{t("leaderboard_update_note")}</p>
@@ -108,8 +113,8 @@ export default function LeaderboardSheet({ onBack }) {
       )}
 
       {!loading && !error && players.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <Users className="w-10 h-10 text-ink-300 mb-3" strokeWidth={1.6} />
+        <div className="flex flex-col items-center justify-center py-6 text-center">
+          <EmptyStateIllustration className="w-40 h-auto mb-3" />
           <p className="text-ink-700 text-[14px] font-bold">{t("leaderboard_empty_title")}</p>
           <p className="text-ink-400 text-[12px] font-medium mt-1 max-w-[220px]">{t("leaderboard_empty_subtitle")}</p>
         </div>

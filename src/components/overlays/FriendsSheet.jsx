@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { UserPlus, Search, MapPin, Trophy } from "lucide-react";
+import { Search, MapPin, Trophy } from "lucide-react";
 import Sheet from "../ui/Sheet";
 import GlassPanel from "../ui/GlassPanel";
 import Input3D from "../ui/Input3D";
 import { MOCK_FRIENDS } from "../../lib/mainMenuData";
+import { FriendsIllustration } from "../illustrations";
 
 export default function FriendsSheet({ onBack }) {
   const [query, setQuery] = useState("");
@@ -40,8 +41,8 @@ export default function FriendsSheet({ onBack }) {
       </div>
 
       {sortedFriends.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-14 text-center">
-          <UserPlus className="w-10 h-10 text-ink-300 mb-3" strokeWidth={1.6} />
+        <div className="flex flex-col items-center justify-center py-4 text-center">
+          <FriendsIllustration className="w-full max-w-[200px] h-auto mb-3" />
           <p className="text-ink-700 text-[14px] font-bold">Пока нет друзей</p>
           <p className="text-ink-400 text-[12px] font-medium mt-1 max-w-[220px]">
             Найдите игроков рядом или по имени пользователя

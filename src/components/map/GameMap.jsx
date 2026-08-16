@@ -111,6 +111,7 @@ function GameMap({
       styleLoadedRef.current = true;
       updateTerritorySource(map, pendingRef.current.territories);
       updatePathSource(map, pendingRef.current.pathPoints);
+      applyNatureTint(map);
     });
 
     map.on("error", (e) => {
@@ -242,6 +243,48 @@ function escapeHtml(str) {
     '"': "&quot;",
     "'": "&#39;",
   })[c]);
+}
+
+/**
+ * DATAVIZ стиліндегі негізгі қабаттарды (жер, парк, су) жаратылыс/
+ * табиғи Stepland палитрасына үйлесімді жасыл-жылы реңкке бояу.
+ * Қабат id-лары табылмаса — үнсіз өтеді (стиль нұсқасы өзгерсе де қатесіз).
+ */
+function applyNatureTint(map) {
+  const paintIfExists = (layerId, prop, value) => {
+    try {
+      if (map.getLayer(layerId)) {
+        map.setPaintProperty(layerId, prop, value);
+      }
+    } catch {
+      /* қабат осы стильде жоқ болуы мүмкін — елемей өтеміз */
+    }
+  };
+
+  // Жалпы фон / жер беті — жылы кремді реңк
+  paintIfExists("Background", "background-color", "#fbf6e8");
+  paintIfExists("background", "background-color", "#fbf6e8");
+
+  // Парктер мен жасыл аймақтар — палитрадағы leaf түстер
+  ["Park", "park", "Landcover", "landcover", "Landuse", "landuse", "Wood", "wood", "Forest"].forEach(
+    (id) => paintIfExists(id, "fill-color", "#c9edd4")
+  );
+
+  // Су айдындары — sky2 реңкі
+  ["Water", "water", "Waterway", "waterway"].forEach((id) =>
+    paintIfExists(id, "fill-color", "#bfe8fb")
+  );
+
+  // Ғимарат контурлары — жұмсақ, назар аудармайтын
+  ["Building", "building"].forEach((id) => {
+    paintIfExists(id, "fill-color", "#eee3c8");
+    paintIfExists(id, "fill-opacity", 0.6);
+  });
+
+  // Жолдар — жұмсақ, жасыл фонмен үйлесімді
+  ["Road network", "road", "Road", "highway"].forEach((id) =>
+    paintIfExists(id, "line-color", "#f4ead0")
+  );
 }
 
 export default memo(GameMap);
