@@ -184,46 +184,46 @@ export default function MapPage() {
         <div className="absolute top-4 left-4 right-4 z-10 flex items-center gap-2">
           <button
             onClick={() => setSearchOpen(true)}
-            className="flex-1 glass-panel rounded-xl h-11 flex items-center gap-2.5 px-4 text-left"
+            className="flex-1 glass-panel rounded-2xl h-12 flex items-center gap-2.5 px-4 text-left"
           >
-            <Search className="w-4 h-4 text-gray-300 shrink-0" strokeWidth={2.4} />
-            <span className="text-gray-300 text-[13px] truncate">{t("search_placeholder")}</span>
+            <Search className="w-4 h-4 text-leaf-500 shrink-0" strokeWidth={2.4} />
+            <span className="text-ink-400 text-[13px] font-semibold truncate">{t("search_placeholder")}</span>
           </button>
 
           <button
             onClick={() => navigate("/menu")}
-            className="w-11 h-11 rounded-full glass-panel flex items-center justify-center shrink-0"
+            className="w-12 h-12 rounded-full glass-panel flex items-center justify-center shrink-0"
             aria-label="Menu"
           >
-            <MenuIcon className="w-4.5 h-4.5 text-gray-100" strokeWidth={2.3} />
+            <MenuIcon className="w-4.5 h-4.5 text-leaf-600" strokeWidth={2.3} />
           </button>
         </div>
       )}
 
       {/* Zoom controls */}
-      <div className="absolute top-20 left-4 flex flex-col z-10">
+      <div className="absolute top-24 left-4 flex flex-col z-10 gap-[3px]">
         <button
           onClick={handleZoomIn}
-          className="btn-3d w-10 h-10 rounded-t-xl rounded-b-sm mb-[2px]"
+          className="btn-3d w-11 h-11 rounded-2xl"
           aria-label="Zoom +"
         >
-          <Plus className="w-5 h-5 text-gray-200" />
+          <Plus className="w-5 h-5 text-white" />
         </button>
         <button
           onClick={handleZoomOut}
-          className="btn-3d w-10 h-10 rounded-b-xl rounded-t-sm"
+          className="btn-3d w-11 h-11 rounded-2xl"
           aria-label="Zoom -"
         >
-          <Minus className="w-5 h-5 text-gray-200" />
+          <Minus className="w-5 h-5 text-white" />
         </button>
       </div>
 
       {/* Жылдамдық индикаторы (км/сағ) — жүріп/жүгіріп бара жатқанда көрінеді */}
       {recording && speedKmh != null && (
-        <div className="absolute top-20 right-4 z-10 glass-panel rounded-[12px] px-3 py-2 flex items-center gap-1.5">
-          <Gauge className="w-3.5 h-3.5 text-emerald-300" strokeWidth={2.2} />
-          <span className="text-white text-[13px] font-bold">{speedKmh.toFixed(1)}</span>
-          <span className="text-gray-400 text-[10px]">км/ч</span>
+        <div className="absolute top-24 right-4 z-10 glass-panel rounded-2xl px-3 py-2 flex items-center gap-1.5">
+          <Gauge className="w-3.5 h-3.5 text-leaf-500" strokeWidth={2.2} />
+          <span className="text-ink-800 text-[13px] font-extrabold">{speedKmh.toFixed(1)}</span>
+          <span className="text-ink-400 text-[10px] font-semibold">км/ч</span>
         </div>
       )}
 
@@ -232,38 +232,38 @@ export default function MapPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75%] max-w-[280px] modal-panel p-4 text-center z-20 flex flex-col items-center">
           <button
             onClick={() => setGpsErrorDismissed(true)}
-            className="absolute top-2 right-2 text-gray-400 hover:text-white transition-colors"
+            className="absolute top-2 right-2 text-ink-300 hover:text-coral-500 transition-colors"
             aria-label="Close"
           >
             <X className="w-4 h-4" strokeWidth={2.4} />
           </button>
-          <div className="text-white mb-2">
+          <div className="text-sun-500 mb-2">
             <Satellite className="w-6 h-6 opacity-90" strokeWidth={1.5} />
           </div>
-          <h2 className="text-white text-[17px] font-semibold mb-2">{t("gps_error_title")}</h2>
-          <p className="text-gray-200 text-[12px] leading-snug mb-4 px-1">
+          <h2 className="start-text text-ink-800 text-[17px] font-bold mb-2">{t("gps_error_title")}</h2>
+          <p className="text-ink-400 text-[12px] font-medium leading-snug mb-4 px-1">
             {gpsErrorMessage(gpsErrorCode, t)}
           </p>
           <div className="flex justify-between w-[90%] mb-1">
             <button
               onClick={handleGpsRefresh}
-              className="flex flex-col items-center text-gray-300 hover:text-white transition-colors group"
+              className="flex flex-col items-center text-ink-500 hover:text-leaf-600 transition-colors group"
             >
               <RefreshCw
                 className="w-5 h-5 mb-1 opacity-80 group-hover:opacity-100 transition-opacity"
                 strokeWidth={2.2}
               />
-              <span className="text-[11px]">{t("refresh")}</span>
+              <span className="text-[11px] font-semibold">{t("refresh")}</span>
             </button>
             <button
               onClick={() => navigate("/menu")}
-              className="flex flex-col items-center text-gray-300 hover:text-white transition-colors group"
+              className="flex flex-col items-center text-ink-500 hover:text-leaf-600 transition-colors group"
             >
               <Settings
                 className="w-5 h-5 mb-1 opacity-80 group-hover:opacity-100 transition-opacity"
                 strokeWidth={2.2}
               />
-              <span className="text-[11px]">{t("settings_short")}</span>
+              <span className="text-[11px] font-semibold">{t("settings_short")}</span>
             </button>
           </div>
         </div>
@@ -271,12 +271,12 @@ export default function MapPage() {
 
       {/* Capture нәтижесі туралы toast */}
       {captureMessage && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] z-20">
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] z-20">
           <div
-            className={`rounded-[12px] px-4 py-2.5 backdrop-blur-md border text-center text-[13px] font-medium ${
+            className={`rounded-2xl px-4 py-2.5 border-2 text-center text-[13px] font-bold shadow-card-lg ${
               captureMessage.type === "success"
-                ? "bg-emerald-500/15 border-emerald-400/30 text-emerald-200"
-                : "bg-red-500/15 border-red-400/30 text-red-200"
+                ? "bg-leaf-50 border-leaf-300 text-leaf-700"
+                : "bg-coral-50 border-coral-300 text-coral-600"
             }`}
           >
             {captureMessage.text}
@@ -287,14 +287,15 @@ export default function MapPage() {
       {/* Bottom — score bar (search орнына), содан кейін START/STOP */}
       {!searchOpen && (
         <div className="absolute bottom-4 left-4 right-4 z-10 flex flex-col gap-2">
-          <div className="glass-panel rounded-xl h-11 flex items-center justify-center">
-            <span className="text-white text-xl font-bold">{score}</span>
+          <div className="glass-panel rounded-2xl h-12 flex items-center justify-center gap-1.5">
+            <span className="text-sun-500 text-lg">★</span>
+            <span className="text-ink-800 text-xl font-extrabold">{score}</span>
           </div>
 
           {!recording ? (
             <Btn3D
               onClick={handleStart}
-              className="w-full h-[52px] rounded-[16px] flex items-center justify-center gap-2"
+              className="w-full h-[54px] rounded-3xl flex items-center justify-center gap-2"
             >
               <Play className="w-5 h-5 text-white fill-white" strokeWidth={0} />
               <span className="start-text text-white text-[17px] font-bold">{t("start")}</span>
@@ -304,7 +305,7 @@ export default function MapPage() {
               <button
                 onClick={handleCloseLoop}
                 disabled={capturing || pathPoints.length < 3}
-                className="flex-1 h-[52px] rounded-[16px] flex items-center justify-center gap-2 bg-amber-500 text-white shadow-lg shadow-amber-500/30 hover:bg-amber-400 active:scale-[0.98] transition-all disabled:opacity-50"
+                className="flex-1 h-[54px] rounded-3xl flex items-center justify-center gap-2 bg-sun-400 text-ink-900 font-bold shadow-[0_4px_0_0_rgba(0,0,0,0.15)] hover:bg-sun-300 active:translate-y-[3px] active:shadow-[0_1px_0_0_rgba(0,0,0,0.15)] transition-all disabled:opacity-50"
               >
                 {capturing ? (
                   <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.3} />
@@ -319,7 +320,7 @@ export default function MapPage() {
               <button
                 onClick={handleStop}
                 disabled={capturing}
-                className="btn-3d w-[100px] h-[52px] rounded-[16px] flex items-center justify-center gap-1.5 text-gray-100 active:scale-[0.98] transition-all disabled:opacity-50"
+                className="w-[100px] h-[54px] rounded-3xl flex items-center justify-center gap-1.5 bg-coral-500 text-white font-bold shadow-[0_4px_0_0_rgba(0,0,0,0.15)] hover:bg-coral-400 active:translate-y-[3px] active:shadow-[0_1px_0_0_rgba(0,0,0,0.15)] transition-all disabled:opacity-50"
               >
                 <Square className="w-3.5 h-3.5 fill-current" strokeWidth={0} />
                 <span className="start-text text-[14px] font-bold">{t("stop")}</span>
@@ -333,10 +334,10 @@ export default function MapPage() {
       {position && !searchOpen && (
         <button
           onClick={handleCenterMe}
-          className="absolute bottom-[130px] right-4 btn-3d w-10 h-10 rounded-full z-10"
+          className="absolute bottom-[138px] right-4 btn-3d w-11 h-11 rounded-full z-10"
           aria-label="Центрировать на мне"
         >
-          <Crosshair className="w-4 h-4 text-gray-200" strokeWidth={2.2} />
+          <Crosshair className="w-4 h-4 text-white" strokeWidth={2.2} />
         </button>
       )}
     </div>

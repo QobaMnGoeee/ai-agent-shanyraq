@@ -36,8 +36,8 @@ function PublicOnlyRoute({ children }) {
 
 function FullScreenLoader() {
   return (
-    <div className="min-h-[100dvh] flex items-center justify-center bg-[#e5e7eb]">
-      <div className="w-8 h-8 border-2 border-gray-400/40 border-t-gray-700 rounded-full animate-spin" />
+    <div className="min-h-[100dvh] flex items-center justify-center bg-cream-100">
+      <div className="w-9 h-9 border-4 border-leaf-100 border-t-leaf-500 rounded-full animate-spin" />
     </div>
   );
 }

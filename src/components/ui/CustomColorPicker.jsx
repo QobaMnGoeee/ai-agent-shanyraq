@@ -25,7 +25,7 @@ export default function CustomColorPicker({ value, onChange }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="aspect-square rounded-full bg-white/10 border border-white/15 backdrop-blur-sm flex items-center justify-center text-gray-200 hover:bg-white/15 hover:text-white active:scale-95 transition-all"
+        className="aspect-square rounded-full bg-ink-50 border-2 border-ink-100 flex items-center justify-center text-ink-500 hover:bg-white hover:text-leaf-500 hover:border-leaf-300 active:scale-95 transition-all"
         aria-label="Свой цвет"
       >
         <Palette className="w-3.5 h-3.5" strokeWidth={2.2} />
@@ -33,7 +33,7 @@ export default function CustomColorPicker({ value, onChange }) {
 
       {open && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center px-6 bg-black/50 backdrop-blur-sm animate-fade-up"
+          className="fixed inset-0 z-[100] flex items-center justify-center px-6 bg-ink-900/40 backdrop-blur-sm animate-fade-up"
           onClick={() => setOpen(false)}
         >
           <div
@@ -43,13 +43,13 @@ export default function CustomColorPicker({ value, onChange }) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors z-10"
+              className="absolute top-3 right-3 text-ink-300 hover:text-coral-500 transition-colors z-10"
               aria-label="Закрыть"
             >
               <X className="w-4 h-4" strokeWidth={2.4} />
             </button>
 
-            <h3 className="text-white text-[14px] font-semibold self-start mb-1">Свой цвет</h3>
+            <h3 className="start-text text-ink-800 text-[15px] font-bold self-start mb-1">Свой цвет</h3>
 
             <ColorWheel value={value} onChange={onChange} onConfirm={() => setOpen(false)} />
           </div>
@@ -169,10 +169,10 @@ function ColorWheel({ value, onChange, onConfirm }) {
 
       <div className="flex items-center gap-3 w-full">
         <div
-          className="w-8 h-8 rounded-full border-2 border-white/20 shrink-0"
+          className="w-8 h-8 rounded-full border-2 border-ink-100 shrink-0"
           style={{ backgroundColor: value }}
         />
-        <span className="text-gray-300 text-[12px] font-mono flex-1">{value}</span>
+        <span className="text-ink-500 text-[12px] font-mono font-semibold flex-1">{value}</span>
         <button
           type="button"
           onClick={onConfirm}

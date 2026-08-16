@@ -6,7 +6,7 @@ export default function GoogleButton({ onClick, loading = false }) {
       type="button"
       onClick={onClick}
       disabled={loading}
-      className="w-full h-[46px] rounded-[12px] flex items-center justify-center gap-2.5 bg-white/95 hover:bg-white text-gray-800 font-medium text-[14px] transition-colors disabled:opacity-60"
+      className="w-full h-[48px] rounded-2xl flex items-center justify-center gap-2.5 bg-white border-2 border-ink-100 hover:border-leaf-300 text-ink-700 font-bold text-[14px] transition-colors disabled:opacity-60"
     >
       {loading ? (
         <Loader2 className="animate-spin shrink-0" style={{ width: 18, height: 18 }} strokeWidth={2.2} />

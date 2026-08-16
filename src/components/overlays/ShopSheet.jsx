@@ -22,18 +22,18 @@ export default function ShopSheet({ onBack, balance = 0 }) {
 
   return (
     <Sheet title="Магазин" onBack={onBack}>
-      <GlassPanel className="rounded-[16px] p-4 mb-4 flex items-center justify-between">
+      <GlassPanel className="rounded-2xl p-4 mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <Coins className="w-5 h-5 text-amber-300" strokeWidth={2.2} />
-          <span className="text-white text-[14px] font-medium">Баланс</span>
+          <Coins className="w-5 h-5 text-sun-500" strokeWidth={2.2} />
+          <span className="text-ink-800 text-[14px] font-bold">Баланс</span>
         </div>
-        <span className="text-amber-300 text-[16px] font-bold">
+        <span className="text-sun-600 text-[16px] font-extrabold">
           {balance.toLocaleString("ru-RU")}
         </span>
       </GlassPanel>
 
-      <div className="bg-amber-400/10 border border-amber-300/25 rounded-[12px] px-3.5 py-2.5 mb-4">
-        <p className="text-amber-200 text-[11.5px] leading-snug">
+      <div className="bg-sun-50 border-2 border-sun-200 rounded-2xl px-3.5 py-2.5 mb-4">
+        <p className="text-sun-700 text-[11.5px] font-semibold leading-snug">
           Золотая зона — обменивайте очки на эксклюзивные цвета, значки и ускорители
         </p>
       </div>
@@ -57,25 +57,25 @@ function ShopItemCard({ item, owned, affordable, onBuy }) {
   const Icon = CATEGORY_ICONS[item.category] || Route;
 
   return (
-    <GlassPanel className="rounded-[14px] p-3.5 flex items-center gap-3">
-      <div className="w-11 h-11 rounded-[12px] bg-white/8 flex items-center justify-center shrink-0">
-        <Icon className="w-5 h-5 text-gray-200" strokeWidth={2} />
+    <GlassPanel className="rounded-2xl p-3.5 flex items-center gap-3">
+      <div className="w-11 h-11 rounded-2xl bg-cream-100 flex items-center justify-center shrink-0">
+        <Icon className="w-5 h-5 text-leaf-600" strokeWidth={2} />
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-white text-[13px] font-semibold truncate">{item.name}</p>
-        <p className="text-gray-500 text-[10.5px] truncate">{item.description}</p>
+        <p className="text-ink-800 text-[13px] font-bold truncate">{item.name}</p>
+        <p className="text-ink-400 text-[10.5px] font-medium truncate">{item.description}</p>
       </div>
 
       <button
         onClick={onBuy}
         disabled={owned || !affordable}
-        className={`shrink-0 h-8 px-3.5 rounded-[10px] text-[12px] font-semibold flex items-center gap-1.5 transition-all ${
+        className={`shrink-0 h-9 px-3.5 rounded-xl text-[12px] font-extrabold flex items-center gap-1.5 transition-all ${
           owned
-            ? "bg-emerald-400/15 text-emerald-300"
+            ? "bg-leaf-100 text-leaf-700"
             : affordable
             ? "btn-3d text-white"
-            : "bg-white/5 text-gray-500 cursor-not-allowed"
+            : "bg-ink-100 text-ink-300 cursor-not-allowed"
         }`}
       >
         {owned ? (

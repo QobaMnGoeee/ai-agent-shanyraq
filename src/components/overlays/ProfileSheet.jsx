@@ -62,46 +62,46 @@ export default function ProfileSheet({ onBack }) {
         <button
           onClick={handleSignOut}
           disabled={signingOut}
-          className="w-full h-[46px] rounded-[14px] flex items-center justify-center gap-2 bg-red-500/15 border border-red-500/30 text-red-300 hover:bg-red-500/20 active:scale-[0.98] transition-all disabled:opacity-50"
+          className="w-full h-[48px] rounded-2xl flex items-center justify-center gap-2 bg-coral-50 border-2 border-coral-200 text-coral-600 font-bold hover:bg-coral-100 active:scale-[0.98] transition-all disabled:opacity-50"
         >
           <LogOut className="w-4 h-4" strokeWidth={2.2} />
-          <span className="text-[14px] font-semibold">{signingOut ? t("logging_out") : t("logout")}</span>
+          <span className="text-[14px] font-bold">{signingOut ? t("logging_out") : t("logout")}</span>
         </button>
       }
     >
       <div className="flex flex-col items-center py-4">
         <div
-          className="w-20 h-20 rounded-full border-4 border-white/10 flex items-center justify-center text-white text-2xl font-bold mb-3 relative"
-          style={{ backgroundColor: profile?.color || "#2b5569" }}
+          className="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center text-white text-2xl font-extrabold mb-3 relative shadow-card"
+          style={{ backgroundColor: profile?.color || "#22b25c" }}
         >
           {(profile?.username || user?.email || "?").charAt(0).toUpperCase()}
           <div
-            className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full border-2 border-[#1a2e38] flex items-center justify-center"
+            className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full border-2 border-white flex items-center justify-center"
             style={{ backgroundColor: league.color }}
           >
             <Star className="w-3.5 h-3.5 text-white" strokeWidth={2.5} fill="white" />
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <h2 className="text-white text-[18px] font-semibold">
+          <h2 className="start-text text-ink-800 text-[18px] font-bold">
             {loading ? "..." : profile?.username || "—"}
           </h2>
           <span
-            className="text-[10px] font-bold text-gray-900 px-2 py-0.5 rounded-full"
+            className="text-[10px] font-extrabold text-ink-900 px-2 py-0.5 rounded-full"
             style={{ backgroundColor: league.color }}
           >
             Уровень {level}
           </span>
         </div>
-        <p className="text-gray-400 text-[12px] mt-1">{league.name} лига</p>
-        <div className="flex items-center gap-1.5 text-gray-400 text-[12.5px] mt-2">
+        <p className="text-ink-400 text-[12px] font-semibold mt-1">{league.name} лига</p>
+        <div className="flex items-center gap-1.5 text-ink-400 text-[12.5px] font-medium mt-2">
           <Mail className="w-3.5 h-3.5" strokeWidth={2} />
           <span>{user?.email}</span>
         </div>
 
         {/* Описание профиля */}
         <div className="w-full mt-3">
-          <button className="w-full flex items-center gap-2 justify-center text-gray-500 text-[11.5px] hover:text-gray-300 transition-colors">
+          <button className="w-full flex items-center gap-2 justify-center text-ink-300 text-[11.5px] font-semibold hover:text-leaf-600 transition-colors">
             <Pencil className="w-3 h-3" strokeWidth={2.2} />
             <span>Добавить описание профиля</span>
           </button>
@@ -119,25 +119,25 @@ export default function ProfileSheet({ onBack }) {
         />
       </div>
 
-      <GlassPanel className="rounded-[16px] p-4">
-        <h3 className="text-white text-[14px] font-semibold mb-3 flex items-center gap-2">
-          <Award className="w-4 h-4" strokeWidth={2.2} />
+      <GlassPanel className="rounded-2xl p-4">
+        <h3 className="start-text text-ink-800 text-[14px] font-bold mb-3 flex items-center gap-2">
+          <Award className="w-4 h-4 text-sun-500" strokeWidth={2.2} />
           {t("achievements_label")}
         </h3>
         <div className="flex flex-col gap-2">
           {ACHIEVEMENTS.slice(0, 3).map((a) => (
-            <div key={a.id} className="flex items-center justify-between bg-white/5 rounded-[10px] px-3 py-2">
+            <div key={a.id} className="flex items-center justify-between bg-cream-100 rounded-xl px-3 py-2">
               <div>
-                <p className="text-gray-200 text-[12.5px] font-medium">{a.title}</p>
-                <p className="text-gray-400 text-[11px]">{a.description}</p>
+                <p className="text-ink-700 text-[12.5px] font-bold">{a.title}</p>
+                <p className="text-ink-400 text-[11px] font-medium">{a.description}</p>
               </div>
-              <span className="text-emerald-300 text-[11px] font-semibold shrink-0 ml-2">
+              <span className="text-leaf-600 text-[11px] font-extrabold shrink-0 ml-2">
                 +{a.reward.toLocaleString("ru-RU")}
               </span>
             </div>
           ))}
         </div>
-        <p className="text-gray-500 text-[11px] mt-3 text-center">{t("full_achievements_hint")}</p>
+        <p className="text-ink-300 text-[11px] font-medium mt-3 text-center">{t("full_achievements_hint")}</p>
       </GlassPanel>
     </Sheet>
   );
@@ -145,12 +145,12 @@ export default function ProfileSheet({ onBack }) {
 
 function StatCard({ icon: Icon, label, value }) {
   return (
-    <GlassPanel className="rounded-[14px] p-3 flex flex-col gap-1">
-      <div className="flex items-center gap-1.5 text-gray-400">
+    <GlassPanel className="rounded-2xl p-3 flex flex-col gap-1">
+      <div className="flex items-center gap-1.5 text-ink-400">
         <Icon className="w-3.5 h-3.5" strokeWidth={2.2} />
-        <span className="text-[11px]">{label}</span>
+        <span className="text-[11px] font-bold">{label}</span>
       </div>
-      <span className="text-white text-[20px] font-bold">{value}</span>
+      <span className="text-ink-800 text-[20px] font-extrabold">{value}</span>
     </GlassPanel>
   );
 }

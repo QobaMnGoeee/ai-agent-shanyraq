@@ -57,12 +57,12 @@ export default function AchievementsSheet({ onBack }) {
 
   return (
     <Sheet title={t("achievements_title")} onBack={onBack}>
-      <GlassPanel className="rounded-[16px] p-4 mb-4 flex items-center justify-between">
+      <GlassPanel className="rounded-2xl p-4 mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <Award className="w-5 h-5 text-amber-300" strokeWidth={2.2} />
-          <span className="text-white text-[14px] font-medium">{t("progress_label")}</span>
+          <Award className="w-5 h-5 text-sun-500" strokeWidth={2.2} />
+          <span className="text-ink-800 text-[14px] font-bold">{t("progress_label")}</span>
         </div>
-        <span className="text-gray-300 text-[13px] font-semibold">
+        <span className="text-ink-500 text-[13px] font-extrabold">
           {loading ? "…" : `${unlockedCount} / ${ACHIEVEMENTS.length}`}
         </span>
       </GlassPanel>
@@ -89,37 +89,37 @@ function getProgressPct(achievement, progress) {
 
 function AchievementCard({ achievement, unlocked, progressPct }) {
   return (
-    <GlassPanel className={`rounded-[14px] p-3.5 ${unlocked ? "" : "opacity-80"}`}>
+    <GlassPanel className={`rounded-2xl p-3.5 ${unlocked ? "" : "opacity-80"}`}>
       <div className="flex items-start gap-3">
         <div
-          className={`w-10 h-10 rounded-[12px] flex items-center justify-center shrink-0 ${
-            unlocked ? "bg-amber-400/20 border border-amber-300/40" : "bg-white/5 border border-white/10"
+          className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
+            unlocked ? "bg-sun-100 border-2 border-sun-300" : "bg-cream-100 border-2 border-ink-100"
           }`}
         >
           {unlocked ? (
-            <Check className="w-5 h-5 text-amber-300" strokeWidth={2.4} />
+            <Check className="w-5 h-5 text-sun-600" strokeWidth={2.4} />
           ) : (
-            <Lock className="w-4 h-4 text-gray-500" strokeWidth={2.2} />
+            <Lock className="w-4 h-4 text-ink-300" strokeWidth={2.2} />
           )}
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-white text-[13.5px] font-semibold truncate">{achievement.title}</p>
+            <p className="text-ink-800 text-[13.5px] font-bold truncate">{achievement.title}</p>
             <span
-              className={`text-[11px] font-semibold shrink-0 ${
-                unlocked ? "text-emerald-300" : "text-gray-500"
+              className={`text-[11px] font-extrabold shrink-0 ${
+                unlocked ? "text-leaf-600" : "text-ink-300"
               }`}
             >
               +{achievement.reward.toLocaleString("ru-RU")}
             </span>
           </div>
-          <p className="text-gray-400 text-[11.5px] mt-0.5 leading-snug">{achievement.description}</p>
+          <p className="text-ink-400 text-[11.5px] font-medium mt-0.5 leading-snug">{achievement.description}</p>
 
           {!unlocked && achievement.metric !== "rank" && (
-            <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden">
+            <div className="mt-2 h-1.5 rounded-full bg-ink-100 overflow-hidden">
               <div
-                className="h-full bg-amber-400/60 rounded-full transition-all"
+                className="h-full bg-sun-400 rounded-full transition-all"
                 style={{ width: `${progressPct}%` }}
               />
             </div>

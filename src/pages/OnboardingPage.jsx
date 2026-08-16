@@ -102,7 +102,7 @@ export default function OnboardingPage() {
         />
 
         <div>
-          <label className="text-gray-300 text-[12px] font-medium mb-2 block px-1">
+          <label className="text-ink-500 text-[12px] font-semibold mb-2 block px-1">
             {t("territory_color")}
           </label>
           <div className="grid grid-cols-9 gap-2">
@@ -112,7 +112,7 @@ export default function OnboardingPage() {
                 type="button"
                 onClick={() => setColor(c)}
                 className={`aspect-square rounded-full border-2 transition-transform ${
-                  color === c ? "border-white scale-110" : "border-transparent opacity-70"
+                  color === c ? "border-ink-700 scale-110" : "border-transparent opacity-70"
                 }`}
                 style={{ backgroundColor: c }}
                 aria-label={c}
@@ -123,12 +123,12 @@ export default function OnboardingPage() {
         </div>
 
         {error && !error.includes("имя") && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-[10px] px-3 py-2">
-            <p className="text-red-300 text-[12px]">{error}</p>
+          <div className="bg-coral-50 border-2 border-coral-200 rounded-2xl px-3 py-2">
+            <p className="text-coral-600 text-[12px] font-semibold">{error}</p>
           </div>
         )}
 
-        <Btn3D type="submit" loading={loading} className="w-full h-[46px] rounded-[12px] mt-1 gap-2">
+        <Btn3D type="submit" loading={loading} className="w-full h-[48px] rounded-2xl mt-1 gap-2">
           <span className="start-text text-[15px] font-bold">{t("start_button")}</span>
           <ArrowRight className="w-4 h-4" strokeWidth={2.4} />
         </Btn3D>

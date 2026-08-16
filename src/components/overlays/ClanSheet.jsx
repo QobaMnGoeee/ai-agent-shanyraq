@@ -23,33 +23,33 @@ export default function ClanSheet({ onBack }) {
       {!mode && (
         <div className="flex flex-col gap-3">
           <div className="flex flex-col items-center py-8 text-center">
-            <Users className="w-10 h-10 text-gray-500 mb-3" strokeWidth={1.6} />
-            <p className="text-gray-300 text-[14px] font-medium">Вы ещё не в клубе</p>
-            <p className="text-gray-500 text-[12px] mt-1 max-w-[240px]">
+            <Users className="w-10 h-10 text-ink-300 mb-3" strokeWidth={1.6} />
+            <p className="text-ink-700 text-[14px] font-bold">Вы ещё не в клубе</p>
+            <p className="text-ink-400 text-[12px] font-medium mt-1 max-w-[240px]">
               Создайте свой клуб или вступите в существующий, чтобы соревноваться командой
             </p>
           </div>
 
           <button onClick={() => setMode("create")} className="w-full">
-            <GlassPanel className="rounded-[16px] p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[12px] bg-blue-400/15 flex items-center justify-center shrink-0">
-                <Plus className="w-4.5 h-4.5 text-blue-300" strokeWidth={2.2} />
+            <GlassPanel className="rounded-2xl p-4 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-sky2-100 flex items-center justify-center shrink-0">
+                <Plus className="w-4.5 h-4.5 text-sky2-600" strokeWidth={2.2} />
               </div>
               <div className="text-left">
-                <p className="text-white text-[13.5px] font-semibold">Создать клуб</p>
-                <p className="text-gray-500 text-[11px]">Станьте лидером своей команды</p>
+                <p className="text-ink-800 text-[13.5px] font-bold">Создать клуб</p>
+                <p className="text-ink-400 text-[11px] font-medium">Станьте лидером своей команды</p>
               </div>
             </GlassPanel>
           </button>
 
           <button onClick={() => setMode("join")} className="w-full">
-            <GlassPanel className="rounded-[16px] p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[12px] bg-emerald-400/15 flex items-center justify-center shrink-0">
-                <Search className="w-4.5 h-4.5 text-emerald-300" strokeWidth={2.2} />
+            <GlassPanel className="rounded-2xl p-4 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-leaf-100 flex items-center justify-center shrink-0">
+                <Search className="w-4.5 h-4.5 text-leaf-600" strokeWidth={2.2} />
               </div>
               <div className="text-left">
-                <p className="text-white text-[13.5px] font-semibold">Найти клуб</p>
-                <p className="text-gray-500 text-[11px]">Вступить в существующую команду</p>
+                <p className="text-ink-800 text-[13.5px] font-bold">Найти клуб</p>
+                <p className="text-ink-400 text-[11px] font-medium">Вступить в существующую команду</p>
               </div>
             </GlassPanel>
           </button>
@@ -64,12 +64,12 @@ export default function ClanSheet({ onBack }) {
             value={clanName}
             onChange={(e) => setClanName(e.target.value)}
           />
-          <Btn3D className="h-[46px] rounded-[12px]" disabled={clanName.trim().length < 3}>
-            <span className="text-[14px] font-semibold">Создать клуб</span>
+          <Btn3D className="h-[48px] rounded-2xl" disabled={clanName.trim().length < 3}>
+            <span className="text-[14px] font-bold">Создать клуб</span>
           </Btn3D>
           <button
             onClick={() => setMode(null)}
-            className="text-gray-400 text-[12.5px] text-center hover:text-white transition-colors"
+            className="text-ink-400 text-[12.5px] font-semibold text-center hover:text-leaf-600 transition-colors"
           >
             Назад
           </button>
@@ -80,11 +80,11 @@ export default function ClanSheet({ onBack }) {
         <div className="flex flex-col gap-3">
           <Input3D icon={Search} placeholder="Поиск клуба по названию" />
           <div className="flex flex-col items-center py-8 text-center">
-            <p className="text-gray-500 text-[12px]">Пока нет доступных клубов для поиска</p>
+            <p className="text-ink-400 text-[12px] font-medium">Пока нет доступных клубов для поиска</p>
           </div>
           <button
             onClick={() => setMode(null)}
-            className="text-gray-400 text-[12.5px] text-center hover:text-white transition-colors"
+            className="text-ink-400 text-[12.5px] font-semibold text-center hover:text-leaf-600 transition-colors"
           >
             Назад
           </button>
@@ -96,9 +96,9 @@ export default function ClanSheet({ onBack }) {
 
 function ClanOverview({ clan }) {
   return (
-    <GlassPanel className="rounded-[16px] p-4">
-      <p className="text-white text-[15px] font-semibold">{clan.name}</p>
-      <p className="text-gray-400 text-[12px] mt-1">{clan.members} участников</p>
+    <GlassPanel className="rounded-2xl p-4">
+      <p className="text-ink-800 text-[15px] font-bold">{clan.name}</p>
+      <p className="text-ink-400 text-[12px] font-semibold mt-1">{clan.members} участников</p>
     </GlassPanel>
   );
 }

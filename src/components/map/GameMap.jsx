@@ -101,10 +101,10 @@ function GameMap({
         source: PATH_SOURCE_ID,
         layout: { "line-cap": "round", "line-join": "round" },
         paint: {
-          "line-color": "#00FF88",
-          "line-width": 3,
+          "line-color": "#22b25c",
+          "line-width": 4,
           "line-dasharray": [2, 1.5],
-          "line-opacity": 0.9,
+          "line-opacity": 0.95,
         },
       });
 
@@ -216,18 +216,19 @@ function renderMarkerHtml(el, color, username) {
   el.innerHTML = `
     <div style="display:flex;flex-direction:column;align-items:center;">
       <div style="
-        width:16px;height:16px;border-radius:50%;
+        width:18px;height:18px;border-radius:50%;
         background:${color};
         border:3px solid white;
-        box-shadow:0 2px 6px rgba(0,0,0,0.4);
+        box-shadow:0 2px 6px rgba(38,46,42,0.35);
       "></div>
       <div style="
-        margin-top:2px;
-        background:rgba(23,50,64,0.9);
-        color:white;font-size:10px;font-weight:600;
-        padding:2px 7px;border-radius:10px;
+        margin-top:3px;
+        background:#ffffff;
+        color:#262e2a;font-size:10px;font-weight:800;
+        padding:2px 8px;border-radius:10px;
         white-space:nowrap;
-        border:1px solid rgba(255,255,255,0.15);
+        border:2px solid #eef2ee;
+        box-shadow:0 2px 6px rgba(38,46,42,0.12);
       ">${escapeHtml(username)}</div>
     </div>
   `;

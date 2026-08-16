@@ -16,19 +16,19 @@ export default function Input3D({
   return (
     <div className="w-full">
       {label && (
-        <label className="text-gray-300 text-[12px] font-medium mb-1.5 block px-1">
+        <label className="text-ink-500 text-[12px] font-semibold mb-1.5 block px-1">
           {label}
         </label>
       )}
       <div className="relative flex items-center">
         {Icon && (
-          <div className="absolute left-3.5 text-gray-400 pointer-events-none">
+          <div className="absolute left-3.5 text-leaf-500 pointer-events-none">
             <Icon className="w-4 h-4" />
           </div>
         )}
         <input
           type={actualType}
-          className={`input-3d w-full h-[46px] rounded-[12px] text-[14px] ${
+          className={`input-3d w-full h-[48px] rounded-2xl text-[14px] font-medium ${
             Icon ? "pl-10" : "pl-4"
           } ${isPassword ? "pr-10" : "pr-4"} ${
             error ? "input-error" : ""
@@ -39,7 +39,7 @@ export default function Input3D({
           <button
             type="button"
             onClick={() => setShowPassword((s) => !s)}
-            className="absolute right-3.5 text-gray-400 hover:text-white transition-colors"
+            className="absolute right-3.5 text-ink-300 hover:text-leaf-500 transition-colors"
             tabIndex={-1}
           >
             {showPassword ? (
@@ -51,7 +51,7 @@ export default function Input3D({
         )}
       </div>
       {error && (
-        <p className="text-red-400 text-[11px] mt-1 px-1">{error}</p>
+        <p className="text-coral-500 text-[11px] font-semibold mt-1 px-1">{error}</p>
       )}
     </div>
   );

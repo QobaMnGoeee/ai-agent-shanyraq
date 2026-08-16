@@ -91,31 +91,39 @@ export default function MainMenuPage() {
   }
 
   return (
-    <div className="h-[100dvh] w-full overflow-y-auto overscroll-contain">
-      <div className="min-h-full px-4 pt-5 pb-8">
+    <div className="h-[100dvh] w-full overflow-y-auto overscroll-contain relative">
+      <div
+        className="absolute -top-16 -right-20 w-64 h-64 blob-shape bg-sun-200/40 pointer-events-none"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute top-[40%] -left-24 w-56 h-56 blob-shape bg-sky2-200/30 pointer-events-none"
+        aria-hidden="true"
+      />
+      <div className="relative min-h-full px-4 pt-5 pb-8">
         {/* Header */}
         <div className="flex items-center gap-3 mb-5">
           <button
             onClick={() => navigate("/map")}
             aria-label="Назад"
-            className="btn-3d w-10 h-10 rounded-[12px] shrink-0"
+            className="btn-3d w-11 h-11 rounded-2xl shrink-0"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-100" strokeWidth={2.2} />
+            <ArrowLeft className="w-5 h-5 text-white" strokeWidth={2.2} />
           </button>
-          <h1 className="start-text text-gray-800 text-[20px] font-bold">Меню</h1>
+          <h1 className="start-text text-ink-800 text-[22px] font-bold">Меню</h1>
         </div>
 
         {/* Profile card — уровень + лига + описание */}
         <button onClick={() => setActiveSheet(SHEETS.PROFILE)} className="w-full mb-4">
-          <GlassPanel className="rounded-[20px] p-4">
+          <GlassPanel className="rounded-3xl p-4">
             <div className="flex items-center gap-3.5">
               <div
-                className="w-16 h-16 rounded-full border-4 border-white/10 flex items-center justify-center text-white text-xl font-bold shrink-0 relative"
-                style={{ backgroundColor: profile?.color || "#2b5569" }}
+                className="w-16 h-16 rounded-full border-4 border-white flex items-center justify-center text-white text-xl font-extrabold shrink-0 relative shadow-card"
+                style={{ backgroundColor: profile?.color || "#22b25c" }}
               >
                 {(profile?.username || "?").charAt(0).toUpperCase()}
                 <div
-                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-[#1a2e38] flex items-center justify-center"
+                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center"
                   style={{ backgroundColor: league.color }}
                   title={league.name}
                 >
@@ -125,22 +133,22 @@ export default function MainMenuPage() {
 
               <div className="flex-1 min-w-0 text-left">
                 <div className="flex items-center gap-2">
-                  <p className="text-white text-[16px] font-semibold truncate">
+                  <p className="text-ink-800 text-[16px] font-extrabold truncate">
                     {loading ? "..." : profile?.username || "—"}
                   </p>
-                  <span className="text-[10px] font-bold text-gray-900 px-2 py-0.5 rounded-full shrink-0" style={{ backgroundColor: league.color }}>
+                  <span className="text-[10px] font-extrabold text-ink-900 px-2 py-0.5 rounded-full shrink-0" style={{ backgroundColor: league.color }}>
                     Ур. {level}
                   </span>
                 </div>
-                <p className="text-gray-400 text-[11.5px] mt-0.5 leading-snug">
+                <p className="text-ink-400 text-[11.5px] font-semibold mt-0.5 leading-snug">
                   {league.name} лига · {score.toLocaleString("ru-RU")} очков
                 </p>
-                <p className="text-gray-500 text-[10.5px] mt-1 leading-snug line-clamp-1">
+                <p className="text-ink-300 text-[10.5px] font-medium mt-1 leading-snug line-clamp-1">
                   Захватывает территории с {new Date().getFullYear()} года
                 </p>
               </div>
 
-              <ChevronRight className="w-4 h-4 text-gray-500 shrink-0" strokeWidth={2.2} />
+              <ChevronRight className="w-4 h-4 text-ink-300 shrink-0" strokeWidth={2.2} />
             </div>
           </GlassPanel>
         </button>
@@ -166,13 +174,13 @@ export default function MainMenuPage() {
               icon={ShoppingBag}
               label="Магазин"
               sublabel="Золотая зона"
-              accent="#FFD700"
+              accent="#fca311"
               onClick={() => setActiveSheet(SHEETS.SHOP)}
             />
             <MenuRow
               icon={Award}
               label="Достижения"
-              accent="#F59E0B"
+              accent="#e2810a"
               onClick={() => setActiveSheet(SHEETS.ACHIEVEMENTS)}
             />
             <MenuRow
@@ -185,6 +193,7 @@ export default function MainMenuPage() {
             <MenuRow
               icon={Settings}
               label="Настройки"
+              accent="#1aa1fb"
               onClick={() => setActiveSheet(SHEETS.SETTINGS)}
             />
           </div>
@@ -201,7 +210,7 @@ export default function MainMenuPage() {
                   ? "Создать/вступить"
                   : `Откроется на ${CLAN_UNLOCK_SCORE.toLocaleString("ru-RU")} очках`
               }
-              accent="#60A5FA"
+              accent="#1aa1fb"
               locked={score < CLAN_UNLOCK_SCORE}
               progress={Math.min(100, Math.round((score / CLAN_UNLOCK_SCORE) * 100))}
               onClick={() => score >= CLAN_UNLOCK_SCORE && setActiveSheet(SHEETS.CLAN)}
@@ -210,7 +219,7 @@ export default function MainMenuPage() {
               icon={UserPlus}
               label="Друзья"
               sublabel="Найти рядом"
-              accent="#34D399"
+              accent="#22b25c"
               onClick={() => setActiveSheet(SHEETS.FRIENDS)}
             />
           </div>
@@ -218,21 +227,21 @@ export default function MainMenuPage() {
 
         {/* League ladder preview */}
         <Section title="Система лиг">
-          <GlassPanel className="rounded-[16px] p-4">
+          <GlassPanel className="rounded-3xl p-4">
             <div className="flex items-center justify-between">
               {LEAGUES.map((l) => (
                 <div key={l.id} className="flex flex-col items-center gap-1.5">
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all ${
-                      league.id === l.id ? "border-white scale-110" : "border-transparent opacity-40"
+                      league.id === l.id ? "border-ink-800 scale-110" : "border-transparent opacity-40"
                     }`}
                     style={{ backgroundColor: l.color }}
                   >
                     <Target className="w-4 h-4 text-white" strokeWidth={2.4} />
                   </div>
                   <span
-                    className={`text-[9px] font-medium ${
-                      league.id === l.id ? "text-white" : "text-gray-500"
+                    className={`text-[9px] font-bold ${
+                      league.id === l.id ? "text-ink-800" : "text-ink-300"
                     }`}
                   >
                     {l.name}
@@ -240,7 +249,7 @@ export default function MainMenuPage() {
                 </div>
               ))}
             </div>
-            <p className="text-gray-500 text-[10.5px] text-center mt-3 leading-snug">
+            <p className="text-ink-400 text-[10.5px] font-medium text-center mt-3 leading-snug">
               Каждую неделю самые активные игроки переходят в следующую лигу
             </p>
           </GlassPanel>
@@ -253,7 +262,7 @@ export default function MainMenuPage() {
 function Section({ title, children }) {
   return (
     <div className="mb-5">
-      <h2 className="text-gray-600 text-[12px] font-semibold uppercase tracking-wide mb-2.5 px-1">
+      <h2 className="text-ink-400 text-[12px] font-extrabold uppercase tracking-wide mb-2.5 px-1">
         {title}
       </h2>
       {children}
@@ -264,23 +273,23 @@ function Section({ title, children }) {
 function MenuRow({ icon: Icon, label, sublabel, accent, onClick, locked, progress }) {
   return (
     <button onClick={onClick} disabled={locked} className="w-full">
-      <GlassPanel className={`rounded-[16px] p-3.5 flex items-center gap-3.5 ${locked ? "opacity-75" : ""}`}>
+      <GlassPanel className={`rounded-2xl p-3.5 flex items-center gap-3.5 ${locked ? "opacity-75" : ""}`}>
         <div
-          className="w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0"
-          style={{ backgroundColor: accent ? `${accent}25` : "rgba(255,255,255,0.08)" }}
+          className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
+          style={{ backgroundColor: accent ? `${accent}22` : "#f4f6f5" }}
         >
           {locked ? (
-            <Lock className="w-4.5 h-4.5 text-gray-400" strokeWidth={2.2} />
+            <Lock className="w-4.5 h-4.5 text-ink-300" strokeWidth={2.2} />
           ) : (
-            <Icon className="w-4.5 h-4.5" style={{ color: accent || "#e5e7eb" }} strokeWidth={2.2} />
+            <Icon className="w-4.5 h-4.5" style={{ color: accent || "#54615a" }} strokeWidth={2.2} />
           )}
         </div>
 
         <div className="flex-1 min-w-0 text-left">
-          <p className="text-white text-[14px] font-semibold">{label}</p>
-          {sublabel && <p className="text-gray-500 text-[11px] mt-0.5">{sublabel}</p>}
+          <p className="text-ink-800 text-[14px] font-bold">{label}</p>
+          {sublabel && <p className="text-ink-400 text-[11px] font-semibold">{sublabel}</p>}
           {locked && typeof progress === "number" && (
-            <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden max-w-[160px]">
+            <div className="mt-2 h-1.5 rounded-full bg-ink-100 overflow-hidden max-w-[160px]">
               <div
                 className="h-full rounded-full transition-all"
                 style={{ width: `${progress}%`, backgroundColor: accent }}
@@ -289,7 +298,7 @@ function MenuRow({ icon: Icon, label, sublabel, accent, onClick, locked, progres
           )}
         </div>
 
-        {!locked && <ChevronRight className="w-4 h-4 text-gray-500 shrink-0" strokeWidth={2.2} />}
+        {!locked && <ChevronRight className="w-4 h-4 text-ink-300 shrink-0" strokeWidth={2.2} />}
       </GlassPanel>
     </button>
   );
@@ -299,25 +308,25 @@ function MissionRow({ mission, completed, onClick }) {
   const Icon = mission.id.includes("instagram") ? InstagramIcon : Send;
   return (
     <button onClick={onClick} disabled={completed} className="w-full">
-      <GlassPanel className="rounded-[14px] p-3.5 flex items-center gap-3">
+      <GlassPanel className="rounded-2xl p-3.5 flex items-center gap-3">
         <div
-          className={`w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 ${
-            completed ? "bg-emerald-400/20" : "bg-white/8"
+          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+            completed ? "bg-leaf-100" : "bg-sky2-100"
           }`}
         >
           {completed ? (
-            <Check className="w-4 h-4 text-emerald-300" strokeWidth={2.4} />
+            <Check className="w-4 h-4 text-leaf-600" strokeWidth={2.4} />
           ) : (
-            <Icon className="w-4 h-4 text-gray-300" strokeWidth={2.2} />
+            <Icon className="w-4 h-4 text-sky2-600" strokeWidth={2.2} />
           )}
         </div>
         <div className="flex-1 min-w-0 text-left">
-          <p className="text-white text-[13px] font-medium truncate">{mission.title}</p>
-          <p className="text-gray-500 text-[10.5px] truncate">{mission.description}</p>
+          <p className="text-ink-800 text-[13px] font-bold truncate">{mission.title}</p>
+          <p className="text-ink-400 text-[10.5px] font-medium truncate">{mission.description}</p>
         </div>
         <span
-          className={`text-[11px] font-semibold shrink-0 ${
-            completed ? "text-emerald-300" : "text-amber-300"
+          className={`text-[11px] font-extrabold shrink-0 ${
+            completed ? "text-leaf-600" : "text-sun-600"
           }`}
         >
           +{mission.reward.toLocaleString("ru-RU")}

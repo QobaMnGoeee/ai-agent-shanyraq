@@ -40,25 +40,25 @@ export default function CookieConsent() {
         closing ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"
       }`}
     >
-      <div className="glass-panel rounded-[16px] px-4 py-3.5 flex items-start gap-3 shadow-lg">
-        <div className="shrink-0 w-8 h-8 rounded-[10px] bg-amber-400/15 border border-amber-300/25 flex items-center justify-center">
-          <Cookie className="w-4 h-4 text-amber-300" strokeWidth={2.2} />
+      <div className="glass-panel rounded-2xl px-4 py-3.5 flex items-start gap-3 shadow-card-lg">
+        <div className="shrink-0 w-8 h-8 rounded-xl bg-sun-100 border-2 border-sun-200 flex items-center justify-center">
+          <Cookie className="w-4 h-4 text-sun-600" strokeWidth={2.2} />
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="text-gray-200 text-[12px] leading-snug">
+          <p className="text-ink-600 text-[12px] font-medium leading-snug">
             Мы используем файлы cookie для обеспечения работы сайта.
           </p>
           <div className="flex gap-2 mt-2.5">
             <button
               onClick={() => dismiss("accepted")}
-              className="btn-3d h-[30px] px-3.5 rounded-[8px] text-[12px] font-semibold"
+              className="btn-3d h-[32px] px-3.5 rounded-xl text-[12px] font-bold"
             >
               Понятно
             </button>
             <button
               onClick={() => dismiss("declined")}
-              className="h-[30px] px-3.5 rounded-[8px] text-[12px] font-medium bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+              className="h-[32px] px-3.5 rounded-xl text-[12px] font-bold bg-ink-50 border-2 border-ink-100 text-ink-500 hover:bg-ink-100 hover:text-ink-700 transition-colors"
             >
               Отклонить
             </button>
@@ -67,7 +67,7 @@ export default function CookieConsent() {
 
         <button
           onClick={() => dismiss("declined")}
-          className="shrink-0 text-gray-500 hover:text-gray-300 transition-colors"
+          className="shrink-0 text-ink-300 hover:text-coral-500 transition-colors"
           aria-label="Закрыть"
         >
           <X className="w-3.5 h-3.5" strokeWidth={2.2} />

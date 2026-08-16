@@ -101,31 +101,31 @@ export default function LoginPage() {
         />
 
         {errors.form && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-[10px] px-3 py-2">
-            <p className="text-red-300 text-[12px]">{errors.form}</p>
+          <div className="bg-coral-50 border-2 border-coral-200 rounded-2xl px-3 py-2">
+            <p className="text-coral-600 text-[12px] font-semibold">{errors.form}</p>
           </div>
         )}
 
         <Btn3D
           type="submit"
           loading={loading}
-          className="w-full h-[46px] rounded-[12px] mt-1"
+          className="w-full h-[48px] rounded-2xl mt-1"
         >
           <span className="start-text text-[15px] font-bold">{t("login_button")}</span>
         </Btn3D>
       </form>
 
       <div className="flex items-center gap-3 my-4">
-        <div className="flex-1 h-px bg-white/10" />
-        <span className="text-gray-500 text-[11px]">или</span>
-        <div className="flex-1 h-px bg-white/10" />
+        <div className="flex-1 h-px bg-ink-100" />
+        <span className="text-ink-300 text-[11px] font-semibold">или</span>
+        <div className="flex-1 h-px bg-ink-100" />
       </div>
 
       <GoogleButton onClick={handleGoogleSignIn} loading={googleLoading} />
 
-      <p className="text-gray-400 text-[12.5px] text-center mt-5">
+      <p className="text-ink-400 text-[12.5px] font-medium text-center mt-5">
         {t("no_account")}{" "}
-        <Link to="/register" className="text-white font-semibold hover:underline">
+        <Link to="/register" className="text-leaf-600 font-bold hover:underline">
           {t("signup_link")}
         </Link>
       </p>

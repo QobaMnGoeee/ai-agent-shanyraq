@@ -7,8 +7,16 @@ import { ArrowLeft } from "lucide-react";
 export default function Sheet({ title, onBack, children, footer }) {
   return (
     <div className="absolute inset-0 z-30 flex flex-col animate-fade-up">
-      {/* Фон — блюрленген қараңғылау қабат */}
-      <div className="absolute inset-0 bg-[#1a2e38]/95 backdrop-blur-md" />
+      {/* Фон — ашық, жылы түсті қабат */}
+      <div className="absolute inset-0 bg-cream-100" />
+      <div
+        className="absolute -top-20 -right-16 w-56 h-56 blob-shape bg-sun-200/50 pointer-events-none"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute -bottom-24 -left-16 w-60 h-60 blob-shape bg-leaf-200/50 pointer-events-none"
+        aria-hidden="true"
+      />
 
       <div className="relative flex flex-col h-full">
         {/* Header */}
@@ -16,11 +24,11 @@ export default function Sheet({ title, onBack, children, footer }) {
           <button
             onClick={onBack}
             aria-label="Назад"
-            className="btn-3d w-10 h-10 rounded-[12px] shrink-0"
+            className="btn-3d w-10 h-10 rounded-2xl shrink-0"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-100" strokeWidth={2.2} />
+            <ArrowLeft className="w-5 h-5 text-white" strokeWidth={2.2} />
           </button>
-          <h1 className="start-text text-white text-[19px] font-bold">{title}</h1>
+          <h1 className="start-text text-ink-800 text-[20px] font-bold">{title}</h1>
         </div>
 
         {/* Scrollable content */}
