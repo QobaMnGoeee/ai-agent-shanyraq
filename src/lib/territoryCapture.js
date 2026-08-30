@@ -1,69 +1,30 @@
 import { supabase } from "./supabase";
-import { GRID_SIZE } from "./useGeolocation";
 
-// Минималды жарамды territory ауданы — шамамен 2x2 grid ұяшық (~60x60м)
-const MIN_AREA_M2 = (GRID_SIZE * 2 * 111320) ** 2;
+// Минималды жарамды territory ауданы — шамамен 30x30м (900м²)
+const MIN_AREA_M2 = 900;
 
 /**
  * Полигон ауданын шамамен есептейді (shoelace формула, градус бірлігінде,
- * содан кейін метрге түрлендіріледі).
+ * содан кейін метрге түрлендіріледі). Жердің қисықтығын ескеру үшін
+ * lng осін орташа lat-тың косинусына масштабтаймыз (эквиректангулярлы жуықтау).
  */
 function polygonAreaM2(pathPoints) {
+  if (pathPoints.length < 3) return 0;
+
+  const avgLat =
+    pathPoints.reduce((sum, p) => sum + p.lat, 0) / pathPoints.length;
+  const latScale = 111320; // 1° lat ≈ 111.32км
+  const lngScale = 111320 * Math.cos((avgLat * Math.PI) / 180);
+
   let area = 0;
   for (let i = 0, j = pathPoints.length - 1; i < pathPoints.length; j = i++) {
-    area += pathPoints[j].lat * pathPoints[i].lng;
-    area -= pathPoints[i].lat * pathPoints[j].lng;
+    const xi = pathPoints[i].lng * lngScale;
+    const yi = pathPoints[i].lat * latScale;
+    const xj = pathPoints[j].lng * lngScale;
+    const yj = pathPoints[j].lat * latScale;
+    area += xj * yi - xi * yj;
   }
-  area = Math.abs(area / 2);
-  // градус² -> метр² (жуық, экватор маңында 1° ≈ 111320м)
-  return area * 111320 * 111320;
-}
-
-/**
- * Path нүктелерінен тұйықталған полигон ішіндегі барлық grid ұяшықтарын табады
- * (нүктелердегі "iнin polygon" тексеруі — ray casting алгоритмі).
- */
-function getCellsInsidePolygon(pathPoints) {
-  if (pathPoints.length < 3) return [];
-
-  const lats = pathPoints.map((p) => p.lat);
-  const lngs = pathPoints.map((p) => p.lng);
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
-  const minLng = Math.min(...lngs);
-  const maxLng = Math.max(...lngs);
-
-  const cells = [];
-
-  for (let lat = minLat; lat <= maxLat; lat += GRID_SIZE) {
-    for (let lng = minLng; lng <= maxLng; lng += GRID_SIZE) {
-      if (isPointInPolygon(lat, lng, pathPoints)) {
-        cells.push({
-          grid_lat: Math.round(lat / GRID_SIZE) * GRID_SIZE,
-          grid_lng: Math.round(lng / GRID_SIZE) * GRID_SIZE,
-        });
-      }
-    }
-  }
-
-  return cells;
-}
-
-// Ray casting алгоритмі — нүкте полигон ішінде ме, соны тексереді
-function isPointInPolygon(lat, lng, polygon) {
-  let inside = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const xi = polygon[i].lat,
-      yi = polygon[i].lng;
-    const xj = polygon[j].lat,
-      yj = polygon[j].lng;
-
-    const intersect =
-      yi > lng !== yj > lng &&
-      lat < ((xj - xi) * (lng - yi)) / (yj - yi) + xi;
-    if (intersect) inside = !inside;
-  }
-  return inside;
+  return Math.abs(area / 2);
 }
 
 /**
@@ -89,11 +50,31 @@ function haversineKm(a, b) {
 }
 
 /**
- * "Замкнуть петлю" — path-ты жабады, ішіндегі grid ұяшықтарын
- * есептеп, Supabase-тегі territories кестесіне жазады,
- * сонымен қатар capture_events-ке statistics/achievements үшін жазба қосады.
+ * Path нүктелерін жеңілдетеді (қарапайым ара-қашықтық сүзгісі) —
+ * GPS "дірілінен" пайда болатын майда тісшелерді алып тастап,
+ * тегіс полигон алу үшін.
+ */
+function simplifyPath(pathPoints, minDistM = 3) {
+  if (pathPoints.length <= 2) return pathPoints;
+  const result = [pathPoints[0]];
+  for (let i = 1; i < pathPoints.length; i++) {
+    const last = result[result.length - 1];
+    const distKm = haversineKm(last, pathPoints[i]);
+    if (distKm * 1000 >= minDistM) {
+      result.push(pathPoints[i]);
+    }
+  }
+  return result;
+}
+
+/**
+ * "Замкнуть петлю" — path-ты жабады, НАҚТЫ жүрген маршрутты
+ * (grid-ке айналдырмай) полигон ретінде Supabase-тегі territories
+ * кестесіне жазады. Карта осы полигонды дәл сол пішінде салады —
+ * INTVL-дегідей органикалық territory формасы шығады.
  *
  * Қайтарады: { success, capturedCount, error }
+ * capturedCount — көрнекілік үшін captured аудан (м²/100 ≈ ұпай саны)
  */
 export async function captureLoop(pathPoints, userId) {
   if (!userId) return { success: false, capturedCount: 0, error: "Не авторизован" };
@@ -101,36 +82,34 @@ export async function captureLoop(pathPoints, userId) {
     return { success: false, capturedCount: 0, error: "Слишком короткий маршрут" };
   }
 
-  const area = polygonAreaM2(pathPoints);
+  const simplified = simplifyPath(pathPoints);
+  if (simplified.length < 3) {
+    return { success: false, capturedCount: 0, error: "Слишком короткий маршрут" };
+  }
+
+  const area = polygonAreaM2(simplified);
   if (area < MIN_AREA_M2) {
     return {
       success: false,
       capturedCount: 0,
-      error: "Маршрут слишком мал. Обойдите большую территорию (минимум ~60×60м)",
+      error: "Маршрут слишком мал. Обойдите большую территорию (минимум ~30×30м)",
     };
   }
 
-  const cells = getCellsInsidePolygon(pathPoints);
-  const allCells = dedupeCells(cells);
-
-  if (allCells.length === 0) {
-    return {
-      success: false,
-      capturedCount: 0,
-      error: "Маршрут слишком мал — обойдите большую территорию",
-    };
+  // Полигонды жабамыз (соңғы нүкте біріншісімен сәйкес болуы керек)
+  const closedPolygon = [...simplified];
+  const first = closedPolygon[0];
+  const last = closedPolygon[closedPolygon.length - 1];
+  if (first.lat !== last.lat || first.lng !== last.lng) {
+    closedPolygon.push({ lat: first.lat, lng: first.lng });
   }
 
-  const rows = allCells.map((c) => ({
-    grid_lat: c.grid_lat,
-    grid_lng: c.grid_lng,
+  const { error } = await supabase.from("territories").insert({
     controller_id: userId,
+    polygon: closedPolygon,
+    area_m2: Number(area.toFixed(1)),
     captured_at: new Date().toISOString(),
-  }));
-
-  const { error } = await supabase
-    .from("territories")
-    .upsert(rows, { onConflict: "grid_lat,grid_lng" });
+  });
 
   if (error) {
     return { success: false, capturedCount: 0, error: error.message };
@@ -138,37 +117,26 @@ export async function captureLoop(pathPoints, userId) {
 
   // Statistics/achievements үшін capture_events жазбасы
   const distanceKm = calculatePathDistanceKm(pathPoints);
+  const blocksEquivalent = Math.max(1, Math.round(area / 100));
   await supabase.from("capture_events").insert({
     user_id: userId,
-    blocks_captured: allCells.length,
+    blocks_captured: blocksEquivalent,
     distance_km: Number(distanceKm.toFixed(3)),
   });
 
-  return { success: true, capturedCount: allCells.length, error: null };
-}
-
-function dedupeCells(cells) {
-  const seen = new Set();
-  const result = [];
-  for (const c of cells) {
-    const key = `${c.grid_lat.toFixed(6)},${c.grid_lng.toFixed(6)}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      result.push(c);
-    }
-  }
-  return result;
+  return { success: true, capturedCount: blocksEquivalent, error: null };
 }
 
 /**
- * Пайдаланушының жаулап алған блок санын алады.
+ * Пайдаланушының жаулап алған territory (полигон) санын алады.
  */
 export async function getBlocksCaptured(userId) {
   if (!userId) return 0;
-  const { count, error } = await supabase
+  const { data, error } = await supabase
     .from("territories")
-    .select("id", { count: "exact", head: true })
+    .select("area_m2")
     .eq("controller_id", userId);
-  if (error) return 0;
-  return count || 0;
+  if (error || !data) return 0;
+  const totalArea = data.reduce((sum, t) => sum + Number(t.area_m2 || 0), 0);
+  return Math.round(totalArea / 100);
 }

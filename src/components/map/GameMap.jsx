@@ -1,7 +1,6 @@
 import { useEffect, useRef, memo } from "react";
 import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
-import { GRID_SIZE } from "../../lib/useGeolocation";
 
 const DEFAULT_CENTER = [69.2401, 41.2995]; // [lng, lat]
 const MAPTILER_KEY = "N5HlBjvet6ZuNOIJlSa5";
@@ -23,7 +22,8 @@ maptilersdk.config.apiKey = MAPTILER_KEY;
  * Props:
  * - position: { lat, lng } | null — ойыншының ағымдағы GPS позициясы
  * - pathPoints: [{ lat, lng }] — жазылып жатқан жол (recording кезінде)
- * - territories: [{ grid_lat, grid_lng, color }] — жаулап алынған ұяшықтар
+ * - territories: [{ polygon, color }] — жаулап алынған нақты аумақтар
+ *   (polygon — [{lat,lng}, ...] нүктелер тізбегі, grid емес, нақты пішін)
  * - userColor: string — пайдаланушының территория түсі (маркер белгісіне)
  * - username: string
  * - onMapReady: (map) => void — сыртқы zoom controls үшін map instance беру
@@ -78,16 +78,17 @@ function GameMap({
         source: TERRITORY_SOURCE_ID,
         paint: {
           "fill-color": ["get", "color"],
-          "fill-opacity": 0.35,
+          "fill-opacity": 0.55,
         },
       });
       map.addLayer({
         id: TERRITORY_LINE_LAYER_ID,
         type: "line",
         source: TERRITORY_SOURCE_ID,
+        layout: { "line-cap": "round", "line-join": "round" },
         paint: {
           "line-color": ["get", "color"],
-          "line-width": 1,
+          "line-width": 3,
         },
       });
 
@@ -178,23 +179,18 @@ function updateTerritorySource(map, territories) {
   const source = map.getSource(TERRITORY_SOURCE_ID);
   if (!source) return;
 
-  const half = GRID_SIZE / 2;
-  const features = territories.map((t) => ({
-    type: "Feature",
-    properties: { color: t.color || "#888888" },
-    geometry: {
-      type: "Polygon",
-      coordinates: [
-        [
-          [t.grid_lng - half, t.grid_lat - half],
-          [t.grid_lng + half, t.grid_lat - half],
-          [t.grid_lng + half, t.grid_lat + half],
-          [t.grid_lng - half, t.grid_lat + half],
-          [t.grid_lng - half, t.grid_lat - half],
-        ],
-      ],
-    },
-  }));
+  const features = territories
+    .filter((t) => Array.isArray(t.polygon) && t.polygon.length >= 3)
+    .map((t) => ({
+      type: "Feature",
+      properties: { color: t.color || "#888888" },
+      geometry: {
+        type: "Polygon",
+        // t.polygon — [{lat,lng}, ...] нақты жүрген маршрут нүктелері.
+        // GeoJSON [lng, lat] ретін талап етеді.
+        coordinates: [t.polygon.map((p) => [p.lng, p.lat])],
+      },
+    }));
 
   source.setData({ type: "FeatureCollection", features });
 }

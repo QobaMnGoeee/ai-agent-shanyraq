@@ -19,7 +19,7 @@ import {
 import Btn3D from "../components/ui/Btn3D";
 import GameMap, { centerOnPosition, flyToPlace } from "../components/map/GameMap";
 import SearchBar from "../components/map/SearchBar";
-import { useGeolocation, snapToGrid } from "../lib/useGeolocation";
+import { useGeolocation } from "../lib/useGeolocation";
 import { captureLoop } from "../lib/territoryCapture";
 import { useAuth } from "../context/AuthContext";
 import { useLang } from "../context/LangContext";
@@ -48,12 +48,12 @@ export default function MapPage() {
   const loadTerritories = useCallback(async () => {
     const { data, error } = await supabase
       .from("territories_public")
-      .select("grid_lat, grid_lng, color");
+      .select("id, polygon, color");
     if (!error && data) {
       setTerritories(
         data.map((t) => ({
-          grid_lat: t.grid_lat,
-          grid_lng: t.grid_lng,
+          id: t.id,
+          polygon: t.polygon,
           color: t.color || "#888888",
         }))
       );
@@ -98,13 +98,16 @@ export default function MapPage() {
 
   useEffect(() => {
     if (!recording || !position) return;
-    const snapped = snapToGrid(position.lat, position.lng);
     setPathPoints((prev) => {
       const last = prev[prev.length - 1];
-      if (last && last.lat === snapped.lat && last.lng === snapped.lng) {
-        return prev;
+      // GPS "дірілін" азайту үшін кемінде ~2.5м жылжыса ғана жаңа нүкте қосамыз
+      if (last) {
+        const dLat = position.lat - last.lat;
+        const dLng = position.lng - last.lng;
+        const approxMeters = Math.sqrt(dLat * dLat + dLng * dLng) * 111320;
+        if (approxMeters < 2.5) return prev;
       }
-      return [...prev, snapped];
+      return [...prev, { lat: position.lat, lng: position.lng }];
     });
   }, [position, recording]);
 
@@ -115,7 +118,7 @@ export default function MapPage() {
   }, [captureMessage]);
 
   const handleStart = useCallback(() => {
-    setPathPoints(position ? [snapToGrid(position.lat, position.lng)] : []);
+    setPathPoints(position ? [{ lat: position.lat, lng: position.lng }] : []);
     setRecording(true);
   }, [position]);
 

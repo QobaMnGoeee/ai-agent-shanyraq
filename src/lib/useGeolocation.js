@@ -54,12 +54,3 @@ export function useGeolocation() {
 
   return { position, accuracy, speedKmh, error };
 }
-
-export const GRID_SIZE = 27e-5; // ~30 метр
-
-export function snapToGrid(lat, lng) {
-  return {
-    lat: Math.round(lat / GRID_SIZE) * GRID_SIZE,
-    lng: Math.round(lng / GRID_SIZE) * GRID_SIZE,
-  };
-}
