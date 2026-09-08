@@ -138,7 +138,7 @@ export default function Admin() {
     <div className={styles.page}>
       <div className={styles.topBar}>
         <h1 className={styles.pageTitle}>
-          <i className="fa-solid fa-gauge" style={{ marginRight: '10px', color: 'var(--accent)' }}></i>
+          <i className="fa-solid fa-gauge" style={{ marginRight: '13px', color: 'var(--accent)' }}></i>
           Admin Panel
         </h1>
         <button className={styles.logoutBtn} onClick={handleLogout}>
@@ -166,7 +166,7 @@ export default function Admin() {
         <div className={styles.section}>
           {orders.length === 0 ? (
             <p className={styles.empty}>
-              <i className="fa-solid fa-inbox" style={{ fontSize: '2rem', display: 'block', marginBottom: '8px', opacity: 0.3 }}></i>
+              <i className="fa-solid fa-inbox" style={{ fontSize: '2rem', display: 'block', marginBottom: '10px', opacity: 0.3 }}></i>
               {t.admin.noOrders}
             </p>
           ) : (

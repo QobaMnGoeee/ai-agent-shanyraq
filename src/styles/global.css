@@ -24,7 +24,7 @@
   --font-display: 'Rajdhani', sans-serif;
   --font-body: 'Inter', sans-serif;
   --transition: 0.2s ease;
-  font-size: 80%;
+  font-size: 104%; /* было 80%, увеличено на 30% (масштаб всего интерфейса) */
 }
 
 html {
@@ -65,9 +65,10 @@ img { max-width: 100%; display: block; }
 ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
 
 .container {
-  max-width: 1200px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 26px; /* 20px * 1.3 */
 }
 
 .accent-line {

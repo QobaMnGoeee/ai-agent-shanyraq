@@ -30,7 +30,7 @@ export default function FAQ({ goBack }) {
         <div className={styles.requisiteBox}>
           <span className={styles.requisiteLabel}>{t.faq.requisite}</span>
           <span className={styles.requisiteValue}>
-            <i className="fa-solid fa-credit-card" style={{ marginRight: '8px', opacity: 0.6 }}></i>
+            <i className="fa-solid fa-credit-card" style={{ marginRight: '10px', opacity: 0.6 }}></i>
             {requisite}
           </span>
         </div>
@@ -84,7 +84,7 @@ export default function FAQ({ goBack }) {
 
         <div className={styles.faqList}>
           <h2 className={styles.faqTitle}>
-            <i className="fa-solid fa-list-ul" style={{ marginRight: '10px', color: 'var(--accent)' }}></i>
+            <i className="fa-solid fa-list-ul" style={{ marginRight: '13px', color: 'var(--accent)' }}></i>
             {t.faq.faqListTitle}
           </h2>
           {faqs.map((item, i) => (

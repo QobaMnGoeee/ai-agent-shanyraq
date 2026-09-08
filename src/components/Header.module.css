@@ -9,10 +9,11 @@
 }
 
 .inner {
-  max-width: 1200px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
-  height: 64px;
+  padding: 0 26px;
+  height: 83px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -26,10 +27,10 @@
 }
 
 .logoImg {
-  width: 42px;
-  height: 42px;
+  width: 55px;
+  height: 55px;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .logoText {
@@ -40,7 +41,7 @@
   letter-spacing: 0.05em;
 }
 
-.nav { display: flex; align-items: center; gap: 2px; }
+.nav { display: flex; align-items: center; gap: 3px; }
 
 .navLink {
   background: none;
@@ -48,7 +49,7 @@
   color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
-  padding: 6px 14px;
+  padding: 8px 18px;
   cursor: pointer;
   position: relative;
   transition: color var(--transition);
@@ -58,9 +59,9 @@
 .navLink::after {
   content: '';
   position: absolute;
-  bottom: 2px; left: 50%;
+  bottom: 3px; left: 50%;
   transform: translateX(-50%) scaleX(0);
-  width: 16px; height: 2px;
+  width: 21px; height: 3px;
   background: var(--accent);
   transition: transform var(--transition);
 }
@@ -72,53 +73,53 @@
 .hamburger {
   display: none;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 5px;
 }
 
 .bar {
   display: block;
-  width: 22px; height: 2px;
+  width: 29px; height: 3px;
   background: var(--text-primary);
   transition: transform 0.25s ease, opacity 0.25s ease;
   transform-origin: center;
 }
 
-.bar1Open { transform: translateY(6px) rotate(45deg); }
+.bar1Open { transform: translateY(8px) rotate(45deg); }
 .bar2Open { opacity: 0; }
-.bar3Open { transform: translateY(-6px) rotate(-45deg); }
+.bar3Open { transform: translateY(-8px) rotate(-45deg); }
 
 @media (max-width: 768px) {
-  .inner { padding: 0 14px; height: 58px; }
-  .logoImg { width: 34px; height: 34px; }
-  .logoText { font-size: 1.15rem; }
+  .inner { padding: 0 18px; height: 75px; }
+  .logoImg { width: 44px; height: 44px; }
+  .logoText { font-size: 1.5rem; }
 
   .hamburger { display: flex; }
 
   .nav {
     position: fixed;
-    top: 58px; left: 0; right: 0;
+    top: 75px; left: 0; right: 0;
     background: rgba(21,14,8,0.95);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
     flex-direction: column;
     align-items: stretch;
-    padding: 12px;
-    gap: 2px;
+    padding: 16px;
+    gap: 3px;
     transform: translateY(-110%);
     transition: transform 0.25s ease;
   }
 
   .nav.navOpen { transform: translateY(0); }
-  .navLink { text-align: left; padding: 10px 14px; }
+  .navLink { text-align: left; padding: 13px 18px; }
 }
 
 @media (max-width: 380px) {
-  .inner { padding: 0 10px; height: 54px; }
-  .logoImg { width: 28px; height: 28px; }
-  .logoText { font-size: 1rem; }
-  .nav { top: 54px; }
+  .inner { padding: 0 13px; height: 70px; }
+  .logoImg { width: 36px; height: 36px; }
+  .logoText { font-size: 1.3rem; }
+  .nav { top: 70px; }
 }

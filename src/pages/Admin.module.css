@@ -4,19 +4,19 @@
   align-items: center;
   justify-content: center;
   background: transparent;
-  padding: 24px;
+  padding: 31.2px;
 }
 
 .loginBox {
   background: var(--bg-card);
   border: 1px solid var(--border-bright);
-  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
-  padding: 48px 40px;
+  clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 26px 100%, 0 calc(100% - 26px));
+  padding: 62.4px 52px;
   width: 100%;
-  max-width: 400px;
+  max-width: 520px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20.8px;
   animation: fadeIn 0.3s ease;
 }
 
@@ -24,7 +24,7 @@
   font-size: 2.5rem;
   color: var(--accent);
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 10.4px;
 }
 
 .loginTitle {
@@ -42,9 +42,9 @@
   border: 1px solid var(--border);
   color: var(--text-primary);
   font-size: 1rem;
-  padding: 14px 16px;
+  padding: 18.2px 20.8px;
   outline: none;
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, calc(100% - 10.4px) 0, 100% 10.4px, 100% 100%, 0 100%);
   transition: border-color var(--transition);
   letter-spacing: 0.1em;
 }
@@ -64,14 +64,14 @@
   color: #fff;
   font-size: 0.9rem;
   font-weight: 600;
-  padding: 14px;
+  padding: 18.2px;
   clip-path: var(--clip-btn);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   border: none;
   cursor: pointer;
   transition: opacity var(--transition);
-  margin-top: 8px;
+  margin-top: 10.4px;
 }
 
 .loginBtn:hover {
@@ -79,12 +79,12 @@
 }
 
 .page {
-  padding-top: 64px;
+  padding-top: 83.2px;
   min-height: 100vh;
   background: transparent;
-  padding-left: 24px;
-  padding-right: 24px;
-  max-width: 1200px;
+  padding-left: 31.2px;
+  padding-right: 31.2px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -92,9 +92,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 48px 0 32px;
+  padding: 62.4px 0 41.6px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 32px;
+  margin-bottom: 41.6px;
 }
 
 .pageTitle {
@@ -111,7 +111,7 @@
   color: #EF5350;
   font-size: 0.85rem;
   font-weight: 600;
-  padding: 10px 20px;
+  padding: 13px 26px;
   cursor: pointer;
   clip-path: var(--clip-btn);
   letter-spacing: 0.05em;
@@ -125,8 +125,8 @@
 
 .tabs {
   display: flex;
-  gap: 4px;
-  margin-bottom: 32px;
+  gap: 5.2px;
+  margin-bottom: 41.6px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -136,7 +136,7 @@
   color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
-  padding: 12px 20px;
+  padding: 15.6px 26px;
   cursor: pointer;
   letter-spacing: 0.03em;
   position: relative;
@@ -146,10 +146,10 @@
 .tab::after {
   content: '';
   position: absolute;
-  bottom: -1px;
+  bottom: -1.3px;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 2.6px;
   background: var(--accent);
   transform: scaleX(0);
   transition: transform var(--transition);
@@ -168,36 +168,36 @@
 }
 
 .section {
-  padding-bottom: 60px;
+  padding-bottom: 78px;
 }
 
 .empty {
   color: var(--text-muted);
   font-size: 0.95rem;
   text-align: center;
-  padding: 60px 0;
+  padding: 78px 0;
 }
 
 .ordersGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+  gap: 20.8px;
 }
 
 .orderCard {
   background: var(--bg-card);
   border: 1px solid var(--border);
   clip-path: var(--clip-card);
-  padding: 20px 24px;
+  padding: 26px 31.2px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 13px;
 }
 
 .orderRow {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 13px;
 }
 
 .orderKey {
@@ -206,8 +206,8 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-muted);
-  min-width: 56px;
-  padding-top: 1px;
+  min-width: 72.8px;
+  padding-top: 1.3px;
 }
 
 .orderVal {
@@ -227,12 +227,12 @@
   color: var(--accent-light);
   font-size: 0.9rem;
   font-weight: 600;
-  padding: 12px 24px;
+  padding: 15.6px 31.2px;
   clip-path: var(--clip-btn);
   cursor: pointer;
   letter-spacing: 0.05em;
   transition: background var(--transition);
-  margin-bottom: 24px;
+  margin-bottom: 31.2px;
 }
 
 .addBtn:hover {
@@ -243,8 +243,8 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   clip-path: var(--clip-card);
-  padding: 28px;
-  max-width: 480px;
+  padding: 36.4px;
+  max-width: 624px;
   animation: fadeIn 0.2s ease;
 }
 
@@ -254,11 +254,11 @@
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-primary);
-  margin-bottom: 20px;
+  margin-bottom: 26px;
 }
 
 .field {
-  margin-bottom: 16px;
+  margin-bottom: 20.8px;
 }
 
 .label {
@@ -268,7 +268,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-secondary);
-  margin-bottom: 8px;
+  margin-bottom: 10.4px;
 }
 
 .input {
@@ -277,9 +277,9 @@
   border: 1px solid var(--border);
   color: var(--text-primary);
   font-size: 0.95rem;
-  padding: 12px 16px;
+  padding: 15.6px 20.8px;
   outline: none;
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, calc(100% - 10.4px) 0, 100% 10.4px, 100% 100%, 0 100%);
   transition: border-color var(--transition);
 }
 
@@ -293,7 +293,7 @@
   border: 1px solid var(--border);
   color: var(--text-primary);
   font-size: 0.95rem;
-  padding: 12px 16px;
+  padding: 15.6px 20.8px;
   outline: none;
   resize: vertical;
   transition: border-color var(--transition);
@@ -310,8 +310,8 @@
 
 .formBtns {
   display: flex;
-  gap: 10px;
-  margin-top: 8px;
+  gap: 13px;
+  margin-top: 10.4px;
 }
 
 .saveBtn {
@@ -319,7 +319,7 @@
   color: #fff;
   font-size: 0.85rem;
   font-weight: 600;
-  padding: 11px 24px;
+  padding: 14.3px 31.2px;
   clip-path: var(--clip-btn);
   border: none;
   cursor: pointer;
@@ -338,7 +338,7 @@
   color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
-  padding: 11px 20px;
+  padding: 14.3px 26px;
   clip-path: var(--clip-btn);
   cursor: pointer;
   transition: border-color var(--transition);
@@ -349,34 +349,34 @@
 }
 
 .reqForm {
-  max-width: 480px;
+  max-width: 624px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20.8px;
 }
 
 .donateManageList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 8px;
+  gap: 15.6px;
+  margin-top: 10.4px;
 }
 
 .donateManageCard {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 18.2px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   clip-path: var(--clip-card);
-  padding: 12px 16px;
+  padding: 15.6px 20.8px;
 }
 
 .donateManageImg {
-  width: 48px;
-  height: 48px;
+  width: 62.4px;
+  height: 62.4px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 7.8px;
   flex-shrink: 0;
 }
 
@@ -384,7 +384,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 2.6px;
 }
 
 .donateManageName {
@@ -403,7 +403,7 @@
   border: 1px solid rgba(239,83,80,0.3);
   color: #EF5350;
   font-size: 0.9rem;
-  padding: 9px 13px;
+  padding: 11.7px 16.9px;
   cursor: pointer;
   clip-path: var(--clip-btn);
   transition: background var(--transition);
@@ -415,6 +415,6 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10.4px); }
   to { opacity: 1; transform: translateY(0); }
 }

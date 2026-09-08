@@ -77,7 +77,7 @@ export default function Dashboard({ setPage }) {
           <div className={styles.sectionHeader}>
             <span className={styles.decorLine} />
             <h2 className={styles.sectionTitle}>
-              <i className="fa-solid fa-gamepad" style={{ marginRight: '10px', color: 'var(--accent)' }}></i>
+              <i className="fa-solid fa-gamepad" style={{ marginRight: '13px', color: 'var(--accent)' }}></i>
               {t.gameplay.title}
             </h2>
             <span className={styles.decorLine} />
