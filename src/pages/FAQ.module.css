@@ -186,4 +186,9 @@
   .stepsGrid {
     grid-template-columns: 1fr;
   }
+  .page { padding-top: 58px; }
+}
+
+@media (max-width: 380px) {
+  .page { padding-top: 54px; }
 }

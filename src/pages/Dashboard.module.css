@@ -330,3 +330,11 @@
   .sliderLeft { transform: translateX(-210px) scale(0.85); }
   .sliderRight { transform: translateX(210px) scale(0.85); }
 }
+
+@media (max-width: 768px) {
+  .hero { margin-top: 58px; }
+}
+
+@media (max-width: 380px) {
+  .hero { margin-top: 54px; }
+}
