@@ -20,7 +20,7 @@ export default function Footer() {
           ))}
         </div>
         <div className={styles.logo}>
-          <i className="fa-solid fa-cubes" style={{ color: 'var(--accent)' }}></i>
+          <i className="fa-solid fa-cubes" style={{ color: 'var(--accent)', fontSize: '1.2rem' }}></i>
           <span>MortyMC</span>
         </div>
         <p className={styles.copy}>{t.footer.rights}</p>
