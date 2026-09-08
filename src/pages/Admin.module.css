@@ -1,0 +1,420 @@
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  padding: 31.2px;
+}
+
+.loginBox {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 26px 100%, 0 calc(100% - 26px));
+  padding: 62.4px 52px;
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 20.8px;
+  animation: fadeIn 0.3s ease;
+}
+
+.loginIcon {
+  font-size: 2.5rem;
+  color: var(--accent);
+  text-align: center;
+  margin-bottom: 10.4px;
+}
+
+.loginTitle {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+}
+
+.loginInput {
+  background: var(--bg-mid);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 18.2px 20.8px;
+  outline: none;
+  clip-path: polygon(0 0, calc(100% - 10.4px) 0, 100% 10.4px, 100% 100%, 0 100%);
+  transition: border-color var(--transition);
+  letter-spacing: 0.1em;
+}
+
+.loginInput:focus {
+  border-color: var(--accent);
+}
+
+.loginError {
+  color: #EF5350;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.loginBtn {
+  background: var(--gradient-btn);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 18.2px;
+  clip-path: var(--clip-btn);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: opacity var(--transition);
+  margin-top: 10.4px;
+}
+
+.loginBtn:hover {
+  opacity: 0.85;
+}
+
+.page {
+  padding-top: 96px;
+  min-height: 100vh;
+  background: transparent;
+  padding-left: 31.2px;
+  padding-right: 31.2px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 62.4px 0 41.6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 41.6px;
+}
+
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.logoutBtn {
+  background: rgba(239,83,80,0.1);
+  border: 1px solid rgba(239,83,80,0.3);
+  color: #EF5350;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 13px 26px;
+  cursor: pointer;
+  clip-path: var(--clip-btn);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: background var(--transition);
+}
+
+.logoutBtn:hover {
+  background: rgba(239,83,80,0.2);
+}
+
+.tabs {
+  display: flex;
+  gap: 5.2px;
+  margin-bottom: 41.6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 15.6px 26px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  position: relative;
+  transition: color var(--transition);
+}
+
+.tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1.3px;
+  left: 0;
+  right: 0;
+  height: 2.6px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform var(--transition);
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tab.activeTab {
+  color: var(--accent);
+}
+
+.tab.activeTab::after {
+  transform: scaleX(1);
+}
+
+.section {
+  padding-bottom: 78px;
+}
+
+.empty {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 78px 0;
+}
+
+.ordersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+  gap: 20.8px;
+}
+
+.orderCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-card);
+  padding: 26px 31.2px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.orderRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+}
+
+.orderKey {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  min-width: 72.8px;
+  padding-top: 1.3px;
+}
+
+.orderVal {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.orderLink {
+  color: var(--accent-light);
+  font-size: 0.9rem;
+  text-decoration: underline;
+}
+
+.addBtn {
+  background: rgba(255,138,0,0.1);
+  border: 1px solid var(--border-bright);
+  color: var(--accent-light);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 15.6px 31.2px;
+  clip-path: var(--clip-btn);
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: background var(--transition);
+  margin-bottom: 31.2px;
+}
+
+.addBtn:hover {
+  background: rgba(255,138,0,0.18);
+}
+
+.donateForm {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-card);
+  padding: 36.4px;
+  max-width: 624px;
+  animation: fadeIn 0.2s ease;
+}
+
+.formTitle {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 26px;
+}
+
+.field {
+  margin-bottom: 20.8px;
+}
+
+.label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 10.4px;
+}
+
+.input {
+  width: 100%;
+  background: var(--bg-mid);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  padding: 15.6px 20.8px;
+  outline: none;
+  clip-path: polygon(0 0, calc(100% - 10.4px) 0, 100% 10.4px, 100% 100%, 0 100%);
+  transition: border-color var(--transition);
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
+.textarea {
+  width: 100%;
+  background: var(--bg-mid);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  padding: 15.6px 20.8px;
+  outline: none;
+  resize: vertical;
+  transition: border-color var(--transition);
+}
+
+.textarea:focus {
+  border-color: var(--accent);
+}
+
+.fileInput {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.formBtns {
+  display: flex;
+  gap: 13px;
+  margin-top: 10.4px;
+}
+
+.saveBtn {
+  background: var(--gradient-btn);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 14.3px 31.2px;
+  clip-path: var(--clip-btn);
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: opacity var(--transition);
+}
+
+.saveBtn:hover {
+  opacity: 0.85;
+}
+
+.cancelBtn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 14.3px 26px;
+  clip-path: var(--clip-btn);
+  cursor: pointer;
+  transition: border-color var(--transition);
+}
+
+.cancelBtn:hover {
+  border-color: var(--text-secondary);
+}
+
+.reqForm {
+  max-width: 624px;
+  display: flex;
+  flex-direction: column;
+  gap: 20.8px;
+}
+
+.donateManageList {
+  display: flex;
+  flex-direction: column;
+  gap: 15.6px;
+  margin-top: 10.4px;
+}
+
+.donateManageCard {
+  display: flex;
+  align-items: center;
+  gap: 18.2px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-card);
+  padding: 15.6px 20.8px;
+}
+
+.donateManageImg {
+  width: 62.4px;
+  height: 62.4px;
+  object-fit: cover;
+  border-radius: 7.8px;
+  flex-shrink: 0;
+}
+
+.donateManageInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2.6px;
+}
+
+.donateManageName {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.donateManagePrice {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.deleteBtn {
+  background: rgba(239,83,80,0.1);
+  border: 1px solid rgba(239,83,80,0.3);
+  color: #EF5350;
+  font-size: 0.9rem;
+  padding: 11.7px 16.9px;
+  cursor: pointer;
+  clip-path: var(--clip-btn);
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+
+.deleteBtn:hover {
+  background: rgba(239,83,80,0.2);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10.4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

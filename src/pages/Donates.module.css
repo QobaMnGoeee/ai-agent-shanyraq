@@ -1,0 +1,351 @@
+.page {
+  padding-top: 96px;
+  min-height: 100vh;
+  background: transparent;
+}
+
+.pageHeader {
+  padding: 104px 0 78px;
+  background: linear-gradient(to bottom, var(--bg-mid), var(--bg-deep));
+  border-bottom: 1px solid var(--border);
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10.4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  color: var(--text-secondary, #9aa4b2);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 11.7px 20.8px;
+  border-radius: 10.4px;
+  cursor: pointer;
+  margin-bottom: 26px;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.backBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  border-color: var(--accent);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(351px, 1fr));
+  gap: 31.2px;
+  padding-top: 78px;
+  padding-bottom: 104px;
+}
+
+.card {
+  background: rgba(22, 28, 40, 0.7);
+  backdrop-filter: blur(15.6px);
+  -webkit-backdrop-filter: blur(15.6px);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-card);
+  overflow: hidden;
+  transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.card:hover {
+  border-color: var(--border-bright);
+  transform: translateY(-7.8px);
+  box-shadow: 0 20.8px 52px rgba(0,0,0,0.4);
+}
+
+.cardImg {
+  position: relative;
+  height: 234px;
+  overflow: hidden;
+}
+
+.cardImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6) saturate(0.8);
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.card:hover .cardImg img {
+  transform: scale(1.06);
+  filter: brightness(0.7) saturate(1);
+}
+
+.cardImgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--bg-card) 0%, rgba(0,0,0,0) 70%);
+}
+
+.cardImgOverlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.6px;
+  background: var(--c);
+  box-shadow: 0 0 18.2px var(--c);
+}
+
+.cardBadge {
+  position: absolute;
+  top: 15.6px;
+  right: 15.6px;
+  width: 46.8px;
+  height: 46.8px;
+  background: rgba(21,14,8,0.6);
+  backdrop-filter: blur(10.4px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+}
+
+.cardBody {
+  padding: 26px 31.2px 31.2px;
+}
+
+.cardTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 13px;
+}
+
+.cardName {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.cardPrice {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cardDesc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 26px;
+  min-height: 67.6px;
+}
+
+.orderBtn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10.4px;
+  background: var(--gradient-btn);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 14.3px 26px;
+  clip-path: var(--clip-btn);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+
+.orderBtn:hover { opacity: 0.85; }
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(7.8px);
+  -webkit-backdrop-filter: blur(7.8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 31.2px;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal {
+  background: rgba(18, 23, 33, 0.9);
+  backdrop-filter: blur(26px);
+  -webkit-backdrop-filter: blur(26px);
+  border: 1px solid var(--border-bright);
+  clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 26px 100%, 0 calc(100% - 26px));
+  padding: 52px;
+  width: 100%;
+  max-width: 572px;
+  position: relative;
+  animation: fadeIn 0.2s ease;
+}
+
+.modalClose {
+  position: absolute;
+  top: 20.8px;
+  right: 26px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  width: 39px;
+  height: 39px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 5.2px;
+  transition: color var(--transition), background var(--transition);
+}
+
+.modalClose:hover {
+  color: #EF5350;
+  background: rgba(239,83,80,0.1);
+}
+
+.modalTitle {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 5.2px;
+}
+
+.modalSub {
+  font-size: 0.85rem;
+  color: var(--accent-light);
+  margin-bottom: 36.4px;
+}
+
+.field { margin-bottom: 26px; }
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 9.1px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 10.4px;
+}
+
+.input {
+  width: 100%;
+  background: rgba(21,14,8,0.6);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  padding: 15.6px 20.8px;
+  outline: none;
+  clip-path: polygon(0 0, calc(100% - 10.4px) 0, 100% 10.4px, 100% 100%, 0 100%);
+  transition: border-color var(--transition);
+}
+
+.input:focus { border-color: var(--accent); }
+.input::placeholder { color: var(--text-muted); }
+
+.fileLabel { display: block; cursor: pointer; }
+
+.fileBtn {
+  display: flex;
+  align-items: center;
+  gap: 10.4px;
+  width: 100%;
+  background: rgba(21,14,8,0.5);
+  border: 1px dashed var(--border-bright);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  padding: 15.6px 20.8px;
+  clip-path: polygon(0 0, calc(100% - 10.4px) 0, 100% 10.4px, 100% 100%, 0 100%);
+  transition: border-color var(--transition);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileLabel:hover .fileBtn {
+  border-color: var(--accent);
+  color: var(--accent-light);
+}
+
+.errMsg {
+  display: flex;
+  align-items: center;
+  gap: 7.8px;
+  color: #EF5350;
+  font-size: 0.85rem;
+  margin-bottom: 15.6px;
+}
+
+.submitBtn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10.4px;
+  background: var(--gradient-btn);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 18.2px;
+  clip-path: var(--clip-btn);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  margin-top: 10.4px;
+  transition: opacity var(--transition);
+}
+
+.submitBtn:hover:not(:disabled) { opacity: 0.85; }
+.submitBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.successMsg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  background: rgba(76,175,80,0.1);
+  border: 1px solid rgba(76,175,80,0.35);
+  color: #81C784;
+  padding: 26px;
+  text-align: center;
+  font-weight: 600;
+  clip-path: var(--clip-card);
+  margin-top: 20.8px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+  .page { padding-top: 75.4px; }
+}
+
+@media (max-width: 380px) {
+  .page { padding-top: 70.2px; }
+}
