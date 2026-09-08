@@ -55,7 +55,7 @@
   align-items: center;
   gap: 9.1px;
   font-family: var(--font-display);
-  font-size: 0.72rem;
+  font-size: 1.008rem; /* 0.72rem * 1.4 (desktop only) */
   font-weight: 600;
   letter-spacing: 0.2em;
   color: var(--accent);
@@ -79,7 +79,7 @@
 
 .heroIpValue {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.54rem; /* 1.1rem * 1.4 (desktop only) */
   font-weight: 700;
   color: var(--accent-light);
   letter-spacing: 0.06em;
@@ -98,10 +98,10 @@
 .copyBtn:hover { color: var(--accent); }
 
 .heroDesc {
-  font-size: 0.85rem;
+  font-size: 1.19rem; /* 0.85rem * 1.4 (desktop only) */
   color: rgba(255,255,255,0.55);
   line-height: 1.7;
-  max-width: 494px;
+  max-width: 620px;
 }
 
 .heroBtns {
@@ -116,7 +116,7 @@
   gap: 9.1px;
   background: var(--gradient-btn);
   color: #fff;
-  font-size: 0.8rem;
+  font-size: 1.12rem; /* 0.8rem * 1.4 (desktop only) */
   font-weight: 600;
   padding: 13px 28.6px;
   clip-path: var(--clip-btn);
@@ -136,7 +136,7 @@
   background: rgba(255,255,255,0.05);
   backdrop-filter: blur(13px);
   color: var(--text-primary);
-  font-size: 0.8rem;
+  font-size: 1.12rem; /* 0.8rem * 1.4 (desktop only) */
   font-weight: 600;
   padding: 11.7px 28.6px;
   clip-path: var(--clip-btn);
@@ -329,6 +329,12 @@
   .sliderCard { width: 260px; height: 351px; }
   .sliderLeft { transform: translateX(-273px) scale(0.85); }
   .sliderRight { transform: translateX(273px) scale(0.85); }
+
+  /* Hero text stays at base size on mobile (no +40% desktop boost) */
+  .heroEyebrow { font-size: 0.72rem; }
+  .heroIpValue { font-size: 1.1rem; }
+  .heroDesc { font-size: 0.85rem; max-width: 494px; }
+  .btnPrimary, .btnOutline { font-size: 0.8rem; }
 }
 
 @media (max-width: 768px) {
