@@ -2,8 +2,8 @@
 
 .hero {
   position: relative;
-  height: calc(62.4vh - 83.2px);
-  margin-top: 83.2px;
+  height: calc(62.4vh - 96px);
+  margin-top: 96px;
   display: flex;
   align-items: flex-start;
   padding-top: 140.4px;
