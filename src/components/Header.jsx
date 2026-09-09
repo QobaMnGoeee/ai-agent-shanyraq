@@ -4,7 +4,6 @@ import styles from './Header.module.css';
 
 export default function Header({ currentPage, setPage }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [logoError, setLogoError] = useState(false);
   const { t } = useLang();
 
   const navItems = [
@@ -19,16 +18,7 @@ export default function Header({ currentPage, setPage }) {
     <header className={styles.header}>
       <div className={styles.inner}>
         <div className={styles.logo} onClick={() => handleNav('dashboard')}>
-          {!logoError ? (
-            <img
-              src="https://cdn.discordapp.com/attachments/1544381975765196870/1546520887098871849/pack.png?ex=6aa01550&is=6a9ec3d0&hm=f080bca985b74a747a7b22c47e964771671447d4b99d5b63fa68781fc97d7df0&"
-              alt="MortyMC"
-              className={styles.logoImg}
-              onError={() => setLogoError(true)}
-            />
-          ) : (
-            <i className="fa-solid fa-cubes" style={{ color: 'var(--accent)', fontSize: '1.5rem' }}></i>
-          )}
+          <i className="fa-solid fa-cubes" style={{ color: 'var(--accent)' }}></i>
           <span className={styles.logoText}>MortyMC</span>
         </div>
 
