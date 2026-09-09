@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { ref, onValue } from 'firebase/database';
 import { useLang } from '../hooks/useLang';
+import { useSiteSettings } from '../hooks/useSiteSettings';
 import styles from './FAQ.module.css';
 
 export default function FAQ({ goBack }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const { serverIp } = useSiteSettings();
   const [requisite, setRequisite] = useState('xxxx xxxx xxxx xxxx');
   const [openIdx, setOpenIdx] = useState(null);
+  const [customFaq, setCustomFaq] = useState(null);
 
   useEffect(() => {
     const r = ref(db, 'settings/requisite');
@@ -18,7 +21,23 @@ export default function FAQ({ goBack }) {
     return () => unsub();
   }, []);
 
-  const faqs = t.faq.items;
+  useEffect(() => {
+    const r = ref(db, `settings/faq/${lang}`);
+    const unsub = onValue(r, (snap) => {
+      const v = snap.val();
+      setCustomFaq(Array.isArray(v) ? v : null);
+    });
+    return () => unsub();
+  }, [lang]);
+
+  // Әкімші баптаулардан келген FAQ болса — соны қолданамыз, әйтпесе әдепкі аудармаларды
+  const rawFaqs = (customFaq && customFaq.length > 0) ? customFaq : t.faq.items;
+  // Мәтіндегі IP-ды ағымдағы сервер мекенжайымен алмастырамыз (әдепкі аудармаларда да,
+  // әкімші жазған кастом жауаптарда да {IP} қолдансаңыз болады)
+  const faqs = rawFaqs.map(item => ({
+    q: item.q.replaceAll('mortymc.altyn.fun', serverIp).replaceAll('{IP}', serverIp),
+    a: item.a.replaceAll('mortymc.altyn.fun', serverIp).replaceAll('{IP}', serverIp),
+  }));
 
   const steps = [
     {

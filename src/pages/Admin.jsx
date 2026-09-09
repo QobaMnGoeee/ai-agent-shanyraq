@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { ref, onValue, push, set, remove } from 'firebase/database';
-import { useLang } from '../hooks/useLang';
+import { useLang, translations } from '../hooks/useLang';
+import { useSiteSettings, SITE_SETTINGS_DEFAULTS } from '../hooks/useSiteSettings';
 import styles from './Admin.module.css';
+
+const FAQ_LANGS = ['RU', 'KZ', 'EN'];
 
 export default function Admin() {
   const { t } = useLang();
+  const liveSiteSettings = useSiteSettings();
   const [code, setCode] = useState('');
   const [authed, setAuthed] = useState(() => localStorage.getItem('adminAuthed') === 'true');
   const [authError, setAuthError] = useState(false);
@@ -16,6 +20,19 @@ export default function Admin() {
   const [reqEdit, setReqEdit] = useState('');
   const [reqSaved, setReqSaved] = useState(false);
   const [newDonate, setNewDonate] = useState({ name: '', price: '', desc: '', image: '' });
+
+  // Сайт баптаулары (атауы + сервер IP)
+  const [siteEdit, setSiteEdit] = useState(SITE_SETTINGS_DEFAULTS);
+  const [siteSaved, setSiteSaved] = useState(false);
+
+  // FAQ басқару
+  const [faqLang, setFaqLang] = useState('RU');
+  const [faqItems, setFaqItems] = useState(null); // null = firebase-тен әлі жүктелмеді
+  const [faqSaved, setFaqSaved] = useState(false);
+
+  useEffect(() => {
+    setSiteEdit(liveSiteSettings);
+  }, [liveSiteSettings]);
 
   useEffect(() => {
     if (!authed) return;
@@ -37,6 +54,22 @@ export default function Admin() {
     });
     return () => { unsub(); unsub2(); unsub3(); };
   }, [authed]);
+
+  useEffect(() => {
+    if (!authed) return;
+    const r = ref(db, `settings/faq/${faqLang}`);
+    const unsub = onValue(r, (snap) => {
+      const v = snap.val();
+      if (Array.isArray(v) && v.length > 0) {
+        setFaqItems(v);
+      } else {
+        // Firebase-те әлі жоқ болса — сол тілдің дефолт (translations.js) мәтінін көрсетеміз
+        const defaults = translations[faqLang]?.faq?.items || [];
+        setFaqItems(defaults);
+      }
+    });
+    return () => unsub();
+  }, [authed, faqLang]);
 
   const handleLogin = () => {
     onValue(ref(db, 'admins'), (snap) => {
@@ -105,6 +138,39 @@ export default function Admin() {
     setTimeout(() => setReqSaved(false), 2000);
   };
 
+  const handleSaveSite = async () => {
+    const name = (siteEdit.siteName || '').trim() || SITE_SETTINGS_DEFAULTS.siteName;
+    const ip = (siteEdit.serverIp || '').trim() || SITE_SETTINGS_DEFAULTS.serverIp;
+    await set(ref(db, 'settings/site'), { siteName: name, serverIp: ip });
+    setSiteEdit({ siteName: name, serverIp: ip });
+    setSiteSaved(true);
+    setTimeout(() => setSiteSaved(false), 2000);
+  };
+
+  const handleFaqItemChange = (idx, field, value) => {
+    setFaqItems(prev => prev.map((it, i) => i === idx ? { ...it, [field]: value } : it));
+  };
+
+  const handleAddFaqItem = () => {
+    setFaqItems(prev => [...(prev || []), { q: '', a: '' }]);
+  };
+
+  const handleDeleteFaqItem = (idx) => {
+    setFaqItems(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleSaveFaq = async () => {
+    const cleaned = (faqItems || []).filter(it => it.q.trim() || it.a.trim());
+    await set(ref(db, `settings/faq/${faqLang}`), cleaned);
+    setFaqItems(cleaned);
+    setFaqSaved(true);
+    setTimeout(() => setFaqSaved(false), 2000);
+  };
+
+  const handleResetFaqToDefault = () => {
+    setFaqItems(translations[faqLang]?.faq?.items || []);
+  };
+
   if (!authed) {
     return (
       <div className={styles.loginPage}>
@@ -151,6 +217,8 @@ export default function Admin() {
           { key: 'orders', label: t.admin.orders, icon: 'fa-inbox' },
           { key: 'donates', label: t.admin.donatesTab, icon: 'fa-gem' },
           { key: 'requisite', label: t.admin.editRequisite, icon: 'fa-credit-card' },
+          { key: 'site', label: 'Сайт', icon: 'fa-globe' },
+          { key: 'faq', label: 'FAQ', icon: 'fa-circle-question' },
         ].map(tab_ => (
           <button
             key={tab_.key}
@@ -280,6 +348,107 @@ export default function Admin() {
             />
             <button className={styles.saveBtn} onClick={handleSaveRequisite}>
               {reqSaved
+                ? <><i className="fa-solid fa-check"></i> {t.admin.saved}</>
+                : <><i className="fa-solid fa-floppy-disk"></i> {t.admin.donateForm.save}</>
+              }
+            </button>
+          </div>
+        </div>
+      )}
+
+      {tab === 'site' && (
+        <div className={styles.section}>
+          <div className={styles.reqForm}>
+            <p className={styles.sectionHint}>
+              <i className="fa-solid fa-circle-info"></i> Бұл жерден сайттың атауын (логотип пен тақырыпта көрінеді) және Minecraft серверінің IP мекенжайын өзгертуге болады. Өзгеріс бүкіл сайтта (Header, Footer, Басты бет, FAQ) бірден көрінеді.
+            </p>
+            <div className={styles.field}>
+              <label className={styles.label}>
+                <i className="fa-solid fa-signature"></i> Сайт атауы
+              </label>
+              <input
+                className={styles.input}
+                value={siteEdit.siteName}
+                onChange={(e) => setSiteEdit(p => ({ ...p, siteName: e.target.value }))}
+                placeholder="MortyMC"
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>
+                <i className="fa-solid fa-server"></i> Сервер IP / домені
+              </label>
+              <input
+                className={styles.input}
+                value={siteEdit.serverIp}
+                onChange={(e) => setSiteEdit(p => ({ ...p, serverIp: e.target.value }))}
+                placeholder="play.example.com"
+              />
+            </div>
+            <button className={styles.saveBtn} onClick={handleSaveSite}>
+              {siteSaved
+                ? <><i className="fa-solid fa-check"></i> {t.admin.saved}</>
+                : <><i className="fa-solid fa-floppy-disk"></i> {t.admin.donateForm.save}</>
+              }
+            </button>
+          </div>
+        </div>
+      )}
+
+      {tab === 'faq' && (
+        <div className={styles.section}>
+          <p className={styles.sectionHint}>
+            <i className="fa-solid fa-circle-info"></i> FAQ сұрақ-жауаптарын әр тіл үшін бөлек өзгертуге болады. Мәтін ішінде сервер мекенжайын жазу үшін <code>{'{IP}'}</code> қолдансаңыз, ол автоматты түрде ағымдағы серверIP-мен алмасады.
+          </p>
+          <div className={styles.langTabs}>
+            {FAQ_LANGS.map(l => (
+              <button
+                key={l}
+                className={`${styles.langTab} ${faqLang === l ? styles.langTabActive : ''}`}
+                onClick={() => setFaqLang(l)}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
+
+          {(faqItems || []).map((item, idx) => (
+            <div key={idx} className={styles.faqEditCard}>
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  <i className="fa-solid fa-circle-question"></i> Сұрақ
+                </label>
+                <input
+                  className={styles.input}
+                  value={item.q}
+                  onChange={(e) => handleFaqItemChange(idx, 'q', e.target.value)}
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  <i className="fa-solid fa-comment"></i> Жауап
+                </label>
+                <textarea
+                  className={styles.textarea}
+                  rows={3}
+                  value={item.a}
+                  onChange={(e) => handleFaqItemChange(idx, 'a', e.target.value)}
+                />
+              </div>
+              <button className={styles.deleteBtn} onClick={() => handleDeleteFaqItem(idx)} title={t.admin.delete}>
+                <i className="fa-solid fa-trash"></i> Өшіру
+              </button>
+            </div>
+          ))}
+
+          <div className={styles.formBtns} style={{ marginTop: '20.8px' }}>
+            <button className={styles.addBtn} onClick={handleAddFaqItem} style={{ marginBottom: 0 }}>
+              <i className="fa-solid fa-plus"></i> Сұрақ қосу
+            </button>
+            <button className={styles.cancelBtn} onClick={handleResetFaqToDefault}>
+              <i className="fa-solid fa-rotate-left"></i> Әдепкіге қайтару
+            </button>
+            <button className={styles.saveBtn} onClick={handleSaveFaq}>
+              {faqSaved
                 ? <><i className="fa-solid fa-check"></i> {t.admin.saved}</>
                 : <><i className="fa-solid fa-floppy-disk"></i> {t.admin.donateForm.save}</>
               }

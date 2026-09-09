@@ -1,8 +1,10 @@
 import { useLang } from '../hooks/useLang';
+import { useSiteSettings } from '../hooks/useSiteSettings';
 import styles from './Dashboard.module.css';
 
 export default function Dashboard({ setPage }) {
   const { t } = useLang();
+  const { serverIp } = useSiteSettings();
 
   return (
     <main className={styles.main}>
@@ -19,8 +21,8 @@ export default function Dashboard({ setPage }) {
             </p>
             <div className={styles.heroIp}>
               <i className="fa-solid fa-server"></i>
-              <span className={styles.heroIpValue}>mortymc.altyn.fun</span>
-              <button className={styles.copyBtn} onClick={() => navigator.clipboard.writeText('mortymc.altyn.fun')} title={t.hero.copy}>
+              <span className={styles.heroIpValue}>{serverIp}</span>
+              <button className={styles.copyBtn} onClick={() => navigator.clipboard.writeText(serverIp)} title={t.hero.copy}>
                 <i className="fa-regular fa-copy"></i>
               </button>
             </div>

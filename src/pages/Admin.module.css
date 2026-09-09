@@ -4,32 +4,32 @@
   align-items: center;
   justify-content: center;
   background: transparent;
-  padding: 31.2px;
+  padding: 34.32px;
 }
 
 .loginBox {
   background: var(--bg-card);
-  border: 1px solid var(--border-bright);
-  clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 26px 100%, 0 calc(100% - 26px));
-  padding: 62.4px 52px;
+  border: 1.1px solid var(--border-bright);
+  clip-path: polygon(0 0, calc(100% - 28.6px) 0, 100% 28.6px, 100% 100%, 28.6px 100%, 0 calc(100% - 28.6px));
+  padding: 68.64px 57.2px;
   width: 100%;
-  max-width: 520px;
+  max-width: 572px;
   display: flex;
   flex-direction: column;
-  gap: 20.8px;
+  gap: 22.88px;
   animation: fadeIn 0.3s ease;
 }
 
 .loginIcon {
-  font-size: 2.5rem;
+  font-size: 2.75rem;
   color: var(--accent);
   text-align: center;
-  margin-bottom: 10.4px;
+  margin-bottom: 11.44px;
 }
 
 .loginTitle {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: 1.76rem;
   font-weight: 700;
   text-transform: uppercase;
   text-align: center;
@@ -39,12 +39,12 @@
 
 .loginInput {
   background: var(--bg-mid);
-  border: 1px solid var(--border);
+  border: 1.1px solid var(--border);
   color: var(--text-primary);
-  font-size: 1rem;
-  padding: 18.2px 20.8px;
+  font-size: 1.1rem;
+  padding: 20.02px 22.88px;
   outline: none;
-  clip-path: polygon(0 0, calc(100% - 10.4px) 0, 100% 10.4px, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, calc(100% - 11.44px) 0, 100% 11.44px, 100% 100%, 0 100%);
   transition: border-color var(--transition);
   letter-spacing: 0.1em;
 }
@@ -55,23 +55,23 @@
 
 .loginError {
   color: #EF5350;
-  font-size: 0.85rem;
+  font-size: 0.935rem;
   text-align: center;
 }
 
 .loginBtn {
   background: var(--gradient-btn);
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.99rem;
   font-weight: 600;
-  padding: 18.2px;
+  padding: 20.02px;
   clip-path: var(--clip-btn);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   border: none;
   cursor: pointer;
   transition: opacity var(--transition);
-  margin-top: 10.4px;
+  margin-top: 11.44px;
 }
 
 .loginBtn:hover {
@@ -79,11 +79,11 @@
 }
 
 .page {
-  padding-top: 96px;
+  padding-top: 105.6px;
   min-height: 100vh;
   background: transparent;
-  padding-left: 31.2px;
-  padding-right: 31.2px;
+  padding-left: 34.32px;
+  padding-right: 34.32px;
   max-width: 100%;
   margin: 0 auto;
 }
@@ -92,14 +92,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 62.4px 0 41.6px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 41.6px;
+  padding: 68.64px 0 45.76px;
+  border-bottom: 1.1px solid var(--border);
+  margin-bottom: 45.76px;
 }
 
 .pageTitle {
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-primary);
@@ -107,11 +107,11 @@
 
 .logoutBtn {
   background: rgba(239,83,80,0.1);
-  border: 1px solid rgba(239,83,80,0.3);
+  border: 1.1px solid rgba(239,83,80,0.3);
   color: #EF5350;
-  font-size: 0.85rem;
+  font-size: 0.935rem;
   font-weight: 600;
-  padding: 13px 26px;
+  padding: 14.3px 28.6px;
   cursor: pointer;
   clip-path: var(--clip-btn);
   letter-spacing: 0.05em;
@@ -125,18 +125,18 @@
 
 .tabs {
   display: flex;
-  gap: 5.2px;
-  margin-bottom: 41.6px;
-  border-bottom: 1px solid var(--border);
+  gap: 5.72px;
+  margin-bottom: 45.76px;
+  border-bottom: 1.1px solid var(--border);
 }
 
 .tab {
   background: none;
   border: none;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.99rem;
   font-weight: 500;
-  padding: 15.6px 26px;
+  padding: 17.16px 28.6px;
   cursor: pointer;
   letter-spacing: 0.03em;
   position: relative;
@@ -146,10 +146,10 @@
 .tab::after {
   content: '';
   position: absolute;
-  bottom: -1.3px;
+  bottom: -1.43px;
   left: 0;
   right: 0;
-  height: 2.6px;
+  height: 2.86px;
   background: var(--accent);
   transform: scaleX(0);
   transition: transform var(--transition);
@@ -168,71 +168,71 @@
 }
 
 .section {
-  padding-bottom: 78px;
+  padding-bottom: 85.8px;
 }
 
 .empty {
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 1.045rem;
   text-align: center;
-  padding: 78px 0;
+  padding: 85.8px 0;
 }
 
 .ordersGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
-  gap: 20.8px;
+  grid-template-columns: repeat(auto-fill, minmax(429px, 1fr));
+  gap: 22.88px;
 }
 
 .orderCard {
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: 1.1px solid var(--border);
   clip-path: var(--clip-card);
-  padding: 26px 31.2px;
+  padding: 28.6px 34.32px;
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 14.3px;
 }
 
 .orderRow {
   display: flex;
   align-items: flex-start;
-  gap: 13px;
+  gap: 14.3px;
 }
 
 .orderKey {
-  font-size: 0.75rem;
+  font-size: 0.825rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-muted);
-  min-width: 72.8px;
-  padding-top: 1.3px;
+  min-width: 80.08px;
+  padding-top: 1.43px;
 }
 
 .orderVal {
-  font-size: 0.9rem;
+  font-size: 0.99rem;
   color: var(--text-primary);
 }
 
 .orderLink {
   color: var(--accent-light);
-  font-size: 0.9rem;
+  font-size: 0.99rem;
   text-decoration: underline;
 }
 
 .addBtn {
   background: rgba(255,138,0,0.1);
-  border: 1px solid var(--border-bright);
+  border: 1.1px solid var(--border-bright);
   color: var(--accent-light);
-  font-size: 0.9rem;
+  font-size: 0.99rem;
   font-weight: 600;
-  padding: 15.6px 31.2px;
+  padding: 17.16px 34.32px;
   clip-path: var(--clip-btn);
   cursor: pointer;
   letter-spacing: 0.05em;
   transition: background var(--transition);
-  margin-bottom: 31.2px;
+  margin-bottom: 34.32px;
 }
 
 .addBtn:hover {
@@ -241,45 +241,45 @@
 
 .donateForm {
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: 1.1px solid var(--border);
   clip-path: var(--clip-card);
-  padding: 36.4px;
-  max-width: 624px;
+  padding: 40.04px;
+  max-width: 686.4px;
   animation: fadeIn 0.2s ease;
 }
 
 .formTitle {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.32rem;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-primary);
-  margin-bottom: 26px;
+  margin-bottom: 28.6px;
 }
 
 .field {
-  margin-bottom: 20.8px;
+  margin-bottom: 22.88px;
 }
 
 .label {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.825rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-secondary);
-  margin-bottom: 10.4px;
+  margin-bottom: 11.44px;
 }
 
 .input {
   width: 100%;
   background: var(--bg-mid);
-  border: 1px solid var(--border);
+  border: 1.1px solid var(--border);
   color: var(--text-primary);
-  font-size: 0.95rem;
-  padding: 15.6px 20.8px;
+  font-size: 1.045rem;
+  padding: 17.16px 22.88px;
   outline: none;
-  clip-path: polygon(0 0, calc(100% - 10.4px) 0, 100% 10.4px, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, calc(100% - 11.44px) 0, 100% 11.44px, 100% 100%, 0 100%);
   transition: border-color var(--transition);
 }
 
@@ -290,10 +290,10 @@
 .textarea {
   width: 100%;
   background: var(--bg-mid);
-  border: 1px solid var(--border);
+  border: 1.1px solid var(--border);
   color: var(--text-primary);
-  font-size: 0.95rem;
-  padding: 15.6px 20.8px;
+  font-size: 1.045rem;
+  padding: 17.16px 22.88px;
   outline: none;
   resize: vertical;
   transition: border-color var(--transition);
@@ -305,21 +305,21 @@
 
 .fileInput {
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.935rem;
 }
 
 .formBtns {
   display: flex;
-  gap: 13px;
-  margin-top: 10.4px;
+  gap: 14.3px;
+  margin-top: 11.44px;
 }
 
 .saveBtn {
   background: var(--gradient-btn);
   color: #fff;
-  font-size: 0.85rem;
+  font-size: 0.935rem;
   font-weight: 600;
-  padding: 14.3px 31.2px;
+  padding: 15.73px 34.32px;
   clip-path: var(--clip-btn);
   border: none;
   cursor: pointer;
@@ -334,11 +334,11 @@
 
 .cancelBtn {
   background: none;
-  border: 1px solid var(--border);
+  border: 1.1px solid var(--border);
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.935rem;
   font-weight: 500;
-  padding: 14.3px 26px;
+  padding: 15.73px 28.6px;
   clip-path: var(--clip-btn);
   cursor: pointer;
   transition: border-color var(--transition);
@@ -349,34 +349,34 @@
 }
 
 .reqForm {
-  max-width: 624px;
+  max-width: 686.4px;
   display: flex;
   flex-direction: column;
-  gap: 20.8px;
+  gap: 22.88px;
 }
 
 .donateManageList {
   display: flex;
   flex-direction: column;
-  gap: 15.6px;
-  margin-top: 10.4px;
+  gap: 17.16px;
+  margin-top: 11.44px;
 }
 
 .donateManageCard {
   display: flex;
   align-items: center;
-  gap: 18.2px;
+  gap: 20.02px;
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: 1.1px solid var(--border);
   clip-path: var(--clip-card);
-  padding: 15.6px 20.8px;
+  padding: 17.16px 22.88px;
 }
 
 .donateManageImg {
-  width: 62.4px;
-  height: 62.4px;
+  width: 68.64px;
+  height: 68.64px;
   object-fit: cover;
-  border-radius: 7.8px;
+  border-radius: 8.58px;
   flex-shrink: 0;
 }
 
@@ -384,26 +384,26 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2.6px;
+  gap: 2.86px;
 }
 
 .donateManageName {
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: 1.045rem;
 }
 
 .donateManagePrice {
-  font-size: 0.85rem;
+  font-size: 0.935rem;
   color: var(--text-secondary);
 }
 
 .deleteBtn {
   background: rgba(239,83,80,0.1);
-  border: 1px solid rgba(239,83,80,0.3);
+  border: 1.1px solid rgba(239,83,80,0.3);
   color: #EF5350;
-  font-size: 0.9rem;
-  padding: 11.7px 16.9px;
+  font-size: 0.99rem;
+  padding: 12.87px 18.59px;
   cursor: pointer;
   clip-path: var(--clip-btn);
   transition: background var(--transition);
@@ -415,6 +415,171 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10.4px); }
+  from { opacity: 0; transform: translateY(11.44px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ Сайт баптаулары / FAQ басқару ============ */
+
+.sectionHint {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  max-width: 700px;
+  margin-bottom: 26px;
+  padding: 15.6px 20.8px;
+  background: rgba(255,138,0,0.06);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-card);
+}
+
+.sectionHint i {
+  color: var(--accent);
+  margin-right: 7.8px;
+}
+
+.sectionHint code {
+  background: rgba(255,138,0,0.15);
+  padding: 1.3px 6.5px;
+  border-radius: 3.9px;
+  font-family: monospace;
+}
+
+.langTabs {
+  display: flex;
+  gap: 7.8px;
+  margin-bottom: 26px;
+}
+
+.langTab {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 9.1px 20.8px;
+  cursor: pointer;
+  clip-path: var(--clip-btn);
+  letter-spacing: 0.05em;
+  transition: all var(--transition);
+}
+
+.langTab:hover {
+  color: var(--text-primary);
+  border-color: var(--border-bright);
+}
+
+.langTabActive {
+  background: rgba(255,138,0,0.12);
+  color: var(--accent-light);
+  border-color: var(--border-bright);
+}
+
+.faqEditCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-card);
+  padding: 26px 28.6px;
+  max-width: 700px;
+  margin-bottom: 18.2px;
+}
+
+/* ============ Mobile responsive ============ */
+
+@media (max-width: 768px) {
+  .page {
+    padding-top: 80px;
+    padding-left: 18.2px;
+    padding-right: 18.2px;
+  }
+
+  .topBar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15.6px;
+    padding: 31.2px 0 20.8px;
+    margin-bottom: 26px;
+  }
+
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+
+  .logoutBtn {
+    align-self: stretch;
+    text-align: center;
+  }
+
+  .tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 2.6px;
+    margin-bottom: 26px;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    padding: 13px 15.6px;
+    white-space: nowrap;
+  }
+
+  .ordersGrid {
+    grid-template-columns: 1fr;
+    gap: 15.6px;
+  }
+
+  .orderCard {
+    padding: 18.2px 20.8px;
+  }
+
+  .donateForm,
+  .reqForm,
+  .faqEditCard {
+    max-width: 100%;
+    padding: 20.8px;
+  }
+
+  .donateManageCard {
+    flex-wrap: wrap;
+  }
+
+  .formBtns {
+    flex-wrap: wrap;
+  }
+
+  .formBtns .saveBtn,
+  .formBtns .cancelBtn,
+  .formBtns .addBtn {
+    flex: 1;
+    min-width: 130px;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .loginBox {
+    padding: 41.6px 26px;
+  }
+
+  .loginTitle {
+    font-size: 1.3rem;
+  }
+
+  .pageTitle {
+    font-size: 1.25rem;
+  }
+
+  .pageTitle i {
+    margin-right: 7.8px !important;
+  }
+
+  .section {
+    padding-bottom: 41.6px;
+  }
 }
