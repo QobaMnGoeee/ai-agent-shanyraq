@@ -149,56 +149,9 @@
 
 .btnOutline:hover { border-color: var(--accent); color: var(--accent-light); }
 
-/* BOTTOM NAV */
-.bottomNav {
-  padding: 39px 0 78px;
-  background: transparent;
-}
-
-.bottomNavList {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20.8px;
-  flex-wrap: wrap;
-}
-
-.bottomNavLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 13px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(15.6px);
-  -webkit-backdrop-filter: blur(15.6px);
-  border: 1px solid var(--border);
-  color: var(--text-primary);
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 18.2px 41.6px;
-  clip-path: var(--clip-btn);
-  cursor: pointer;
-  transition: border-color var(--transition), color var(--transition), background var(--transition), transform var(--transition);
-}
-
-.bottomNavLink i { color: var(--accent); font-size: 1.1rem; }
-
-.bottomNavLink:hover {
-  border-color: var(--accent);
-  color: var(--accent-light);
-  background: rgba(255,138,0,0.1);
-  transform: translateY(-2.6px);
-}
-
 @media (max-width: 860px) {
   .hero { height: auto; min-height: 0; padding-top: 91px; padding-bottom: 52px; }
   .heroLeft { max-width: 100%; }
-
-  .bottomNav { padding: 26px 0 52px; }
-  .bottomNavList { gap: 13px; }
-  .bottomNavLink { font-size: 0.85rem; padding: 14.3px 26px; }
 
   /* Hero text stays at base size on mobile (no +40% desktop boost) */
   .heroEyebrow { font-size: 0.72rem; }
@@ -213,6 +166,4 @@
 
 @media (max-width: 380px) {
   .hero { margin-top: 70.2px; }
-  .bottomNavList { flex-direction: column; align-items: stretch; }
-  .bottomNavLink { justify-content: center; }
 }

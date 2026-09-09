@@ -36,25 +36,6 @@ export default function Dashboard({ setPage }) {
           </div>
         </div>
       </section>
-
-      <section className={styles.bottomNav}>
-        <div className="container">
-          <nav className={styles.bottomNavList}>
-            <button className={styles.bottomNavLink} onClick={() => setPage('dashboard')}>
-              <i className="fa-solid fa-house"></i>
-              <span>{t.nav.dashboard}</span>
-            </button>
-            <button className={styles.bottomNavLink} onClick={() => setPage('donates')}>
-              <i className="fa-solid fa-gem"></i>
-              <span>{t.nav.donates}</span>
-            </button>
-            <button className={styles.bottomNavLink} onClick={() => setPage('faq')}>
-              <i className="fa-solid fa-circle-question"></i>
-              <span>{t.nav.faq}</span>
-            </button>
-          </nav>
-        </div>
-      </section>
     </main>
   );
 }

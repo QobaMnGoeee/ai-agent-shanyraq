@@ -30,8 +30,11 @@
   z-index: 2;
 }
 
-.logo i {
-  font-size: 2.34rem; /* 1.8rem * 1.3 (desktop only) */
+.logoImg {
+  width: 2.34rem; /* 1.8rem * 1.3 (desktop only) */
+  height: 2.34rem;
+  object-fit: contain;
+  display: block;
 }
 
 .logoText {
@@ -96,7 +99,7 @@
 @media (max-width: 768px) {
   .inner { padding: 0 18px; height: 75px; }
   .logo { gap: 8px; }
-  .logo i { font-size: 1.5rem; }
+  .logoImg { width: 1.5rem; height: 1.5rem; }
   .logoText { font-size: 1.5rem; }
 
   .hamburger { display: flex; flex-shrink: 0; z-index: 2; }
@@ -124,7 +127,7 @@
 
 @media (max-width: 380px) {
   .inner { padding: 0 13px; height: 70px; }
-  .logo i { font-size: 1.2rem; }
+  .logoImg { width: 1.2rem; height: 1.2rem; }
   .logoText { font-size: 1.3rem; }
   .nav { top: 70px; }
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLang } from '../hooks/useLang';
 import styles from './Header.module.css';
+import logoImg from '../assets/logo.png';
 
 export default function Header({ currentPage, setPage }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,7 +19,7 @@ export default function Header({ currentPage, setPage }) {
     <header className={styles.header}>
       <div className={styles.inner}>
         <div className={styles.logo} onClick={() => handleNav('dashboard')}>
-          <i className="fa-solid fa-cubes" style={{ color: 'var(--accent)' }}></i>
+          <img src={logoImg} alt="MortyMC" className={styles.logoImg} />
           <span className={styles.logoText}>MortyMC</span>
         </div>
 

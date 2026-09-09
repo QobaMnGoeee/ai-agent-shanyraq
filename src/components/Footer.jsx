@@ -1,5 +1,6 @@
 import { useLang } from '../hooks/useLang';
 import styles from './Footer.module.css';
+import logoImg from '../assets/logo.png';
 
 const LANGS = ['RU', 'KZ', 'EN'];
 
@@ -19,8 +20,8 @@ export default function Footer() {
             </button>
           ))}
         </div>
-        <div className={styles.logo}>
-          <i className="fa-solid fa-cubes" style={{ color: 'var(--accent)', fontSize: '1.2rem' }}></i>
+        <div className={`${styles.logo} ${styles.logoDesktopOnly}`}>
+          <img src={logoImg} alt="MortyMC" className={styles.logoImg} />
           <span>MortyMC</span>
         </div>
         <p className={styles.copy}>{t.footer.rights}</p>

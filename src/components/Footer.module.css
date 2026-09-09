@@ -23,6 +23,13 @@
   color: var(--text-primary);
 }
 
+.logoImg {
+  width: 1.3rem;
+  height: 1.3rem;
+  object-fit: contain;
+  display: block;
+}
+
 .copy {
   font-size: 0.78rem;
   color: var(--text-muted);
@@ -63,4 +70,5 @@
 @media (max-width: 600px) {
   .inner { justify-content: center; text-align: center; }
   .langBar { order: 0; }
+  .logoDesktopOnly { display: none; }
 }
