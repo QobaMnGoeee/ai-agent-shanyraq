@@ -110,6 +110,11 @@
   flex-wrap: wrap;
 }
 
+/* Desktop-те "Подключиться" мен "Подробнее" батырмалары жасырылады, mobile-де дефолт бойынша қалады */
+@media (min-width: 861px) {
+  .heroBtns { display: none; }
+}
+
 .btnPrimary {
   display: inline-flex;
   align-items: center;
