@@ -1,0 +1,42 @@
+name: Build KZLauncher
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Unpack project and native libs
+        run: |
+          sudo apt-get install -y p7zip-full
+          unzip -q KZLauncher-src.zip -d proj
+          cat jniLibs.7z.part_* > jniLibs.7z
+          7z x jniLibs.7z -oproj/app_pojavlauncher/src/main/jniLibs
+          ls proj/app_pojavlauncher/src/main/jniLibs
+
+      - name: Install Android SDK parts
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;25.2.9519653"
+
+      - name: Build debug APK
+        working-directory: proj
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          printf "\norg.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g\nandroid.useAndroidX=true\n" >> gradle.properties
+          chmod +x gradlew
+          ./gradlew :app_pojavlauncher:assembleDebug --console=plain
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KZLauncher-apk
+          path: proj/app_pojavlauncher/build/outputs/apk/debug/*.apk
