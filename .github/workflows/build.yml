@@ -3,14 +3,17 @@ name: Build KZLauncher
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 
-      # JDK 8 is needed by jre_lwjgl3glfw / forge_installer toolchains, JDK 17 runs Gradle/AGP
+      # JDK 8 is needed by the jre_lwjgl3glfw toolchain, JDK 17 runs Gradle/AGP
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -28,6 +31,77 @@ jobs:
           cat jniLibs.7z.part_* > jniLibs.7z
           7z x jniLibs.7z -oproj/app_pojavlauncher/src/main/jniLibs
           ls proj/app_pojavlauncher/src/main/jniLibs
+
+      # Java runtimes (8 / 17 / 21) are NOT part of the source code. The official launcher ships them
+      # inside its APK (assets/components/jre, jre-new, jre-21). We take them from an APK that already
+      # has them: first from a Release of THIS repository (any .apk >= 60 MB), then from the official
+      # PojavLauncherTeam/PojavLauncher releases.
+      - name: Fetch Java runtimes (JRE 8, 17, 21)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, os, shutil, subprocess, sys, zipfile
+
+          DEST = 'proj/app_pojavlauncher/src/main/assets/components'
+          WANT = ['jre', 'jre-new', 'jre-21']   # jre = Java 8, jre-new = Java 17, jre-21 = Java 21
+          have = set()
+          repos = [os.environ['GITHUB_REPOSITORY'], 'PojavLauncherTeam/PojavLauncher']
+
+          def run(*a, **k):
+              return subprocess.run(list(a), capture_output=True, text=True, **k)
+
+          for repo in repos:
+              if len(have) == len(WANT):
+                  break
+              r = run('gh', 'api', f'repos/{repo}/releases?per_page=40')
+              if r.returncode != 0:
+                  print('cannot list releases of', repo, r.stderr[:200])
+                  continue
+              for rel in json.loads(r.stdout):
+                  for a in rel.get('assets', []):
+                      if len(have) == len(WANT):
+                          break
+                      name = a['name']
+                      if not name.lower().endswith('.apk') or a['size'] < 60 * 1024 * 1024:
+                          continue
+                      print('trying', repo, rel['tag_name'], name, a['size'] // 1048576, 'MB', flush=True)
+                      with open('src.apk', 'wb') as f:
+                          d = subprocess.run(['gh', 'api', '-H', 'Accept: application/octet-stream',
+                                              f'repos/{repo}/releases/assets/{a["id"]}'], stdout=f)
+                      if d.returncode != 0:
+                          print('download failed'); continue
+                      try:
+                          z = zipfile.ZipFile('src.apk')
+                      except zipfile.BadZipFile:
+                          print('not a zip'); continue
+                      names = z.namelist()
+                      for w in WANT:
+                          if w in have:
+                              continue
+                          prefix = f'assets/components/{w}/'
+                          members = [n for n in names if n.startswith(prefix)]
+                          if not any(n == prefix + 'version' for n in members):
+                              continue
+                          shutil.rmtree('jre_tmp', ignore_errors=True)
+                          z.extractall('jre_tmp', members)
+                          target = os.path.join(DEST, w)
+                          shutil.rmtree(target, ignore_errors=True)
+                          shutil.copytree(os.path.join('jre_tmp', 'assets', 'components', w), target)
+                          have.add(w)
+                          print('  ->', w, 'extracted', flush=True)
+                      z.close()
+                      os.remove('src.apk')
+
+          missing = [w for w in WANT if w not in have]
+          for w in WANT:
+              p = os.path.join(DEST, w)
+              print(w, 'OK' if w in have else 'MISSING', os.listdir(p) if os.path.isdir(p) else '')
+          if missing:
+              print('::error::Java runtimes not found: ' + ', '.join(missing) +
+                    '. Upload the original PojavLauncher APK as a Release asset of this repository and run again.')
+              sys.exit(1)
+          PY
 
       - name: Install Android SDK parts
         run: |
